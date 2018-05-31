@@ -1,0 +1,6 @@
+---
+secure_postgres::log::enabled: false
+secure_postgres::log::threatlevel: warning
+
+# STIG enforcement
+secure_sqlserver::stig::v12345::enforced: true
