@@ -4,4 +4,5 @@
 class secure_sqlserver
 {
   class { '::secure_sqlserver::stig::v67357': }
+  class { '::secure_sqlserver::stig::v67361': }
 }

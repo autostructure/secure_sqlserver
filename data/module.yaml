@@ -1,6 +1,7 @@
 ---
-secure_postgres::log::enabled: false
-secure_postgres::log::threatlevel: warning
+secure_sqlserver::log::enabled: false
+secure_sqlserver::log::threatlevel: warning
 
 # STIG enforcement
-secure_sqlserver::stig::v12345::enforced: true
+secure_sqlserver::stig::v67357::enforced: true
+secure_sqlserver::stig::v67361::enforced: true
