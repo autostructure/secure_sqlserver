@@ -1,20 +1,22 @@
 {
-  "name": "autostructure-secure_sqlserver",
+  "name": "secure_sqlserver",
   "version": "0.1.0",
-  "author": "Jeffrey Frelick",
-  "summary": "",
+  "author": "Bryan, Charlie, Jay, Jeff & Jim",
+  "summary": "Harden a Microsoft SQL Server database and associated instances.",
   "license": "Apache-2.0",
-  "source": "",
+  "source": "https://code.fs.usda.gov/",
+  "project_page": "https://github.com/autostructure/secure_sqlserver",
+  "issues_url": "https://tickets.puppetlabs.com/browse/MODULES",
   "dependencies": [
-
+    { "name":"puppetlabs-sqlserver","version_requirement":">= 2.0.0 < 2.1.1" }
   ],
+  "data_provider": "hiera",
   "operatingsystem_support": [
     {
       "operatingsystem": "windows",
       "operatingsystemrelease": [
-        "2008 R2",
         "2012 R2",
-        "10"
+        "2012"
       ]
     }
   ],
