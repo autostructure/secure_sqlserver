@@ -4,7 +4,14 @@ class secure_sqlserver::stig::v67387 (
   Boolean $enforced = false,
 ) {
 
-  # TODO: replace sample values...
+  #TODO: SME Questions...
+  # 1. Is this handled procedurally?  Can it be automated?
+  # 2. Is the service master key encrypted?
+  # 3. If so, we need to configure a hiera password?
+  # 4. How does the key get backed up?
+  # 5. Backed up to what location?
+
+  #TODO: replace sample values...
   $key_encryption_password = '3dH85Hhk003GHk2597gheij4'
   $key_temp_backup_dir = 'c:\secure_sqlserver_temp'
   $key_temp_backup_file = "${key_temp_backup_dir}\service_master_key"
@@ -18,15 +25,16 @@ class secure_sqlserver::stig::v67387 (
   # refactor and iterate through all instances...
   $db_instance = 'MSSQLSERVER'
 
-  $key_export_sql = "BACKUP SERVICE MASTER KEY TO FILE = '${key_temp_backup_file}'
-    ENCRYPTION BY PASSWORD = '${key_encryption_password}'"
-
+  # Do we have to open the master key w/a password first?
   # SQL if you need to decrypt the key first.
   # $key_export_sql = "USE ${db_instance};
   #  OPEN MASTER KEY DECRYPTION BY PASSWORD = 'sfj5300osdVdgwdfkli7';
   #  BACKUP MASTER KEY TO FILE = 'c:\temp\exportedmasterkey'
   #      ENCRYPTION BY PASSWORD = 'sd092735kjn$&adsg';
   #  GO"
+
+  $key_export_sql = "BACKUP SERVICE MASTER KEY TO FILE = '${key_temp_backup_file}'
+    ENCRYPTION BY PASSWORD = '${key_encryption_password}'"
 
   # $key_export_sql = "USE ${db_instance};
   #   GO
