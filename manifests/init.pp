@@ -1,12 +1,12 @@
 #
-# This module secures Microsoft SQL Server
+# This module secures Microsoft SQL Server 2016
 #
 class secure_sqlserver
 {
   # database STIGs...
-  class { '::secure_sqlserver::stig::v67357': }
-  class { '::secure_sqlserver::stig::v67361': }
 
   # instance STIGs...
-  class { '::secure_sqlserver::stig::v67387': }
+  class { '::secure_sqlserver::stig::v79119': }
+  class { '::secure_sqlserver::stig::v79121': }
+  class { '::secure_sqlserver::stig::v79123': }
 }

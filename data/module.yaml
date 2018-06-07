@@ -5,8 +5,9 @@ secure_sqlserver::log::threatlevel: warning
 # STIG enforcement
 
 # Database STIGs...
-secure_sqlserver::stig::v67357::enforced: true
-secure_sqlserver::stig::v67361::enforced: true
+secure_sqlserver::stig::v79061::enforced: true
 
 # Instance STIGs...
-secure_sqlserver::stig::v67387::enforced: true
+secure_sqlserver::stig::v79119::enforced: true
+secure_sqlserver::stig::v79121::enforced: true
+secure_sqlserver::stig::v79123::enforced: true
