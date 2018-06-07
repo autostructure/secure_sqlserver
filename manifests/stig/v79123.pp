@@ -7,7 +7,7 @@ class secure_sqlserver::stig::v79123 (
 ) {
 
   $port = 1
-  $svc_acct = ''
+  $svc_acct = 'WIN-OKVLNTQGMS4\Administrator'
   $cmd_setspn_fqdn = "setspn -S MSSQLSvc/${fqdn} ${svc_acct}"
   $cmd_setspn_port = "setspn -S MSSQLSvc/${fqdn}:${port} ${svc_acct}"
 
