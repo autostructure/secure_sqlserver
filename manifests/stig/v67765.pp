@@ -6,6 +6,9 @@ class secure_sqlserver::stig::v67765 (
   Boolean $enforced = false,
 ) {
 
+  #TODO: SME Questions...
+  # 1. 
+
   # Create a server role specifically for audit maintainers,
   # and give it permission to maintain traces,
   # without granting it unnecessary permissions:

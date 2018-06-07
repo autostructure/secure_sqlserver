@@ -70,7 +70,7 @@ Users need a complete list of your module's classes, types, defined types provid
 
 ## Limitations
 
-This is where you list OS compatibility, version compatibility, etc. If there are Known Issues, you might want to include them under their own heading here.
+The following STIG vulnerabilities could not be addressed by the module.  Usually because a specification requires manual examination, like confirming a procedure or process is in place.
 
 ## Development
 
