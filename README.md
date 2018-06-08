@@ -72,6 +72,13 @@ Users need a complete list of your module's classes, types, defined types provid
 
 The following STIG vulnerabilities could not be addressed by the module.  Usually because a specification requires manual examination, like confirming a procedure or process is in place.
 
+###Outstanding Vulnerabilities
+
+Vulnerabilities not addressed by this module:
+V-79125
+V-79127
+
+
 ## Development
 
 Since your module is awesome, other users will want to play with it. Let them know what the ground rules for contributing are.
