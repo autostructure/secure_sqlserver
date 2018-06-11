@@ -43,9 +43,14 @@ If there's more that they should know about, though, this is the place to mentio
 
 ### Setup Requirements **OPTIONAL**
 
-If your module requires anything extra before setting up (pluginsync enabled, another module, etc.), mention it here.
+Add the following entries to your Puppetfile:
 
-If your most recent release breaks compatibility or requires particular steps for upgrading, you might want to include an additional "Upgrading" section here.
+```puppet
+mod 'secure_sqlserver',
+    git: 'https://github.com/autostructure/secure_sqlserver.git',
+    branch: 'master'
+mod 'puppetlabs-sqlserver', '2.1.1'
+```
 
 ### Beginning with secure_sqlserver
 
