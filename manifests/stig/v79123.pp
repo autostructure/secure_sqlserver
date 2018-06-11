@@ -9,8 +9,9 @@ class secure_sqlserver::stig::v79123 (
   $fqdn = $facts['fqdn']
   $port = 1433
   $svc_acct = "${facts['domain']}\${facts['id']}"
-  Puppet.debug $svc_acct
+  log { $svc_acct: }
   #$svc_acct = 'WIN-OKVLNTQGMS4\Administrator'
+  #$svc_acct = 'jeff-win-2012-sqlserver\Administrator'
   $cmd_setspn_fqdn = "setspn -S MSSQLSvc/${fqdn} ${svc_acct}"
   $cmd_setspn_port = "setspn -S MSSQLSvc/${fqdn}:${port} ${svc_acct}"
 
