@@ -19,9 +19,10 @@ class secure_sqlserver::stig::v79129 (
     }
   }
 
-  ::secure_sqlserver::log {$assigned_roles}
+  ::secure_sqlserver::log { $assigned_roles: }
+
   $system_user = 'NT AUTHORITY\SYSTEM'
-  $sql_ddl = "ALTER ROLE ${role_name} DROP MEMBER ${system_user}"
+  #$sql_ddl = "ALTER ROLE ${role_name} DROP MEMBER ${system_user}"
 
   $sql_check_server_roles = "SELECT srm.role_principal_id, sp1.name, srm.member_principal_id, sp2.name
 FROM sys.server_role_members srm
