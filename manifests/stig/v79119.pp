@@ -8,7 +8,7 @@ class secure_sqlserver::stig::v79119 (
 
   # Make sure to use the renamed SA account here.
   $sa = 'sa'
-  $db = 'tempdb'
+  $db = 'master'
   $limit = 1000
   $sql_check = 'SELECT name FROM master.sys.server_triggers;'
   $sql_trigger = "CREATE TRIGGER SQL_STIG_v79119_Connection_Limit
