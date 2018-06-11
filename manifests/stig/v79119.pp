@@ -22,7 +22,7 @@ class secure_sqlserver::stig::v79119 (
   $trigger_name = 'SQL_STIG_V79119_CONNECTION_LIMIT'
   $connection_limit = 1000
   # $sql_check = 'SELECT name FROM master.sys.server_triggers;'
-  $sql_check = "SELECT name FROM master.sys.server_triggers WHERE name='${trigger_name}';"
+  $sql_check = "IF (SELECT COUNT(*) FROM master.sys.server_triggers WHERE name='${trigger_name}') = 0 THROW 50000, '', 10"
   $sql_trigger = "CREATE TRIGGER ${trigger_name}
 ON ALL SERVER WITH EXECUTE AS '${sa}'
 FOR LOGON
