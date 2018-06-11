@@ -6,27 +6,34 @@ class secure_sqlserver::stig::v79129 (
   Boolean $enforced = false,
 ) {
 
-  # make sure that is the only role.
-  $server_role = 'Public'
-  $system_user = 'NT AUTHORITY\SYSTEM'
-
   include ::secure_sqlserver::logon
 
-  # Resource to connect to the DB instance
-  #sqlserver::config { 'MSSQLSERVER':
-  #  admin_login_type => 'WINDOWS_LOGIN',
-  #}
+  # make sure this user only has the public role assigned.
+  $system_user = 'NT AUTHORITY\SYSTEM'
+  $sql_ddl = "ALTER ROLE ${role_name} DROP MEMBER ${system_user}"
 
-  #sqlserver::role { 'sysadmin':
-  #  ensure   => 'present',
-  #  instance => 'MSSQLSERVER',
-  #  type     => 'SERVER',
-  #  members  => [$local_dba_group_netbios_name, $facts['id']],
-  #}
+  $sql_check_server_roles = "SELECT srm.role_principal_id, sp1.name, srm.member_principal_id, sp2.name
+FROM sys.server_role_members srm
+FULL OUTER JOIN sys.server_principals sp1
+ON srm.role_principal_id = sp1.principal_id
+LEFT OUTER JOIN sys.server_principals sp2
+ON srm.member_principal_id = sp2.principal_id
+WHERE sp2.name = 'NT AUTHORITY\SYSTEM'
+AND sp1.type = 'R'"
 
-  #sqlserver_tsql{ 'Always running':
-  #  instance => 'MSSQLSERVER',
-  #  command  => 'EXEC notified_executor()',
+  $sql_check_db_roles = "SELECT drm.role_principal_id, dp1.name, drm.member_principal_id, dp2.name
+FROM sys.database_role_members drm
+FULL OUTER JOIN sys.database_principals dp1
+ON drm.role_principal_id = dp1.principal_id
+LEFT OUTER JOIN sys.database_principals dp2
+ON drm.member_principal_id = dp2.principal_id
+WHERE dp2.name = 'NT AUTHORITY\SYSTEM'
+AND dp1.type = 'R'"
+
+  #sqlserver_tsql{ 'create-logon-trigger-to-limit-concurrent-sessions':
+  #  instance => $db,
+  #  command  => $sql_trigger,
+  #  onlyif   => $sql_check,
   #}
 
 }

@@ -18,7 +18,7 @@ class secure_sqlserver::stig::v79119 (
   $trigger_name = 'SQL_STIG_V79119_CONNECTION_LIMIT'
   $connection_limit = 1000
   # $sql_check = 'SELECT name FROM master.sys.server_triggers;'
-  $sql_check = "IF (SELECT COUNT(*) FROM master.sys.server_triggers WHERE name='${trigger_name}') = 0 THROW 50000, '', 10"
+  $sql_check = "IF (SELECT COUNT(*) FROM master.sys.server_triggers WHERE name='${trigger_name}') = 0 THROW 50000, 'Missing STIG Trigger for V-79119.', 10"# lint:ignore:140chars
   $sql_trigger = "CREATE TRIGGER ${trigger_name}
 ON ALL SERVER WITH EXECUTE AS '${sa}'
 FOR LOGON
@@ -35,7 +35,7 @@ ROLLBACK;
 END
 END;"
 
-  sqlserver_tsql{ 'create logon trigger to limit concurrent sessions':
+  sqlserver_tsql{ 'create-logon-trigger-to-limit-concurrent-sessions':
     instance => $db,
     command  => $sql_trigger,
     onlyif   => $sql_check,
