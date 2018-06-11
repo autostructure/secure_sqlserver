@@ -9,4 +9,5 @@ class secure_sqlserver
   class { '::secure_sqlserver::stig::v79119': }
   class { '::secure_sqlserver::stig::v79121': }
   class { '::secure_sqlserver::stig::v79123': }
+  class { '::secure_sqlserver::stig::v79129': }
 }

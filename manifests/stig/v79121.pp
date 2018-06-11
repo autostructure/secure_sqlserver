@@ -1,7 +1,7 @@
 # This class manages DISA STIG vulnerability: V-79121
-# *** RESTART REQ'D ***
 # SQL Server must integrate with an organization-level authentication/access mechanism
 # providing account management and automation for all users, groups, roles, and any other principals.
+# *** RESTART REQ'D ***
 #
 class secure_sqlserver::stig::v79121 (
   Boolean $enforced = false,
