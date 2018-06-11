@@ -19,7 +19,7 @@ class secure_sqlserver::stig::v79129 (
     }
   }
 
-  ::secure_sqlserver::log {"keys = ${assigned_roles}"}
+  ::secure_sqlserver::log {$assigned_roles}
   $system_user = 'NT AUTHORITY\SYSTEM'
   $sql_ddl = "ALTER ROLE ${role_name} DROP MEMBER ${system_user}"
 
