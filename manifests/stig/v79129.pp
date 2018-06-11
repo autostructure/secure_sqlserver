@@ -11,7 +11,7 @@ class secure_sqlserver::stig::v79129 (
   # make sure this user only has the public role assigned.
   #$roles_hash = $facts['nt_authority_system_assigned_roles.SQL_2017']
   $roles_hash = $facts['sqlserver_instances.SQL_2017']
-  notify { $roles_hash:
+  notify { 'roles-output':
     message => $roles_hash,
   }
   #$assigned_roles = keys($roles_hash)
