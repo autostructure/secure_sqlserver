@@ -6,9 +6,19 @@ class secure_sqlserver::stig::v79119 (
   Boolean $enforced = false,
 ) {
 
+  $netbios_user = "${facts['domain']}\\${facts['id']}"
+
+  sqlserver::config { 'MSSQLSERVER':
+    admin_login_type => 'WINDOWS_LOGIN',
+  }
+
+  # sqlserver::login { $netbios_user :
+  #   login_type  => 'WINDOWS_LOGIN',
+  # }
+
   # Make sure to use the renamed SA account here.
   $sa = 'sa'
-  $db = 'master'
+  $db = 'MSSQLSERVER'
   $limit = 1000
   $sql_check = 'SELECT name FROM master.sys.server_triggers;'
   $sql_trigger = "CREATE TRIGGER SQL_STIG_v79119_Connection_Limit
