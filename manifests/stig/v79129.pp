@@ -10,6 +10,8 @@ class secure_sqlserver::stig::v79129 (
   $server_role = 'Public'
   $system_user = 'NT AUTHORITY\SYSTEM'
 
+  include ::secure_sqlserver::logon
+
   # Resource to connect to the DB instance
   #sqlserver::config { 'MSSQLSERVER':
   #  admin_login_type => 'WINDOWS_LOGIN',

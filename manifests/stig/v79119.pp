@@ -6,15 +6,11 @@ class secure_sqlserver::stig::v79119 (
   Boolean $enforced = false,
 ) {
 
-  $netbios_user = "${facts['domain']}\\${facts['id']}"
+  include ::secure_sqlserver::logon
 
-  sqlserver::config { 'MSSQLSERVER':
-    admin_login_type => 'WINDOWS_LOGIN',
-  }
-
-  # sqlserver::login { $netbios_user :
-  #   login_type  => 'WINDOWS_LOGIN',
-  # }
+  #sqlserver::config { 'MSSQLSERVER':
+  #  admin_login_type => 'WINDOWS_LOGIN',
+  #}
 
   # Make sure to use the renamed SA account here.
   $sa = 'sa'
