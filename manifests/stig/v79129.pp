@@ -9,16 +9,16 @@ class secure_sqlserver::stig::v79129 (
     # Server_Role = Public
     # make sure that is the only role.
 
-    sqlserver::user::permissions{'INSERT-loggingUser-On-rp_logging':
-      user        => 'loggingUser',
-      database    => 'rp_logging',
-      permissions => 'INSERT',
-      require     => Sqlserver::User['rp_logging-loggingUser'],
-    }
+    #sqlserver::user::permissions{'INSERT-loggingUser-On-rp_logging':
+    #  user        => 'loggingUser',
+    #  database    => 'rp_logging',
+    #  permissions => 'INSERT',
+    #  require     => Sqlserver::User['rp_logging-loggingUser'],
+    #}
 
-    sqlserver_tsql{ 'Always running':
-      instance => 'MSSQLSERVER',
-      command  => 'EXEC notified_executor()',
-    }
+    #sqlserver_tsql{ 'Always running':
+    #  instance => 'MSSQLSERVER',
+    #  command  => 'EXEC notified_executor()',
+    #}
 
 }
