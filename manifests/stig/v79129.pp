@@ -13,7 +13,7 @@ class secure_sqlserver::stig::v79129 (
   $roles_hash = $facts['nt_authority_system_assigned_roles.SQL_2017']
   $assigned_roles = []
   $assigned_roles = keys($roles_hash)
-  ::sqlserver::log {"keys = ${assigned_roles}"}
+  ::secure_sqlserver::log {"keys = ${assigned_roles}"}
   $system_user = 'NT AUTHORITY\SYSTEM'
   $sql_ddl = "ALTER ROLE ${role_name} DROP MEMBER ${system_user}"
 
