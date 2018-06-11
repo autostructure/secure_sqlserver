@@ -19,9 +19,11 @@ class secure_sqlserver::stig::v79119 (
   # Make sure to use the renamed SA account here.
   $sa = 'sa'
   $db = 'MSSQLSERVER'
-  $limit = 1000
-  $sql_check = 'SELECT name FROM master.sys.server_triggers;'
-  $sql_trigger = "CREATE TRIGGER SQL_STIG_v79119_Connection_Limit
+  $trigger_name = 'SQL_STIG_V79119_CONNECTION_LIMIT'
+  $connection_limit = 1000
+  # $sql_check = 'SELECT name FROM master.sys.server_triggers;'
+  $sql_check = "SELECT name FROM master.sys.server_triggers WHERE name='${trigger_name}';"
+  $sql_trigger = "CREATE TRIGGER ${trigger_name}
 ON ALL SERVER WITH EXECUTE AS '${sa}'
 FOR LOGON
 AS
@@ -30,7 +32,7 @@ IF (SELECT COUNT(1)
 FROM sys.dm_exec_sessions
 WHERE is_user_process = 1
 And original_login_name = ORIGINAL_LOGIN()
-) > ${limit}
+) > ${connection_limit}
 BEGIN
 PRINT 'The login [' + ORIGINAL_LOGIN() + '] has exceeded the concurrent session limit.'
 ROLLBACK;
