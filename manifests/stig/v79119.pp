@@ -1,8 +1,8 @@
 # This class manages DISA STIG vulnerability: V-79119
 # SQL Server must limit the number of concurrent sessions to an organization-defined
 # number per user for all accounts and/or account types.
-# 
-class secure_postgres::stig::v79119 (
+#
+class secure_sqlserver::stig::v79119 (
   Boolean $enforced = false,
 ) {
 
