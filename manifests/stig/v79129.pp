@@ -9,10 +9,10 @@ class secure_sqlserver::stig::v79129 (
   include ::secure_sqlserver::logon
 
   # make sure this user only has the public role assigned.
-  #$roles_hash = $facts['nt_authority_system_assigned_roles.SQL_2017']
-  $roles_hash = $facts['sqlserver_instances.SQL_2017']
+  #$roles_hash = $facts['sqlserver_roles_assigned_to_nt_authority_system']
+  $assigned_roles = $facts['sqlserver_roles_assigned_to_nt_authority_system']
   notify { 'roles-output':
-    message => $roles_hash,
+    message => $assigned_roles,
   }
   #$assigned_roles = keys($roles_hash)
   #$assigned_roles.each |$key| {
@@ -43,6 +43,8 @@ LEFT OUTER JOIN sys.database_principals dp2
 ON drm.member_principal_id = dp2.principal_id
 WHERE dp2.name = 'NT AUTHORITY\SYSTEM'
 AND dp1.type = 'R'"
+
+  $sql_ddl = "ALTER SERVER ROLE ${assigned_roles} DROP MEMBER ${system_user};"
 
   #sqlserver_tsql{ 'create-logon-trigger-to-limit-concurrent-sessions':
   #  instance => $db,
