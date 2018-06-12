@@ -17,8 +17,8 @@ class secure_sqlserver::stig::v79123 (
   $cmd_setspn_fqdn = "setspn -S MSSQLSvc/${fqdn} ${netbios_user}"
   $cmd_setspn_port = "setspn -S MSSQLSvc/${fqdn}:${port} ${netbios_user}"
   ::secure_sqlserver::log { "v79123 log -- service account = ${netbios_user}": }
-  secure_sqlserver::log { "v79123 log -- fqdn setspn command = ${cmd_setspn_fqdn}": }
-  secure_sqlserver::log { "v79123 log -- port setspn command = ${cmd_setspn_port}": }
+  ::secure_sqlserver::log { "v79123 log -- fqdn setspn command = ${cmd_setspn_fqdn}": }
+  ::secure_sqlserver::log { "v79123 log -- port setspn command = ${cmd_setspn_port}": }
 
   exec { 'v79123_setspn_fqdn':
     path    => 'C:\Windows\system32',

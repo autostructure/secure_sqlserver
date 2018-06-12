@@ -12,4 +12,8 @@ class secure_sqlserver::logon
     admin_login_type => 'WINDOWS_LOGIN',
   }
 
+  notify { 'print-instances':
+    message => "print-instances\n${instances}",
+  }
+
 }
