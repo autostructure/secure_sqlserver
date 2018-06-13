@@ -1,7 +1,7 @@
 #
 # This class centralizes log formatting for the module.
 #
-define secure_sqlserver::log ()
+define secure_sqlserver::log
 {
   # Boolean $enabled = true,
   # Enum['alert', 'crit', 'debug', 'emerg', 'err', 'info', 'notice', 'warning'] $loglevel = 'warning',

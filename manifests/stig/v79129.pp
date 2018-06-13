@@ -6,24 +6,11 @@ class secure_sqlserver::stig::v79129 (
   Boolean $enforced = false,
 ) {
 
-  include ::secure_sqlserver::logon
-
   # make sure this user only has the public role assigned.
   #$roles_hash = $facts['sqlserver_roles_assigned_to_nt_authority_system']
   $assigned_roles = $facts['sqlserver_roles_assigned_to_nt_authority_system']
-  notify { 'print-roles':
-    message => $assigned_roles,
-  }
-  #$assigned_roles = keys($roles_hash)
-  #$assigned_roles.each |$key| {
-  #  notify { $key:
-  #    message => $key,
-  #  }
-  #}
 
-  ::secure_sqlserver::log { "nt authority system roles:\n${assigned_roles}": }
-
-  $system_user = 'NT AUTHORITY/SYSTEM'
+  $system_user = 'NT AUTHORITY\SYSTEM'
   #$sql_ddl = "ALTER ROLE ${role_name} DROP MEMBER ${system_user}"
 
   $sql_check_server_roles = "SELECT srm.role_principal_id, sp1.name, srm.member_principal_id, sp2.name

@@ -6,12 +6,10 @@ class secure_sqlserver::stig::v79119 (
   Boolean $enforced = false,
 ) {
 
-  include ::secure_sqlserver::logon
-
   $db = $::secure_sqlserver::logon::single_instance
 
-  notify { 'v79119-print-instances':
-    message  => "v79119.pp::print-instance-variable >>> ${db} <<< EOM.",
+  notify { 'v79119-msg':
+    message  => "v79119.pp: Running in SINGLE_INSTANCE mode: instance=${db}",
     loglevel => warning,
   }
 
