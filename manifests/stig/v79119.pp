@@ -8,7 +8,7 @@ class secure_sqlserver::stig::v79119 (
 
   include ::secure_sqlserver::logon
 
-  $db = $secure_sqlserver::logon::instances
+  $db = $::secure_sqlserver::logon::instances[0]
 
   notify { 'v79119-print-instances':
     message => "v79119.pp::print-instances...\n${db}",
