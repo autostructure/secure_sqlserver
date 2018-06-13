@@ -7,8 +7,8 @@ class secure_sqlserver::stig::v79123 (
 ) {
 
   $fqdn = $facts['fqdn']
-  $port = 1433
-  $netbios_user = "${facts['domain']}\\${facts['id']}"
+  $port = $::secure_sqlserver::logon::port
+  $netbios_user = $::secure_sqlserver::logon::netbios_user
   #$netbios_user = "${facts['hostname']}\\${facts['id']}"
   #'WIN-OKVLNTQGMS4\Administrator'
   #'JEFF-WIN-2012-S\Administrator'
