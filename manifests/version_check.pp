@@ -4,8 +4,6 @@
 class secure_sqlserver::version_check ()
 {
 
-  class { '::secure_sqlserver::logon': }
-
   # if $::secure_sqlserver::logon::version != 'SQL_2016' {
   if $::secure_sqlserver::logon::version != 'SQL_2016' {
     fail("Unsupported MS SQL Server version detected, found ${::secure_sqlserver::logon::version} instead of SQL_2016.")
