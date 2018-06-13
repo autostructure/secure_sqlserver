@@ -5,8 +5,11 @@
 class secure_sqlserver::logon
 {
 
-  $netbios_user = "${facts['domain']}\\${facts['id']}"
-  $fqdn_user = "${facts['fqdn']}\\${facts['id']}"
+  # TODO: Convert to 2016 after done w/2017 dev environment...
+  # $instances = $facts['sqlserver_instances']['SQL_2016'].keys
+  $port = 1433
+  $netbios_user = "${facts['domain']}/${facts['id']}"
+  $fqdn_user = "${facts['fqdn']}/${facts['id']}"
   $instances = $facts['sqlserver_instances']['SQL_2017'].keys
   $single_instance = $instances[0]
 
