@@ -4,7 +4,7 @@
 class secure_sqlserver::version_check ()
 {
 
-  include ::secure_sqlserver::logon
+  class { '::secure_sqlserver::logon': }
 
   # if $::secure_sqlserver::logon::version != 'SQL_2016' {
   if $::secure_sqlserver::logon::version != 'SQL_2016' {
