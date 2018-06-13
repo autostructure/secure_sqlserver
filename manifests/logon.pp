@@ -6,7 +6,8 @@ class secure_sqlserver::logon
 {
 
   #$instances = $facts['sqlserver_instances.SQL_2017']
-  $instances = $facts['sqlserver_instances']['SQL_2017']
+  $instances_hash = $facts['sqlserver_instances']['SQL_2017']
+  $instances = $instances_hash.keys
   $netbios_user = "${facts['domain']}\\${facts['id']}"
 
   sqlserver::config { 'MSSQLSERVER':
