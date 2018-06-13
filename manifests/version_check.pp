@@ -5,7 +5,7 @@ class secure_sqlserver::version_check ()
 {
 
   notify { 'ver chk msg':
-    message  => "sqlserver version = ${::secure_sqlserver::logon::version},"
+    message  => "sqlserver version = ${::secure_sqlserver::logon::version}",
     loglevel => 'warning',
   }
 
