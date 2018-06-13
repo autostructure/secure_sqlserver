@@ -9,7 +9,8 @@ class secure_sqlserver
     provider => 'gem',
   }
 
-  class { '::secure_sqlserver::version_check': }
+  class { '::secure_sqlserver::logon': }
+    -> class { '::secure_sqlserver::version_check': }
     -> class { '::secure_sqlserver::secure_instance': }
     -> class { '::secure_sqlserver::secure_database': }
 
