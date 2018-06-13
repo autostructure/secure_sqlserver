@@ -7,6 +7,11 @@ class secure_sqlserver
   class { '::secure_sqlserver::logon': }
   -> class { '::secure_sqlserver::version_check': }
 
+  package { 'tiny_tds':
+    ensure   => 'installed',
+    provider => 'gem',
+  }
+
   # database STIGs...
   # class { '::secure_sqlserver::stig::v79061': }
 
