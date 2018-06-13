@@ -4,13 +4,11 @@
 class secure_sqlserver
 {
 
-  include ::secure_sqlserver::logon
+  class { '::secure_sqlserver::logon': }
+  -> class { '::secure_sqlserver::version_check': }
 
-  # if $::secure_sqlserver::logon::version != 'SQL_2016' {
-  if $::secure_sqlserver::logon::version != 'SQL_2016' {
-    fail("Unsupported MS SQL Server version detected, found ${::secure_sqlserver::logon::version} instead of SQL_2016.")
-  }
   # database STIGs...
+  # class { '::secure_sqlserver::stig::v79061': }
 
   # instance STIGs...
   class { '::secure_sqlserver::stig::v79119': }
