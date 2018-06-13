@@ -1,11 +1,14 @@
 #
 # This class centralizes log formatting for the module.
 #
-define secure_sqlserver::log (
-  Enum['alert', 'crit', 'debug', 'emerg', 'err', 'info', 'notice', 'warning'] $threatlevel = hiera('secure_sqlserver::log::threatlevel', 'warning'),# lint:ignore:140chars
-  Boolean $enabled = hiera('secure_sqlserver::log::enabled', true),
-) {
+define secure_sqlserver::log ()
+{
+  # Enum['alert', 'crit', 'debug', 'emerg', 'err', 'info', 'notice', 'warning'] $threatlevel = hiera('secure_sqlserver::log::threatlevel', 'warning'),# lint:ignore:140chars
+  # Boolean $enabled = hiera('secure_sqlserver::log::enabled', true),
   # Enum['alert', 'crit', 'debug', 'emerg', 'err', 'info', 'notice', 'warning'] $threatlevel = 'warning',
+
+  Enum['alert', 'crit', 'debug', 'emerg', 'err', 'info', 'notice', 'warning'] $threatlevel = hiera('secure_sqlserver::log::threatlevel', 'warning')
+  Boolean $enabled = hiera('secure_sqlserver::log::enabled', true)
 
   if $enabled {
 
