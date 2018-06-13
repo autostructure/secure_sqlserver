@@ -11,8 +11,8 @@ class secure_sqlserver::stig::v79119 (
   $db = $::secure_sqlserver::logon::single_instance
 
   notify { 'v79119-print-instances':
-    message     => "v79119.pp::print-instance-variable >>> ${db} <<< EOM.",
-    threatlevel => warning,
+    message  => "v79119.pp::print-instance-variable >>> ${db} <<< EOM.",
+    loglevel => warning,
   }
 
   # Make sure to use the renamed SA account here.
