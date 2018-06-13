@@ -3,6 +3,10 @@
 #
 class secure_sqlserver
 {
+
+  if $::secure_sqlserver::logon::version != 'SQL_2016' {
+    fail("Unsupported operating system (${facts['operatingsystemmajrelease']}) detected.")
+  }
   # database STIGs...
 
   # instance STIGs...
