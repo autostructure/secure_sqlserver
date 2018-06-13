@@ -3,12 +3,12 @@
 #
 define secure_sqlserver::log ()
 {
-  # Enum['alert', 'crit', 'debug', 'emerg', 'err', 'info', 'notice', 'warning'] $threatlevel = hiera('secure_sqlserver::log::threatlevel', 'warning'),# lint:ignore:140chars
-  # Boolean $enabled = hiera('secure_sqlserver::log::enabled', true),
-  # Enum['alert', 'crit', 'debug', 'emerg', 'err', 'info', 'notice', 'warning'] $threatlevel = 'warning',
+  # Boolean $enabled = true,
+  # Enum['alert', 'crit', 'debug', 'emerg', 'err', 'info', 'notice', 'warning'] $loglevel = 'warning',
 
-  # $loglevel = hiera('secure_sqlserver::log::loglevel', 'warning')
-  # Boolean $enabled = hiera('secure_sqlserver::log::enabled', true)
+  # $loglevel = hiera('secure_sqlserver::log::threatlevel', 'warning')
+  # $enabled = hiera('secure_sqlserver::log::enabled', true)
+
   $enabled = true
   $loglevel = 'warning'
 
