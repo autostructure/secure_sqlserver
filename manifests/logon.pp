@@ -13,8 +13,8 @@ class secure_sqlserver::logon
   $instances = $facts['sqlserver_instances']['SQL_2017'].keys
   $single_instance = $instances[0]
 
-  #$version = $facts['sqlserver_instances']['SQL_2016']['version_friendly']
-  $version = $facts['sqlserver_instances']['SQL_2017']['version_friendly']
+  #$version = $facts['sqlserver_instances']['SQL_2016']['MSSQLSERVER']['version_friendly']
+  $version = $facts['sqlserver_instances']['SQL_2017'][$single_instance]['version_friendly']
 
   notify { 'logon msg':
     message  => $version,
