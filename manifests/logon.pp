@@ -5,20 +5,15 @@
 class secure_sqlserver::logon
 {
 
-  $instances = $facts['sqlserver_instances']['SQL_2017'].keys
-  #$instances = $instances_hash.keys
   $netbios_user = "${facts['domain']}\\${facts['id']}"
+  $fqdn_user = "${facts['fqdn']}\\${facts['id']}"
+  $instances = $facts['sqlserver_instances']['SQL_2017'].keys
+  $single_instance = $instances[0]
 
-  sqlserver::config { $instances[0]:
-    admin_login_type => 'WINDOWS_LOGIN',
-  }
-
-  notify { 'print-instances':
-    message => "logon.pp::print-instances...\n${instances}",
-  }
-
-  notify { 'print-instances-as-array':
-    message => $instances,
+  $instances.each |String $instance| {
+    sqlserver::config { $instance:
+      admin_login_type => 'WINDOWS_LOGIN',
+    }
   }
 
 }
