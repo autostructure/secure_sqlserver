@@ -18,10 +18,10 @@ class secure_sqlserver
     -> Class['::secure_sqlserver::version_check']
     -> Class['::secure_sqlserver::secure_database']
 
-    Package['tiny_tds']
-      -> Class['::secure_sqlserver::logon']
-      -> Class['::secure_sqlserver::version_check']
-      -> Class['::secure_sqlserver::secure_instance']
-      -> Class['::secure_sqlserver::secure_database']
+  #Package['tiny_tds']
+  #  -> Class['::secure_sqlserver::logon']
+  #  -> Class['::secure_sqlserver::version_check']
+  #  -> Class['::secure_sqlserver::secure_instance']
+  #  -> Class['::secure_sqlserver::secure_database']
 
 }
