@@ -8,9 +8,11 @@ class secure_sqlserver::stig::v79119 (
 
   include ::secure_sqlserver::logon
 
-  #sqlserver::config { 'MSSQLSERVER':
-  #  admin_login_type => 'WINDOWS_LOGIN',
-  #}
+  $db = $secure_sqlserver::logon::instances
+
+  notify { 'v79119-print-instances':
+    message => "v79119.pp::print-instances...\n${db}",
+  }
 
   # Make sure to use the renamed SA account here.
   $sa = 'sa'

@@ -5,12 +5,11 @@
 class secure_sqlserver::logon
 {
 
-  #$instances = $facts['sqlserver_instances.SQL_2017']
-  $instances_hash = $facts['sqlserver_instances']['SQL_2017']
-  $instances = $instances_hash.keys
+  $instances = $facts['sqlserver_instances']['SQL_2017'].keys
+  #$instances = $instances_hash.keys
   $netbios_user = "${facts['domain']}\\${facts['id']}"
 
-  sqlserver::config { 'MSSQLSERVER':
+  sqlserver::config { $instances[0]:
     admin_login_type => 'WINDOWS_LOGIN',
   }
 
