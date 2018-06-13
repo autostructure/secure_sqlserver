@@ -5,7 +5,8 @@
 class secure_sqlserver::logon
 {
 
-  $instances = $facts['sqlserver_instances.SQL_2017']
+  #$instances = $facts['sqlserver_instances.SQL_2017']
+  $instances = $facts['sqlserver_instances']['SQL_2017']
   $netbios_user = "${facts['domain']}\\${facts['id']}"
 
   sqlserver::config { 'MSSQLSERVER':
@@ -13,7 +14,11 @@ class secure_sqlserver::logon
   }
 
   notify { 'print-instances':
-    message => "print-instances\n${instances}",
+    message => "logon.pp::print-instances...\n${instances}",
+  }
+
+  notify { 'print-instances-as-array':
+    message => $instances,
   }
 
 }
