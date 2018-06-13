@@ -9,15 +9,11 @@ class secure_sqlserver::stig::v79123 (
   $fqdn = $facts['fqdn']
   $port = $::secure_sqlserver::logon::port
   $netbios_user = $::secure_sqlserver::logon::netbios_user
-  #$netbios_user = "${facts['hostname']}\\${facts['id']}"
-  #'WIN-OKVLNTQGMS4\Administrator'
-  #'JEFF-WIN-2012-S\Administrator'
-  #'jeff-win-2012-sqlserver\Administrator'
 
-  $cmd_setspn_fqdn = "setspn -S MSSQLSvc/${fqdn} ${netbios_user}"
-  $cmd_setspn_port = "setspn -S MSSQLSvc/${fqdn}:${port} ${netbios_user}"
-  ::secure_sqlserver::log { "v79123 log -- fqdn setspn command:\n${cmd_setspn_fqdn}": }
-  ::secure_sqlserver::log { "v79123 log -- port setspn command:\n${cmd_setspn_port}": }
+  $cmd_setspn_fqdn = "setspn -S MSSQLSvc/${fqdn} '${netbios_user}'"
+  $cmd_setspn_port = "setspn -S MSSQLSvc/${fqdn}:${port} '${netbios_user}'"
+  ::secure_sqlserver::log { "v79123 log -- FQDN setspn command version:\n\n${cmd_setspn_fqdn}\n": }
+  ::secure_sqlserver::log { "v79123 log -- PORT setspn command version:\n\n${cmd_setspn_port}\n": }
 
   exec { 'v79123_setspn_fqdn':
     path    => 'C:\Windows\system32',

@@ -1,6 +1,6 @@
 # This class manages DISA STIG vulnerability: V-79129
 # SQL Server must protect against a user falsely repudiating by ensuring the
-# NT AUTHORITY SYSTEM account is not used for administration.
+# NT AUTHORITY/SYSTEM account is not used for administration.
 #
 class secure_sqlserver::stig::v79129 (
   Boolean $enforced = false,
@@ -21,9 +21,9 @@ class secure_sqlserver::stig::v79129 (
   #  }
   #}
 
-  ::secure_sqlserver::log { $assigned_roles: }
+  ::secure_sqlserver::log { "nt authority system roles:\n${assigned_roles}": }
 
-  $system_user = 'NT AUTHORITY\SYSTEM'
+  $system_user = 'NT AUTHORITY/SYSTEM'
   #$sql_ddl = "ALTER ROLE ${role_name} DROP MEMBER ${system_user}"
 
   $sql_check_server_roles = "SELECT srm.role_principal_id, sp1.name, srm.member_principal_id, sp2.name
