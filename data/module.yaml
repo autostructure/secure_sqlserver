@@ -1,6 +1,6 @@
 ---
 secure_sqlserver::log::enabled: true
-secure_sqlserver::log::threatlevel: info
+secure_sqlserver::log::loglevel: info
 
 # STIG enforcement
 
