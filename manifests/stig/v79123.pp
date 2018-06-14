@@ -14,12 +14,12 @@ class secure_sqlserver::stig::v79123 (
 
   exec { 'v79123_setspn_fqdn':
     path    => 'C:\Windows\system32',
-    command => [$cmd_setspn_fqdn, $cmd_setspn_port],
+    command => $cmd_setspn_fqdn,
   }
 
-  #exec { 'v79123_setspn_port':
-  #  path    => 'C:\Windows\system32',
-  #  command => $cmd_setspn_port,
-  #}
+  exec { 'v79123_setspn_port':
+    path    => 'C:\Windows\system32',
+    command => $cmd_setspn_port,
+  }
 
 }
