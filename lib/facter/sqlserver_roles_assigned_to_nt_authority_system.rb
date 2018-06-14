@@ -22,7 +22,7 @@ Facter.add('sqlserver_roles_assigned_to_nt_authority_system') do
     WHERE sp2.name = 'NT AUTHORITY\SYSTEM'
     AND sp1.type = 'R'"
 
-    Puppet.Debug "#{sql}"
+    Puppet.debug "#{sql}"
 
     begin
       connect = TinyTds::Client.new username: '\JEFF-WIN-SQLSVR\Administrator',
