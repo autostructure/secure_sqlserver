@@ -6,6 +6,8 @@
 # @example  ['bulkadmin', 'dbcreator', 'diskadmin', 'processadmin', 'public', 'securityadmin', 'serveradmin', 'setupadmin', 'sysadmin']
 #
 require 'tiny_tds'
+require 'sqlserver'
+require 'puppet_x/sqlserver/sql_connection'
 
 Facter.add('sqlserver_roles_assigned_to_nt_authority_system') do
   confine operatingsystem: :windows
@@ -27,14 +29,17 @@ Facter.add('sqlserver_roles_assigned_to_nt_authority_system') do
     Puppet.debug "#{sql}"
 
     begin
-      connect = TinyTds::Client.new username: 'JEFF-WIN-SQLSVR\Administrator',
-                                    host:     'localhost',
-                                    port:     1433,
-                                    database: 'MSSQLSERVER',
-                                    azure:    false
-                                    #password: '',
 
-      results = connect.execute(sql)
+      config = [admin_login_type: 'WINDOWS_LOGIN', instance_name: 'MSSQLSERVER', admin_user: '', admin_pass: '', host: 'localhost', database: 'MSSQLSERVER']
+      connect = PuppetX::Sqlserver::SqlConnection.new
+      results = connect.open_and_run_command(sql, config)
+
+      # When FreeTDS sees the "\" character, it automatically chooses a domain login.
+      #connect = TinyTds::Client.new username: 'JEFF-WIN-SQLSVR\Administrator',
+      #                              host:     'localhost',
+      #                              database: 'MSSQLSERVER'
+
+      #results = connect.execute(sql)
 
       results.each do |row|
         Puppet.debug "#{row}"
