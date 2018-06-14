@@ -13,14 +13,16 @@ Facter.add('sqlserver_roles_assigned_to_nt_authority_system') do
 
     role_array = []
 
-    sql = "SELECT srm.role_principal_id, sp1.name, srm.member_principal_id, sp2.name
+    sql = "SELECT sp1.name
     FROM sys.server_role_members srm
-    FULL OUTER JOIN sys.server_principals sp1
+    LEFT JOIN sys.server_principals sp1
     ON srm.role_principal_id = sp1.principal_id
     LEFT OUTER JOIN sys.server_principals sp2
     ON srm.member_principal_id = sp2.principal_id
-    WHERE sp2.name = 'NT AUTHORITY\SYSTEM'
-    AND sp1.type = 'R'"
+    WHERE sp1.type = 'R'
+    AND sp2.name = 'JEFF-WIN-SQLSVR\Administrator'"
+
+    # AND sp2.name = 'NT AUTHORITY\SYSTEM'"
 
     Puppet.debug "#{sql}"
 
@@ -39,11 +41,11 @@ Facter.add('sqlserver_roles_assigned_to_nt_authority_system') do
         role_array << row
       end
     rescue StandardError => e
-      Puppet.debug "Facter: sqlserver_roles_assigned_to_nt_authority_system.rb database error occurred: #{e}"
+      Puppet.debug "Facter: sqlserver_roles_assigned_to_nt_authority_system.rb error occurred: #{e}"
     end
 
     begin
-      role_array = %w[public sysadmin]
+      #role_array = %w[public sysadmin]
     rescue StandardError => e
       Puppet.debug "Facter: sqlserver_roles_assigned_to_nt_authority_system.rb error occurred: #{e}"
     end
