@@ -9,20 +9,17 @@ class secure_sqlserver::stig::v79123 (
   $fqdn = $facts['fqdn']
   $port = $::secure_sqlserver::logon::port
   $netbios_user = $::secure_sqlserver::logon::netbios_user
-
   $cmd_setspn_fqdn = "setspn -S MSSQLSvc/${fqdn} '${netbios_user}'"
   $cmd_setspn_port = "setspn -S MSSQLSvc/${fqdn}:${port} '${netbios_user}'"
-  ::secure_sqlserver::log { "v79123 log -- FQDN setspn command version:\n${cmd_setspn_fqdn}\n\n": }
-  ::secure_sqlserver::log { "v79123 log -- PORT setspn command version:\n${cmd_setspn_port}\n\n": }
 
   exec { 'v79123_setspn_fqdn':
     path    => 'C:\Windows\system32',
-    command => $cmd_setspn_fqdn,
+    command => [$cmd_setspn_fqdn, $cmd_setspn_port],
   }
 
-  exec { 'v79123_setspn_port':
-    path    => 'C:\Windows\system32',
-    command => $cmd_setspn_port,
-  }
+  #exec { 'v79123_setspn_port':
+  #  path    => 'C:\Windows\system32',
+  #  command => $cmd_setspn_port,
+  #}
 
 }
