@@ -6,8 +6,8 @@
 # @example  ['bulkadmin', 'dbcreator', 'diskadmin', 'processadmin', 'public', 'securityadmin', 'serveradmin', 'setupadmin', 'sysadmin']
 #
 require 'tiny_tds'
-require '../../sqlserver'
-require '../../puppet_x/sqlserver/sql_connection'
+#require '../../sqlserver'
+#require '../../puppet_x/sqlserver/sql_connection'
 
 Facter.add('sqlserver_roles_assigned_to_nt_authority_system') do
   confine operatingsystem: :windows
