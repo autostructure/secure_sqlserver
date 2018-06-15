@@ -48,8 +48,8 @@ Facter.add('sqlserver_roles_assigned_to_nt_authority_system') do
       #results = connect.execute(sql)
 
       results.each do |row|
-        Puppet.debug "#{row}"
-        role_array << row
+        Puppet.debug "#{row.to_s}"
+        role_array << row.to_s
       end
     rescue StandardError => e
       Puppet.debug "Facter: sqlserver_roles_assigned_to_nt_authority_system.rb error occurred: #{e}"
