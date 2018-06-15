@@ -6,8 +6,8 @@
 # @example  ['bulkadmin', 'dbcreator', 'diskadmin', 'processadmin', 'public', 'securityadmin', 'serveradmin', 'setupadmin', 'sysadmin']
 #
 require 'tiny_tds'
-require 'sqlserver'
-require 'puppet_x/sqlserver/sql_connection'
+require '../../sqlserver'
+require '../../puppet_x/sqlserver/sql_connection'
 
 Facter.add('sqlserver_roles_assigned_to_nt_authority_system') do
   confine operatingsystem: :windows
@@ -30,7 +30,7 @@ Facter.add('sqlserver_roles_assigned_to_nt_authority_system') do
 
     begin
 
-      config = [admin_login_type: 'WINDOWS_LOGIN', instance_name: 'MSSQLSERVER', admin_user: '', admin_pass: '', host: 'localhost', database: 'MSSQLSERVER']
+      config = [admin_login_type: 'WINDOWS_LOGIN', instance_name: 'MSSQLSERVER', database: 'MSSQLSERVER', admin_user: '', admin_pass: '', host: 'localhost', database: 'MSSQLSERVER']# lint:ignore:140chars
       connect = PuppetX::Sqlserver::SqlConnection.new
       results = connect.open_and_run_command(sql, config)
 
