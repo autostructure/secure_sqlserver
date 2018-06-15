@@ -30,9 +30,11 @@ Facter.add('sqlserver_roles_assigned_to_nt_authority_system') do
 
     begin
 
-      config = [admin_login_type: 'WINDOWS_LOGIN', instance_name: 'MSSQLSERVER', database: 'MSSQLSERVER', admin_user: '', admin_pass: '', host: 'localhost', database: 'MSSQLSERVER']# lint:ignore:140chars
-      connect = PuppetX::Sqlserver::SqlConnection.new
-      results = connect.open_and_run_command(sql, config)
+      #config = [admin_login_type: 'WINDOWS_LOGIN', instance_name: 'MSSQLSERVER', database: 'MSSQLSERVER', admin_user: '', admin_pass: '', host: 'localhost', database: 'MSSQLSERVER']# lint:ignore:140chars
+      #connect = PuppetX::Sqlserver::SqlConnection.new
+      #results = connect.open_and_run_command(sql, config)
+
+      results = %w[public sysadmin]
 
       # When FreeTDS sees the "\" character, it automatically chooses a domain login.
       #connect = TinyTds::Client.new username: 'JEFF-WIN-SQLSVR\Administrator',
