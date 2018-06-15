@@ -5,6 +5,10 @@
 # @return   An array of strings representing roles assigned to the 'NT AUTHORITY\SYSTEM' user.
 # @example  ['bulkadmin', 'dbcreator', 'diskadmin', 'processadmin', 'public', 'securityadmin', 'serveradmin', 'setupadmin', 'sysadmin']
 #
+
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'puppet/provider/sqlserver'))
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'puppet_x/sqlserver/sql_connection'))
+
 require 'tiny_tds'
 #require '../../sqlserver'
 #require '../../puppet_x/sqlserver/sql_connection'
