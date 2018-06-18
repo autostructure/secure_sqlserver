@@ -38,7 +38,8 @@ Facter.add('sqlserver_roles_assigned_to_nt_authority_system') do
       # works, but the SqlConnection object offers no recordset...
       config = { admin_login_type: 'WINDOWS_LOGIN', instance_name: 'MSSQLSERVER', database: 'MSSQLSERVER', admin_user: '', admin_pass: '', host: 'localhost' } # lint:ignore:140chars
       connect = PuppetX::Sqlserver::SqlServerConnection.new
-      results = connect.open_and_run_command(sql, config)
+      Puppet.debug 'sqlserver_roles_assigned_to_nt_authority_system'
+      #results = connect.open_and_run_command(sql, config)
 
       #results = %w[public sysadmin]
 
@@ -49,10 +50,10 @@ Facter.add('sqlserver_roles_assigned_to_nt_authority_system') do
 
       #results = connect.execute(sql)
 
-      results.each do |row|
-        Puppet.debug "#{row.to_s}"
-        role_array << row.to_s
-      end
+      #results.each do |row|
+      #  Puppet.debug "#{row.to_s}"
+      #  role_array << row.to_s
+      #end
     rescue StandardError => e
       Puppet.debug "Facter: sqlserver_roles_assigned_to_nt_authority_system.rb error occurred: #{e}"
     end
