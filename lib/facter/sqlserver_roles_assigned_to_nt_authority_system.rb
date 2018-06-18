@@ -34,8 +34,7 @@ Facter.add('sqlserver_roles_assigned_to_nt_authority_system') do
       # works, but the SqlConnection object offers no recordset...
       config = { admin_login_type: 'WINDOWS_LOGIN', instance_name: 'MSSQLSERVER', database: 'MSSQLSERVER', admin_user: '', admin_pass: '', host: 'localhost' } # lint:ignore:140chars
       connect = PuppetX::Sqlserver::SqlServerConnection.new
-      connect_methods connect.methods
-      Puppet.debug '#{connect_methods}'
+      Puppet.debug connect.methods
       #results = connect.open_and_run_command(sql, config)
 
       #results = %w[public sysadmin]
