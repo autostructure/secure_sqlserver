@@ -15,6 +15,7 @@ module PuppetX
       def results(query, config)
         begin
           open(config)
+          Puppet.debug "connection_string=#{get_connection_string(config)}"
           results = connection.Execute(sql, nil, nil)
         rescue win32_exception => e
           Puppet.debug "SqlServerConnection error: #{e.message}"
