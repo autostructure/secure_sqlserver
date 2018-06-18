@@ -10,10 +10,6 @@ require File.expand_path(File.join(File.dirname(__FILE__), '..', 'puppet/provide
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'puppet_x/sqlserver/sql_connection'))
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'puppet_x/sqlserver/sqlserver_connection'))
 
-#require 'tiny_tds'
-#require '../../sqlserver'
-#require '../../puppet_x/sqlserver/sql_connection'
-
 Facter.add('sqlserver_roles_assigned_to_nt_authority_system') do
   confine operatingsystem: :windows
   setcode do
