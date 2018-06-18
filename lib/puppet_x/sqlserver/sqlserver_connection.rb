@@ -6,6 +6,7 @@
 
 require File.expand_path(File.join(File.dirname(__FILE__), '../..', 'puppet/provider/sqlserver'))
 require File.expand_path(File.join(File.dirname(__FILE__), '../..', 'puppet_x/sqlserver/sql_connection'))
+include sqlserver_connection
 
 module PuppetX
   module Sqlserver
