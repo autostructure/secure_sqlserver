@@ -32,7 +32,8 @@ Facter.add('sqlserver_roles_assigned_to_nt_authority_system') do
     begin
 
       # works, but the SqlConnection object offers no recordset...
-      config = { admin_login_type: 'WINDOWS_LOGIN', instance_name: 'MSSQLSERVER', database: 'MSSQLSERVER', admin_user: '', admin_pass: '', host: 'localhost' } # lint:ignore:140chars
+      # config = { admin_login_type: 'WINDOWS_LOGIN', instance_name: 'MSSQLSERVER', database: 'MSSQLSERVER', admin_user: '', admin_pass: '', host: 'localhost' } # lint:ignore:140chars
+      config = { admin_login_type: 'WINDOWS_LOGIN', database: 'MSSQLSERVER', host: 'localhost' }
       connect = PuppetX::Sqlserver::SqlServerConnection.new
       resultset = connect.results(sql,config)
       Puppet.debug resultset
@@ -40,12 +41,8 @@ Facter.add('sqlserver_roles_assigned_to_nt_authority_system') do
 
       #results = connect.open_and_run_command(sql, config)
 
-      #results = %w[public sysadmin]
 
-      # When FreeTDS sees the "\" character, it automatically chooses a domain login.
-      #connect = TinyTds::Client.new username: 'JEFF-WIN-SQLSVR\Administrator',
-      #                              host:     'localhost',
-      #                              database: 'MSSQLSERVER'
+
 
       #results = connect.execute(sql)
 
@@ -57,12 +54,7 @@ Facter.add('sqlserver_roles_assigned_to_nt_authority_system') do
       Puppet.debug "Facter: sqlserver_roles_assigned_to_nt_authority_system.rb error occurred: #{e}"
     end
 
-    begin
-      #role_array = %w[public sysadmin]
-    rescue StandardError => e
-      Puppet.debug "Facter: sqlserver_roles_assigned_to_nt_authority_system.rb error occurred: #{e}"
-    end
-
+    # role_array = %w[public sysadmin]
     role_array
   end
 end
