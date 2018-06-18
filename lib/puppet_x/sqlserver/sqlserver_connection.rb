@@ -14,5 +14,5 @@ module PuppetX
 
     end
 
-end
+  end
 end
