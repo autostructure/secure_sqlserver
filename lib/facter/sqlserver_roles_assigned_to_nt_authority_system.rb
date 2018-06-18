@@ -8,8 +8,9 @@
 
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'puppet/provider/sqlserver'))
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'puppet_x/sqlserver/sql_connection'))
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'puppet_x/sqlserver/sqlserver_connection'))
 
-require 'tiny_tds'
+#require 'tiny_tds'
 #require '../../sqlserver'
 #require '../../puppet_x/sqlserver/sql_connection'
 
@@ -34,8 +35,9 @@ Facter.add('sqlserver_roles_assigned_to_nt_authority_system') do
 
     begin
 
+      # works, but the SqlConnection object offers no recordset...
       config = { admin_login_type: 'WINDOWS_LOGIN', instance_name: 'MSSQLSERVER', database: 'MSSQLSERVER', admin_user: '', admin_pass: '', host: 'localhost' } # lint:ignore:140chars
-      connect = PuppetX::Sqlserver::SqlConnection.new
+      connect = PuppetX::Sqlserver::SqlServerConnection.new
       results = connect.open_and_run_command(sql, config)
 
       #results = %w[public sysadmin]
