@@ -19,13 +19,13 @@ class SqlServerClient
 
   attr_reader :connection, :fields, :data
 
-  CONNECTION_CLOSED = 0
-
   def initialize
     @connection = nil
     @fields = nil
     @data = nil
   end
+
+  CONNECTION_CLOSED = 0
 
   # using a method instead of hard coding enables testing outside of Windows
   def win32_exception
