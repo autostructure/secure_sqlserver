@@ -13,9 +13,6 @@
 #   client.data
 #   client.fields
 #
-module PuppetX
-  module SqlServer
-
 require 'win32ole'
 
 class SqlServerClient
@@ -164,6 +161,4 @@ class SqlServerClient
     @connection.Errors.count
   end
 
-end
-end
 end
