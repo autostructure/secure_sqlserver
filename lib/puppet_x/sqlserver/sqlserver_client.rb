@@ -66,7 +66,7 @@ class SqlServerClient
     params = {
       #'Provider'             => 'SQLOLEDB.1',
       'Provider'              => 'SQLNCLI11',
-      'Integrated Security'   => 'SSPI'
+      'Integrated Security'   => 'SSPI',
       'Initial Catalog'       => config[:database] || 'master',
       'Data Source'           => '.',
       #'DataTypeComptibility'  => 80,
