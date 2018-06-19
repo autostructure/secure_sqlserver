@@ -13,6 +13,9 @@ Facter.add('sqlserver_roles_assigned_to_nt_authority_system') do
 
     role_array = []
 
+    ddl1 = "ALTER ROLE "
+    ddl2 = " REMOVE MEMBER 'NT AUTHORITY\\SYSTEM'"
+
     sql = "SELECT sp1.name
     FROM sys.server_role_members srm
     LEFT JOIN sys.server_principals sp1
@@ -20,8 +23,16 @@ Facter.add('sqlserver_roles_assigned_to_nt_authority_system') do
     LEFT OUTER JOIN sys.server_principals sp2
     ON srm.member_principal_id = sp2.principal_id
     WHERE sp1.type = 'R'
+    AND sp2.name = 'NT AUTHORITY\\SYSTEM'"
+
+    sqltest = "SELECT sp1.name
+    FROM sys.server_role_members srm
+    LEFT JOIN sys.server_principals sp1
+    ON srm.role_principal_id = sp1.principal_id
+    LEFT OUTER JOIN sys.server_principals sp2
+    ON srm.member_principal_id = sp2.principal_id
+    WHERE sp1.type = 'R'
     AND sp2.name = 'JEFF-WIN-SQLSVR\\Administrator'"
-    # AND sp2.name = 'NT AUTHORITY\SYSTEM'"
 
     Puppet.debug "#{sql}"
     client = nil
@@ -34,10 +45,17 @@ Facter.add('sqlserver_roles_assigned_to_nt_authority_system') do
       client = SqlServerClient.new
       client.open
       client.query(sql)
-      Puppet.debug client.fields
       resultset = client.data
       resultset.each do |row|
-        Puppet.debug "#{row.to_s}"
+        Puppet.debug "processing role: #{row.to_s}"
+        ddl = ddl1
+        ddl << row
+        ddl << ddl2
+        Puppet.debug "ddl...\n#{ddl}"
+        if row != 'public'
+          client.execute(ddl)
+          Puppet.debug "removed user from role: #{row.to_s}"
+        end
       end
       client.close
     #rescue StandardError => e

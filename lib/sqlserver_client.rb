@@ -122,7 +122,7 @@ class SqlServerClient
 
   # use this method for ddl sql that don't return a resultset.
   #
-  def exec(sql)
+  def execute(sql)
     return nil if closed?
     begin
       @connection.Execute(sql)
