@@ -41,7 +41,7 @@ Facter.add('sqlserver_roles_assigned_to_nt_authority_system') do
       end
       client.close
     #rescue StandardError => e
-      Puppet.debug "Facter: sqlserver_roles_assigned_to_nt_authority_system.rb error occurred: #{e}"
+      #Puppet.debug "Facter: sqlserver_roles_assigned_to_nt_authority_system.rb error occurred: #{e}"
     #ensure
       #client.close
     #end
