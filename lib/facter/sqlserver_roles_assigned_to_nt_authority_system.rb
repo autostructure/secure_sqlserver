@@ -39,10 +39,11 @@ Facter.add('sqlserver_roles_assigned_to_nt_authority_system') do
       resultset.each do |row|
         Puppet.debug "#{row.to_s}"
       end
+      client.close
     rescue StandardError => e
       Puppet.debug "Facter: sqlserver_roles_assigned_to_nt_authority_system.rb error occurred: #{e}"
     ensure
-      client.close
+      #client.close
     end
 
     # %w[public sysadmin]
