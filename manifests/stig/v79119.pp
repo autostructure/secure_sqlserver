@@ -39,5 +39,6 @@ class secure_sqlserver::stig::v79119 (
     command  => $sql_trigger,
     onlyif   => $sql_check,
   }
+    # require  => Sqlserver::Config[$instance]
 
 }

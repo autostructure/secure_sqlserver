@@ -4,11 +4,6 @@
 class secure_sqlserver
 {
 
-  package { 'tiny_tds':
-    ensure   => 'installed',
-    provider => 'gem',
-  }
-
   include ::secure_sqlserver::logon
   include ::secure_sqlserver::version_check
   include ::secure_sqlserver::secure_instance

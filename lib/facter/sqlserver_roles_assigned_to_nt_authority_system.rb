@@ -5,10 +5,7 @@
 # @return   An array of strings representing roles assigned to the 'NT AUTHORITY\SYSTEM' user.
 # @example  ['bulkadmin', 'dbcreator', 'diskadmin', 'processadmin', 'public', 'securityadmin', 'serveradmin', 'setupadmin', 'sysadmin']
 #
-
-require File.expand_path(File.join(File.dirname(__FILE__), '..', 'puppet/provider/sqlserver'))
-require File.expand_path(File.join(File.dirname(__FILE__), '..', 'puppet_x/sqlserver/sql_connection'))
-require File.expand_path(File.join(File.dirname(__FILE__), '..', 'puppet_x/sqlserver/sqlserver_connection'))
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'puppet_x/sqlserver/sqlserver_client'))
 
 Facter.add('sqlserver_roles_assigned_to_nt_authority_system') do
   confine operatingsystem: :windows
@@ -24,38 +21,31 @@ Facter.add('sqlserver_roles_assigned_to_nt_authority_system') do
     ON srm.member_principal_id = sp2.principal_id
     WHERE sp1.type = 'R'
     AND sp2.name = 'JEFF-WIN-SQLSVR\\Administrator'"
-
     # AND sp2.name = 'NT AUTHORITY\SYSTEM'"
 
     Puppet.debug "#{sql}"
-
+    client = nil
+    resultset = nil
     begin
-
       # works, but the SqlConnection object offers no recordset...
       # config = { admin_login_type: 'WINDOWS_LOGIN', instance_name: 'MSSQLSERVER', database: 'MSSQLSERVER', admin_user: '', admin_pass: '', host: 'localhost' } # lint:ignore:140chars
-      config = { admin_login_type: 'WINDOWS_LOGIN', database: 'MSSQLSERVER', host: 'localhost' }
-      connect = PuppetX::Sqlserver::SqlServerConnection.new
-      Puppet.debug connect.get_connection_string(config)
-      resultset = connect.results(sql, config)
-      #Puppet.debug resultset
-      #Puppet.debug connect.methods
-
-      #results = connect.open_and_run_command(sql, config)
-
-
-
-
-      #results = connect.execute(sql)
-
-      #results.each do |row|
-      #  Puppet.debug "#{row.to_s}"
-      #  role_array << row.to_s
-      #end
+      # client = PuppetX::Sqlserver::SqlServerConnection.new
+      # config = { admin_login_type: 'WINDOWS_LOGIN', database: 'MSSQLSERVER', host: 'localhost' }
+      client = SqlServerConnection.new
+      client.open
+      client.query(sql)
+      Puppet.debug client.fields
+      resultset = client.data
+      resultset.each do |row|
+        Puppet.debug "#{row.to_s}"
+      end
     rescue StandardError => e
       Puppet.debug "Facter: sqlserver_roles_assigned_to_nt_authority_system.rb error occurred: #{e}"
+    ensure
+      client.close
     end
 
-    # role_array = %w[public sysadmin]
-    role_array
+    # %w[public sysadmin]
+    resultset
   end
 end
