@@ -14,7 +14,7 @@ Facter.add('sqlserver_databases') do
     #select name fom sys.sysdatabases where dbid <5
     # user databases
     #select name fom sys.sysdatabases where dbid >4
-    $sql = 'select name fom sys.sysdatabases'
+    sql = 'select name fom sys.sysdatabases'
 
     Puppet.debug "sqlserver_databases.rb sql...\n#{sql}"
 
