@@ -3,6 +3,7 @@
 #
 class secure_sqlserver::stig::v79 (
   Boolean $enforced = false,
+  String  $instance = 'MSSQLSERVER',
 ) {
 
 

@@ -2,7 +2,7 @@
 # SQL Server must protect against a user falsely repudiating by ensuring the
 # NT AUTHORITY/SYSTEM account is not used for administration.
 #
-# Type TypeDescription
+# Type Description
 # ---- ------------------------
 # C    CERTIFICATE_MAPPED_LOGIN
 # R    SERVER_ROLE
@@ -11,7 +11,7 @@
 #
 class secure_sqlserver::stig::v79129 (
   Boolean $enforced = false,
-  String $instance = 'MSSQLSERVER',
+  String  $instance = 'MSSQLSERVER',
 ) {
   # make sure the "NT AUTHORITY\SYSTEM" user only has the public role assigned.
   $system_user = 'NT AUTHORITY\SYSTEM'

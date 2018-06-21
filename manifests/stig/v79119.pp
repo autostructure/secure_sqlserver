@@ -4,13 +4,8 @@
 #
 class secure_sqlserver::stig::v79119 (
   Boolean $enforced = false,
-  String $instance = 'MSSQLSERVER',
+  String  $instance = 'MSSQLSERVER',
 ) {
-
-  notify { 'v79119-msg':
-    message  => "v79119.pp: Running in SINGLE_INSTANCE mode: instance=${instance}",
-    loglevel => warning,
-  }
 
   # Make sure to use the renamed SA account here.
   $sa = 'sa'

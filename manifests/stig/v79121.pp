@@ -4,7 +4,7 @@
 # *** RESTART REQ'D ***
 #
 class secure_sqlserver::stig::v79121 (
-  Boolean $enforced = false,
+  Boolean          $enforced = false,
   Optional[String] $instance = 'MSSQLSERVER',
 ) {
 

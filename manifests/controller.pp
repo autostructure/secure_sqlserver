@@ -22,6 +22,11 @@ class secure_sqlserver::controller
 
   $single_instance = $instances[0]
 
+  notify { 'secure_sqlserver:_controller_msg1':
+    message  => "secure_sqlserver::controller: Running in SINGLE_INSTANCE mode: instance=${instance}",
+    loglevel => warning,
+  }
+
   # need sqlserver_config for sqlserver_tsql commands to enable windows authentication (no passwords required)
   sqlserver::config { $single_instance:
     admin_login_type => 'WINDOWS_LOGIN',

@@ -1,20 +1,10 @@
 #
 # This class centralizes log formatting for the module.
 #
-define secure_sqlserver::log
-{
-  # Boolean $enabled = true,
-  # Enum['alert', 'crit', 'debug', 'emerg', 'err', 'info', 'notice', 'warning'] $loglevel = 'warning',
-
-  # $loglevel = hiera('secure_sqlserver::log::threatlevel', 'warning')
-  # $enabled = hiera('secure_sqlserver::log::enabled', true)
-
-  $enabled = true
-  $loglevel = 'warning'
-
-  # if $loglevel !=~ Enum['alert', 'crit', 'debug', 'emerg', 'err', 'info', 'notice', 'warning'] {
-  #  fail("Invalid loglevel specified (${loglevel}).\nValid loglevel values include: 'alert', 'crit', 'debug', 'emerg', 'err', 'info', 'notice', 'warning'.")
-  # }
+define secure_sqlserver::log (
+  Optional[Boolean] $enabled = true,
+  Optional[Enum['alert', 'crit', 'debug', 'emerg', 'err', 'info', 'notice', 'warning']] $loglevel = 'warning',
+) {
 
   if $enabled {
 
