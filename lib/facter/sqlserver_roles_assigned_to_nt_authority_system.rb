@@ -52,13 +52,11 @@ Facter.add('sqlserver_roles_assigned_to_nt_authority_system') do
                 WHERE sp1.type = 'R'
                   AND sp2.name = 'JEFF-WIN-SQLSVR\\Administrator'"
 
-    Puppet.debug "sqlserver_roles_assigned_to_nt_authority_system.rb sql...\n#{sqltest}"
+    Puppet.debug "sqlserver_roles_assigned_to_nt_authority_system.rb sql...\n#{sql}"
 
-    client = nil
-    resultset = nil
     client = SqlServerClient.new
     client.open
-    client.query(sqltest)
+    client.query(sql)
     resultset = client.data
     client.close
     resultset
