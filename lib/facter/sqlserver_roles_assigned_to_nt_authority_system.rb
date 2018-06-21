@@ -34,9 +34,6 @@ Facter.add('sqlserver_roles_assigned_to_nt_authority_system') do
   confine operatingsystem: :windows
   setcode do
 
-    ddl1 = "ALTER ROLE "
-    ddl2 = " REMOVE MEMBER \"NT AUTHORITY\\SYSTEM\""
-
     sql = "SELECT sp1.name
              FROM sys.server_role_members srm
         LEFT JOIN sys.server_principals sp1
@@ -55,13 +52,13 @@ Facter.add('sqlserver_roles_assigned_to_nt_authority_system') do
                 WHERE sp1.type = 'R'
                   AND sp2.name = 'JEFF-WIN-SQLSVR\\Administrator'"
 
-    Puppet.debug "sqlserver_roles_assigned_to_nt_authority_system.rb sql...\n#{sql}"
+    Puppet.debug "sqlserver_roles_assigned_to_nt_authority_system.rb sql...\n#{sqltest}"
 
     client = nil
     resultset = nil
     client = SqlServerClient.new
     client.open
-    client.query(sql)
+    client.query(sqltest)
     resultset = client.data
     client.close
     resultset

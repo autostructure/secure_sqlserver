@@ -14,9 +14,9 @@ class secure_sqlserver::stig::v79129 (
   String $instance = 'MSSQLSERVER',
 ) {
   # make sure the "NT AUTHORITY\SYSTEM" user only has the public role assigned.
+  $system_user = 'NT AUTHORITY\SYSTEM'
 
   $assigned_roles = $facts['sqlserver_roles_assigned_to_nt_authority_system']
-  $system_user = 'NT AUTHORITY\SYSTEM'
 
   $sql_server_roles = "SELECT srm.role_principal_id, sp1.name, srm.member_principal_id, sp2.name
                         FROM sys.server_role_members srm
@@ -36,22 +36,19 @@ class secure_sqlserver::stig::v79129 (
                        WHERE dp1.type = 'R'
                          AND dp2.name = '${system_user}'"
 
-  $keys = keys($hash)
   $assigned_roles.each |$single_role| {
+
     $sql_ddl = "ALTER SERVER ROLE ${single_role} DROP MEMBER ${system_user};"
-    sqlserver_tsql{ 'Export master service key to temp file for backup':
+
+    ::secure_sqlserver::log {"sql_ddl=${sql_ddl}"}
+
+    sqlserver_tsql{ "drop_nt_authority_system_role_${single_role}":
       instance => $instance,
       command  => $sql_ddl,
       # onlyif   => '',
       # notify   => Exec[copy to backup medium],
     }
+
   }
-
-
-  #sqlserver_tsql{ 'create-logon-trigger-to-limit-concurrent-sessions':
-  #  instance => $db,
-  #  command  => $sql_trigger,
-  #  onlyif   => $sql_check,
-  #}
 
 }
