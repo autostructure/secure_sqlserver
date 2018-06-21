@@ -23,7 +23,7 @@ class secure_sqlserver::controller
   $single_instance = $instances[0]
 
   notify { 'secure_sqlserver:_controller_msg1':
-    message  => "secure_sqlserver::controller: Running in SINGLE_INSTANCE mode: instance=${instance}",
+    message  => "secure_sqlserver::controller: Running in SINGLE_INSTANCE mode: instance=${single_instance}",
     loglevel => warning,
   }
 
