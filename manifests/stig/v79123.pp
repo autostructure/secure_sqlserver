@@ -4,6 +4,7 @@
 #
 class secure_sqlserver::stig::v79123 (
   Boolean $enforced = false,
+  Optional[String] $instance = 'MSSQLSERVER',
 ) {
 
   $fqdn = $facts['fqdn']

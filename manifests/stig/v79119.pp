@@ -4,12 +4,11 @@
 #
 class secure_sqlserver::stig::v79119 (
   Boolean $enforced = false,
+  String $instance = 'MSSQLSERVER',
 ) {
 
-  $db = $::secure_sqlserver::logon::single_instance
-
   notify { 'v79119-msg':
-    message  => "v79119.pp: Running in SINGLE_INSTANCE mode: instance=${db}",
+    message  => "v79119.pp: Running in SINGLE_INSTANCE mode: instance=${instance}",
     loglevel => warning,
   }
 
@@ -35,7 +34,7 @@ class secure_sqlserver::stig::v79119 (
     END;"
 
   sqlserver_tsql{ 'v79119-create-logon-trigger-to-limit-concurrent-sessions':
-    instance => $db,
+    instance => $instance,
     command  => $sql_trigger,
     onlyif   => $sql_check,
   }

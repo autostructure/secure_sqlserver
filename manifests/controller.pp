@@ -17,7 +17,7 @@ class secure_sqlserver::controller
   $instances = $facts['sqlserver_instances']['SQL_2017'].keys
 
   if empty($instances) {
-    fail('No instances of SQL Server 2016 were discovered in the sqlserver_instances puppet fact (part of the puppetlabs-sqlserver module).')
+    fail('secure_sqlserver failure: No instances of SQL Server 2016 were discovered in the sqlserver_instances puppet fact (part of the puppetlabs-sqlserver module).')
   }
 
   $single_instance = $instances[0]
@@ -31,18 +31,18 @@ class secure_sqlserver::controller
     instance => $single_instance,
   }
 
-  $databases = $facts['sqlserver_databases']
+  #$databases = $facts['sqlserver_databases']
 
-  if empty($databases) {
-    fail('No instances of SQL Server 2016 were discovered in the sqlserver_instances puppet fact (part of the puppetlabs-sqlserver module).')
-  }
+  #if empty($databases) {
+  #  fail('secure_sqlserver failure: No SQL Server 2016 databases were discovered.')
+  #}
 
-  $databases.each |String $current_database| {
-    # using a define type over class, since we make multiple calls...
-    ::secure_windows::secure_database { "secure_database_${current_database}":
-      instance => $single_instance,
-      database => $current_database,
-    }
-  }
+  #$databases.each |String $current_database| {
+  #  # using a define type over class, since we make multiple calls...
+  #  ::secure_windows::secure_database { "secure_database_${current_database}":
+  #    instance => $single_instance,
+  #    database => $current_database,
+  #  }
+  #}
 
 }

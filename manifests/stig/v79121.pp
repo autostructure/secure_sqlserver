@@ -5,6 +5,7 @@
 #
 class secure_sqlserver::stig::v79121 (
   Boolean $enforced = false,
+  Optional[String] $instance = 'MSSQLSERVER',
 ) {
 
   # this requires a restart to take effect...
