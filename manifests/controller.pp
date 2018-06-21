@@ -27,7 +27,7 @@ class secure_sqlserver::controller
     admin_login_type => 'WINDOWS_LOGIN',
   }
 
-  class { '::secure_windows::secure_instance':
+  class { '::secure_sqlserver::secure_instance':
     instance => $single_instance,
   }
 
