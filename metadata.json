@@ -1,7 +1,7 @@
 {
   "name": "secure_sqlserver",
   "version": "0.1.0",
-  "author": "Bryan, Charlie, Jay, Jeff & Jim",
+  "author": "Jeffrey Frelick",
   "summary": "Harden a Microsoft SQL Server database and associated instances.",
   "license": "Apache-2.0",
   "source": "https://code.fs.usda.gov/",
