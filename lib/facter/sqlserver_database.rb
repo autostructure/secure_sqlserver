@@ -22,7 +22,7 @@ Facter.add('sqlserver_databases') do
     client.open
     client.query(sql)
     databases = client.data
-    client.close
+    client.close unless client.nil? || client.closed?
 
     #databases = %w[master tempdb model msdb]
 
