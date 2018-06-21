@@ -24,6 +24,7 @@ class secure_sqlserver::controller
 
   # need sqlserver_config for sqlserver_tsql commands to enable windows authentication (no passwords required)
   sqlserver::config { "sqlserver_config_${single_instance}":
+    instance_name    => $single_instance,
     admin_login_type => 'WINDOWS_LOGIN',
   }
 

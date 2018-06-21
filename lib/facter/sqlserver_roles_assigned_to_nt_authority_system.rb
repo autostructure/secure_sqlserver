@@ -34,7 +34,7 @@ Facter.add('sqlserver_roles_assigned_to_nt_authority_system') do
   confine operatingsystem: :windows
   setcode do
 
-    sql = "SELECT sp1.name
+    sql = "SELECT sp1.name as role
              FROM sys.server_role_members srm
         LEFT JOIN sys.server_principals sp1
                ON srm.role_principal_id = sp1.principal_id
@@ -43,7 +43,7 @@ Facter.add('sqlserver_roles_assigned_to_nt_authority_system') do
             WHERE sp1.type = 'R'
               AND sp2.name = 'NT AUTHORITY\\SYSTEM'"
 
-    sqltest = "SELECT sp1.name as role, sp2.name as username
+    sqltest = "SELECT sp1.name as role
                  FROM sys.server_role_members srm
             LEFT JOIN sys.server_principals sp1
                    ON srm.role_principal_id = sp1.principal_id

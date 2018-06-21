@@ -8,8 +8,8 @@ class secure_sqlserver::stig::v79123 (
 ) {
 
   $fqdn = $facts['fqdn']
-  $port = $::secure_sqlserver::logon::port
-  $netbios_user = $::secure_sqlserver::logon::netbios_user
+  $port = $::secure_sqlserver::controller::port
+  $netbios_user = $::secure_sqlserver::controller::netbios_user
   $cmd_setspn_fqdn = "setspn -S MSSQLSvc/${fqdn} '${netbios_user}'"
   $cmd_setspn_port = "setspn -S MSSQLSvc/${fqdn}:${port} '${netbios_user}'"
 
