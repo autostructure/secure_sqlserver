@@ -64,21 +64,19 @@ class SqlServerClient
 
   def connection_string(config)
     params = {
-      #'Provider'             => 'SQLOLEDB.1',
-      'Provider'              => 'SQLNCLI11',
+      'Provider'              => 'SQLOLEDB.1',
       'Integrated Security'   => 'SSPI',
       'Initial Catalog'       => config[:database] || 'master',
       'Data Source'           => '.',
       #'DataTypeComptibility'  => 80,
       #'Network Library'       => 'dbmssocn'
       #'Persist Security Info' => False
+      #'Provider'              => 'SQLNCLI11',
     }
-
     if config[:host] != nil && config[:host] !~ /^MSSQLSERVER$/
       #params['Data Source'] = ".\\#{config[:hostname]}"
       params['Data Source'] = config[:host]
     end
-
     connection_string = params.map { |k, v| "#{k}=#{v}" }.join(';')
     Puppet.debug "connection_string=#{connection_string}"
     connection_string
@@ -96,21 +94,25 @@ class SqlServerClient
     begin
       recordset = WIN32OLE.new('ADODB.Recordset')
       recordset.Open(sql, @connection)
-      unless empty?(recordset)
-        # Create and populate an array of field names
-        @fields = []
-        recordset.Fields.each do |field|
-          @fields << field.Name
-        end
+      # Create and populate an array of field names
+      @fields = []
+      recordset.Fields.each do |field|
+        @fields << field.Name
+      end
+      begin
         recordset.MoveFirst
         @data = recordset.GetRows
         # An ADO Recordset's GetRows method returns an array of columns,
         # so we'll use the transpose method to convert it to an array of rows
         @data.transpose
+      rescue
+        @data = []
       end
-      recordset.Close
+      begin
+        recordset.Close
+      rescue
+      end
     rescue win32_exception => e
-      @data = []
       Puppet.debug "sqlserver_client.rb error: query(sql): #{e.message}"
     end
     @data
@@ -143,8 +145,7 @@ class SqlServerClient
       rescue
       end
     rescue win32_exception => e
-      @data = []
-      Puppet.debug "sqlserver_client.rb error: query(sql): #{e.message}"
+      Puppet.debug "sqlserver_client.rb error: simple_array(sql): #{e.message}"
     end
     @data
   end
@@ -155,12 +156,12 @@ class SqlServerClient
     begin
       recordset = WIN32OLE.new('ADODB.Recordset')
       recordset.Open(sql, @connection)
-      unless empty?(recordset)
-        # Create and populate an array of field names
-        @fields = []
-        recordset.Fields.each do |field|
-          @fields << field.Name
-        end
+      # Create and populate an array of field names
+      @fields = []
+      recordset.Fields.each do |field|
+        @fields << field.Name
+      end
+      begin
         recordset.MoveFirst
         rows = recordset.GetRows
         # An ADO Recordset's GetRows method returns an array
@@ -176,12 +177,15 @@ class SqlServerClient
           hash << row
         end
         @data = hash
-
+      rescue
+        @data = []
       end
-      recordset.Close
+      begin
+        recordset.Close
+      rescue
+      end
     rescue win32_exception => e
-      @data = []
-      Puppet.debug "sqlserver_client.rb error: query(sql): #{e.message}"
+      Puppet.debug "sqlserver_client.rb error: hasharray(sql): #{e.message}"
     end
     @data
   end
@@ -194,16 +198,6 @@ class SqlServerClient
       @connection.Execute(sql)
     rescue win32_exception => e
       Puppet.debug "sqlserver_client.rb error: exec(sql): #{e.message}"
-    end
-  end
-
-  def empty?(recordset)
-    begin
-      emptyset = recordset.RecordCount != -1 || recordset.RecordCount != 0
-      Puppet.debug "empty? = #{emptyset}, RecordCount = #{recordset.RecordCount}"
-      recordset.RecordCount != -1 || recordset.RecordCount != 0
-    rescue win32_exception => e
-      Puppet.debug "sqlserver_client.rb error: empty?(): #{e.message}"
     end
   end
 
