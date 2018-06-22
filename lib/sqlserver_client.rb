@@ -92,6 +92,7 @@ class SqlServerClient
   #
   def query(sql)
     return nil if closed?
+    @data = []
     begin
       recordset = WIN32OLE.new('ADODB.Recordset')
       recordset.Open(sql, @connection)
@@ -117,6 +118,7 @@ class SqlServerClient
 
   def simple_array(sql)
     return nil if closed?
+    @data = []
     begin
       recordset = WIN32OLE.new('ADODB.Recordset')
       recordset.Open(sql, @connection)
@@ -145,6 +147,7 @@ class SqlServerClient
 
   def hasharray(sql)
     return nil if closed?
+    @data = []
     begin
       recordset = WIN32OLE.new('ADODB.Recordset')
       recordset.Open(sql, @connection)
