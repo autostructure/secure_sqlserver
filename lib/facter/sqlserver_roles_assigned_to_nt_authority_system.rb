@@ -16,18 +16,6 @@
 # config = { admin_login_type: 'WINDOWS_LOGIN', instance_name: 'MSSQLSERVER', database: 'MSSQLSERVER', admin_user: '', admin_pass: '', host: 'localhost' } # lint:ignore:140chars
 # config = { admin_login_type: 'WINDOWS_LOGIN', database: 'MSSQLSERVER', host: 'localhost' }
 #
-# resultset.each do |row|
-#   Puppet.debug "processing role: #{row.to_s}"
-#   ddl = ddl1
-#   ddl << row
-#   ddl << ddl2
-#   Puppet.debug "ddl...\n#{ddl}"
-#   if row != 'public'
-#     client.execute(ddl)
-#     Puppet.debug "removed user from role: #{row.to_s}"
-#   end
-# end
-#
 require 'sqlserver_client'
 
 Facter.add('sqlserver_roles_assigned_to_nt_authority_system') do
