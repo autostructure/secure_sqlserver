@@ -41,24 +41,20 @@ Facter.add('sqlserver_roles_assigned_to_nt_authority_system') do
   LEFT OUTER JOIN sys.server_principals sp2
                ON srm.member_principal_id = sp2.principal_id
             WHERE sp1.type = 'R'
-              AND sp2.name = 'NT AUTHORITY\\SYSTEM'"
+              AND sp2.name = 'JEFF-WIN-SQLSVR\\Administrator'"
+              #{}AND sp2.name = 'NT AUTHORITY\\SYSTEM'"
 
-    sqltest = "SELECT sp1.name as role
-                 FROM sys.server_role_members srm
-            LEFT JOIN sys.server_principals sp1
-                   ON srm.role_principal_id = sp1.principal_id
-      LEFT OUTER JOIN sys.server_principals sp2
-                   ON srm.member_principal_id = sp2.principal_id
-                WHERE sp1.type = 'R'
-                  AND sp2.name = 'JEFF-WIN-SQLSVR\\Administrator'"
 
     Puppet.debug "sqlserver_roles_assigned_to_nt_authority_system.rb sql...\n#{sql}"
 
     client = SqlServerClient.new
     client.open
     client.query(sql)
+    # An ADO Recordset's GetRows method returns an array
+    # of columns, so we'll use the transpose method to
+    # convert it to an array of rows
     resultset = client.data
-    client.close
+    client.close unless client.nil? || client.closed?
     resultset
   end
 end

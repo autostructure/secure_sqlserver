@@ -117,7 +117,7 @@ class SqlServerClient
     recordset.Close
     # An ADO Recordset's GetRows method returns an array of columns,
     # so we'll use the transpose method to convert it to an array of rows
-    @data = @data.transpose
+    @data
   end
 
   # use this method for ddl sql that don't return a resultset.
