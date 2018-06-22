@@ -147,35 +147,36 @@ class SqlServerClient
     begin
       recordset = WIN32OLE.new('ADODB.Recordset')
       recordset.Open(sql, @connection)
-      # Create and populate an array of field names
-      @fields = []
-      recordset.Fields.each do |field|
-        @fields << field.Name
+      if !empty?(recordset)
+        # Create and populate an array of field names
+        @fields = []
+        recordset.Fields.each do |field|
+          @fields << field.Name
+        end
+        recordset.MoveFirst
+        rows = recordset.GetRows
+        Puppet.debug "recordset.MaxRecords=#{recordset.RecordCount}"
+        # An ADO Recordset's GetRows method returns an array
+        # of columns, so we'll use the transpose method to
+        # convert it to an array of rows
+        @data = @data.transpose
+
+        # return the data as an array of hashes keyed by the field names
+        hash = []
+        @data.size.times do |rowIndex|
+          row = {}
+          @fields.size.times { |i| row[@fields[i]] = @data[rowIndex][i] }
+          hash << row
+        end
+        @data = hash
+
+        #rows.each do |datum|
+        #  @data << datum
+        #end
+        #@data = @data.flatten
+
       end
-      recordset.MoveFirst
-      rows = recordset.GetRows
-      Puppet.debug "recordset.MaxRecords=#{recordset.RecordCount}"
-
-      # An ADO Recordset's GetRows method returns an array
-      # of columns, so we'll use the transpose method to
-      # convert it to an array of rows
-      @data = @data.transpose
-
-      # return the data as an array of hashes keyed by the field names
-      hash = []
-      @data.size.times do |rowIndex|
-        row = {}
-        @fields.size.times { |i| row[@fields[i]] = @data[rowIndex][i] }
-        hash << row
-      end
-      @data = hash
-
-
-      #rows.each do |datum|
-      #  @data << datum
-      #end
-      #@data = @data.flatten
-      #recordset.Close
+      recordset.Close
     rescue win32_exception => e
       @data = []
       Puppet.debug "sqlserver_client.rb error: query(sql): #{e.message}"
@@ -191,6 +192,14 @@ class SqlServerClient
       @connection.Execute(sql)
     rescue win32_exception => e
       Puppet.debug "sqlserver_client.rb error: exec(sql): #{e.message}"
+    end
+  end
+
+  def empty?(recordset)
+    begin
+      recordset.RecordCount != -1 && recordset.RecordCount != 0
+    rescue win32_exception => e
+      Puppet.debug "sqlserver_client.rb error: empty?(): #{e.message}"
     end
   end
 
