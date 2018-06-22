@@ -122,25 +122,26 @@ class SqlServerClient
     begin
       recordset = WIN32OLE.new('ADODB.Recordset')
       recordset.Open(sql, @connection)
-      #unless empty?(recordset)
-        # Create and populate an array of field names
-        @fields = []
-        recordset.Fields.each do |field|
-          @fields << field.Name
-        end
+      # Create and populate an array of field names
+      @fields = []
+      recordset.Fields.each do |field|
+        @fields << field.Name
+      end
+      begin
         # Move to the first record/row, if any exist
         # rows.each { |datum| @data << datum }
-        Puppet.debug "1. RecordCount = #{recordset.RecordCount}"
         recordset.MoveFirst
-        Puppet.debug "2. RecordCount = #{recordset.RecordCount}"
         rows = recordset.GetRows
-        Puppet.debug "3. RecordCount = #{recordset.RecordCount}"
         # An ADO Recordset's GetRows method returns an array of columns,
         # I want all the values of one column, so I will NOT transpose.
-        #@data = @data.flatten
         @data = rows[0]
-      #end
-      recordset.Close
+      rescue
+        @data = []
+      end
+      begin
+        recordset.Close
+      rescue
+      end
     rescue win32_exception => e
       @data = []
       Puppet.debug "sqlserver_client.rb error: query(sql): #{e.message}"
