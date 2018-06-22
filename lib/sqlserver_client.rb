@@ -143,9 +143,7 @@ class SqlServerClient
       rows = recordset.GetRows
       @data = rows.transponse
       @data = @data.flatten
-      #ows.each { |datum| @data << datum }
-      # An ADO Recordset's GetRows method returns an array of columns,
-      # so we'll use the transpose method to convert it to an array of rows
+      # rows.each { |datum| @data << datum }
     rescue
       @data = []
     end
