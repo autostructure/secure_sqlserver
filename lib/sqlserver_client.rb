@@ -141,7 +141,8 @@ class SqlServerClient
       # Move to the first record/row, if any exist
       recordset.MoveFirst
       rows = recordset.GetRows
-      @data = rows.flatten
+      @data = rows.transponse
+      @data = @data.flatten
       #ows.each { |datum| @data << datum }
       # An ADO Recordset's GetRows method returns an array of columns,
       # so we'll use the transpose method to convert it to an array of rows
