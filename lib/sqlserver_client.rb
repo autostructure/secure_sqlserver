@@ -152,7 +152,6 @@ class SqlServerClient
       end
       recordset.MoveFirst
       rows = recordset.GetRows
-      rows.transpose
       rows.each do |datum|
         @data << datum[0]
       end
@@ -162,7 +161,7 @@ class SqlServerClient
       @data = []
       Puppet.debug "sqlserver_client.rb error: query(sql): #{e.message}"
     end
-    @data
+    @data[0]
   end
 
   # use this method for ddl sql that don't return a resultset.
