@@ -116,7 +116,7 @@ class SqlServerClient
     @data
   end
 
-  def array(sql)
+  def simple_array(sql)
     return nil if closed?
     begin
       recordset = WIN32OLE.new('ADODB.Recordset')
@@ -130,8 +130,10 @@ class SqlServerClient
       # rows.each { |datum| @data << datum }
       recordset.MoveFirst
       rows = recordset.GetRows
-      @data = rows.transponse
-      @data = @data.flatten
+      # An ADO Recordset's GetRows method returns an array of columns,
+      # I want all the values of one column, so I will NOT transpose.
+      #@data = @data.flatten
+      @data = rows[0]
       recordset.Close
     rescue win32_exception => e
       @data = []
@@ -140,7 +142,7 @@ class SqlServerClient
     @data
   end
 
-  def simple_array(sql)
+  def hasharray(sql)
     return nil if closed?
     begin
       recordset = WIN32OLE.new('ADODB.Recordset')
@@ -152,16 +154,33 @@ class SqlServerClient
       end
       recordset.MoveFirst
       rows = recordset.GetRows
-      rows.each do |datum|
-        @data << datum[0]
+      Puppet.debug "recordset.MaxRecords=#{recordset.RecordCount}"
+
+      # An ADO Recordset's GetRows method returns an array
+      # of columns, so we'll use the transpose method to
+      # convert it to an array of rows
+      @data = @data.transpose
+
+      # return the data as an array of hashes keyed by the field names
+      hash = []
+      @data.size.times do |rowIndex|
+        row = {}
+        @fields.size.times { |i| row[@fields[i]] = @data[rowIndex][i] }
+        hash << row
       end
+      @data = hash
+
+
+      #rows.each do |datum|
+      #  @data << datum
+      #end
       #@data = @data.flatten
-      recordset.Close
+      #recordset.Close
     rescue win32_exception => e
       @data = []
       Puppet.debug "sqlserver_client.rb error: query(sql): #{e.message}"
     end
-    @data[0]
+    @data
   end
 
   # use this method for ddl sql that don't return a resultset.
