@@ -170,13 +170,6 @@ class SqlServerClient
         end
         @data = hash
 
-        #Puppet.debug "recordset.MaxRecords=#{recordset.RecordCount}"
-
-        #rows.each do |datum|
-        #  @data << datum
-        #end
-        #@data = @data.flatten
-
       end
       recordset.Close
     rescue win32_exception => e
@@ -199,6 +192,8 @@ class SqlServerClient
 
   def empty?(recordset)
     begin
+      emptyset = recordset.RecordCount != -1 && recordset.RecordCount != 0
+      Puppet.debug "empty? = #{emptyset}, RecordCount = #{recordset.RecordCount}"
       recordset.RecordCount != -1 && recordset.RecordCount != 0
     rescue win32_exception => e
       Puppet.debug "sqlserver_client.rb error: empty?(): #{e.message}"
