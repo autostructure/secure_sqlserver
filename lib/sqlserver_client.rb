@@ -152,7 +152,7 @@ class SqlServerClient
       end
       recordset.MoveFirst
       rows = recordset.GetRows
-      rows.transponse
+      rows.transpose
       rows.each do |datum|
         @data << datum[0]
       end
