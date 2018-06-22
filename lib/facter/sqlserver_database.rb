@@ -20,11 +20,11 @@ Facter.add('sqlserver_databases') do
 
     client = SqlServerClient.new
     client.open
-    client.query(sql)
+    client.simple_array(sql)
     # An ADO Recordset's GetRows method returns an array
     # of columns, so we'll use the transpose method to
     # convert it to an array of rows
-    databases = client.data.transpose
+    databases = client.data
     client.close unless client.nil? || client.closed?
 
     #databases = %w[master tempdb model msdb]

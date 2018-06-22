@@ -93,10 +93,7 @@ class SqlServerClient
   def query(sql)
     return nil if closed?
     begin
-      # Create an instance of an ADO Recordset
       recordset = WIN32OLE.new('ADODB.Recordset')
-      # Open the recordset, using an SQL statement and the
-      # existing ADO connection
       recordset.Open(sql, @connection)
       # Create and populate an array of field names
       @fields = []
@@ -107,9 +104,7 @@ class SqlServerClient
       Puppet.debug "sqlserver_client.rb error: query(sql): #{e.message}"
     end
     begin
-      # Move to the first record/row, if any exist
       recordset.MoveFirst
-      # Grab all records
       @data = recordset.GetRows
       # An ADO Recordset's GetRows method returns an array of columns,
       # so we'll use the transpose method to convert it to an array of rows
@@ -124,30 +119,49 @@ class SqlServerClient
   def array(sql)
     return nil if closed?
     begin
-      # Create an instance of an ADO Recordset
       recordset = WIN32OLE.new('ADODB.Recordset')
-      # Open the recordset, using an SQL statement and the
-      # existing ADO connection
       recordset.Open(sql, @connection)
       # Create and populate an array of field names
       @fields = []
       recordset.Fields.each do |field|
         @fields << field.Name
       end
-    rescue win32_exception => e
-      Puppet.debug "sqlserver_client.rb error: query(sql): #{e.message}"
-    end
-    begin
       # Move to the first record/row, if any exist
+      # rows.each { |datum| @data << datum }
       recordset.MoveFirst
       rows = recordset.GetRows
       @data = rows.transponse
       @data = @data.flatten
-      # rows.each { |datum| @data << datum }
-    rescue
+      recordset.Close
+    rescue win32_exception => e
       @data = []
+      Puppet.debug "sqlserver_client.rb error: query(sql): #{e.message}"
     end
-    recordset.Close
+    @data
+  end
+
+  def simple_array(sql)
+    return nil if closed?
+    begin
+      recordset = WIN32OLE.new('ADODB.Recordset')
+      recordset.Open(sql, @connection)
+      # Create and populate an array of field names
+      @fields = []
+      recordset.Fields.each do |field|
+        @fields << field.Name
+      end
+      recordset.MoveFirst
+      rows = recordset.GetRows
+      rows.transponse
+      rows.each do |datum|
+        @data << datum[0]
+      end
+      #@data = @data.flatten
+      recordset.Close
+    rescue win32_exception => e
+      @data = []
+      Puppet.debug "sqlserver_client.rb error: query(sql): #{e.message}"
+    end
     @data
   end
 
