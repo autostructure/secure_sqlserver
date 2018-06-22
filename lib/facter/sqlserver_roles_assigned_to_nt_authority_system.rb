@@ -29,7 +29,7 @@ Facter.add('sqlserver_roles_assigned_to_nt_authority_system') do
   LEFT OUTER JOIN sys.server_principals sp2
                ON srm.member_principal_id = sp2.principal_id
             WHERE sp1.type = 'R'
-              AND sp2.name = 'JEFF-WIN-SQLSVR\\Administrator'"
+              AND sp2.name = 'NT AUTHORITY\\SYSTEM'"
               #AND sp2.name = 'JEFF-WIN-SQLSVR\\Administrator'"
               #AND sp2.name = 'NT AUTHORITY\\SYSTEM'"
 

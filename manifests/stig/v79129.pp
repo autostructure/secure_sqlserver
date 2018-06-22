@@ -38,7 +38,7 @@ class secure_sqlserver::stig::v79129 (
 
   $assigned_roles.each |$single_role| {
 
-    $sql_ddl = "ALTER SERVER ROLE ${single_role} DROP MEMBER ${system_user};"
+    $sql_ddl = "ALTER SERVER ROLE '${single_role}' DROP MEMBER '${system_user}';"
 
     ::secure_sqlserver::log { "sql_ddl=${sql_ddl}": }
 

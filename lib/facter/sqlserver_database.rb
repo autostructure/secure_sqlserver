@@ -20,7 +20,7 @@ Facter.add('sqlserver_databases') do
 
     client = SqlServerClient.new
     client.open
-    client.simple_array(sql)
+    client.hasharray(sql)
     # An ADO Recordset's GetRows method returns an array
     # of columns, so we'll use the transpose method to
     # convert it to an array of rows
