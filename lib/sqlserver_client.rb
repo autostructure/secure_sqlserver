@@ -140,8 +140,9 @@ class SqlServerClient
     begin
       # Move to the first record/row, if any exist
       recordset.MoveFirst
-      recordset.each |String $datum| {
-        @data << $datum
+      rows = recordset.GetRows
+      rows.each |Array $row| {
+        @data << $row(0)
       }
       # An ADO Recordset's GetRows method returns an array of columns,
       # so we'll use the transpose method to convert it to an array of rows
