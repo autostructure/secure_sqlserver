@@ -111,12 +111,13 @@ class SqlServerClient
       recordset.MoveFirst
       # Grab all records
       @data = recordset.GetRows
+      # An ADO Recordset's GetRows method returns an array of columns,
+      # so we'll use the transpose method to convert it to an array of rows
+      @data.transpose
     rescue
       @data = []
     end
     recordset.Close
-    # An ADO Recordset's GetRows method returns an array of columns,
-    # so we'll use the transpose method to convert it to an array of rows
     @data
   end
 
