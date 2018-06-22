@@ -132,9 +132,9 @@ class SqlServerClient
         # rows.each { |datum| @data << datum }
         Puppet.debug "1. RecordCount = #{recordset.RecordCount}"
         recordset.MoveFirst
-        Puppet.debug "2. #{emptyset}, RecordCount = #{recordset.RecordCount}"
+        Puppet.debug "2. RecordCount = #{recordset.RecordCount}"
         rows = recordset.GetRows
-        Puppet.debug "3. #{emptyset}, RecordCount = #{recordset.RecordCount}"
+        Puppet.debug "3. RecordCount = #{recordset.RecordCount}"
         # An ADO Recordset's GetRows method returns an array of columns,
         # I want all the values of one column, so I will NOT transpose.
         #@data = @data.flatten
