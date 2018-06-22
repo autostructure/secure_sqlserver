@@ -49,7 +49,7 @@ Facter.add('sqlserver_roles_assigned_to_nt_authority_system') do
 
     client = SqlServerClient.new
     client.open
-    client.query(sql)
+    client.array(sql)
     # An ADO Recordset's GetRows method returns an array
     # of columns, so we'll use the transpose method to
     # convert it to an array of rows

@@ -114,7 +114,37 @@ class SqlServerClient
       # An ADO Recordset's GetRows method returns an array of columns,
       # so we'll use the transpose method to convert it to an array of rows
       @data.transpose
-      @data.transpose
+    rescue
+      @data = []
+    end
+    recordset.Close
+    @data
+  end
+
+  def array(sql)
+    return nil if closed?
+    begin
+      # Create an instance of an ADO Recordset
+      recordset = WIN32OLE.new('ADODB.Recordset')
+      # Open the recordset, using an SQL statement and the
+      # existing ADO connection
+      recordset.Open(sql, @connection)
+      # Create and populate an array of field names
+      @fields = []
+      recordset.Fields.each do |field|
+        @fields << field.Name
+      end
+    rescue win32_exception => e
+      Puppet.debug "sqlserver_client.rb error: query(sql): #{e.message}"
+    end
+    begin
+      # Move to the first record/row, if any exist
+      recordset.MoveFirst
+      recordset.each |String $datum| {
+        @data << $datum
+      }
+      # An ADO Recordset's GetRows method returns an array of columns,
+      # so we'll use the transpose method to convert it to an array of rows
     rescue
       @data = []
     end
