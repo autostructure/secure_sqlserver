@@ -192,9 +192,9 @@ class SqlServerClient
 
   def empty?(recordset)
     begin
-      emptyset = recordset.RecordCount != -1 && recordset.RecordCount != 0
+      emptyset = recordset.RecordCount != -1 || recordset.RecordCount != 0
       Puppet.debug "empty? = #{emptyset}, RecordCount = #{recordset.RecordCount}"
-      recordset.RecordCount != -1 && recordset.RecordCount != 0
+      recordset.RecordCount != -1 || recordset.RecordCount != 0
     rescue win32_exception => e
       Puppet.debug "sqlserver_client.rb error: empty?(): #{e.message}"
     end
