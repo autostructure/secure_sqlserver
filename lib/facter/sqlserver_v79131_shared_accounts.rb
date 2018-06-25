@@ -20,7 +20,7 @@
 # G    GROUP
 #
 # @return   An array of strings representing shared accounts.
-# @example  ['some_user$','another_user$']
+# @example  ['shared_user1$','shared_user2$']
 #
 require 'sqlserver_client'
 
@@ -28,21 +28,13 @@ Facter.add('sqlserver_v79131_shared_accounts') do
   confine operatingsystem: :windows
   setcode do
 
-    sql = "SELECT name
-          FROM sys.server_principals
-          WHERE type in ('U','G')
-          AND name LIKE '%$'"
-
-
+    sql = "SELECT name FROM sys.server_principals WHERE type in ('U','G') AND name LIKE '%$'"
 
     Puppet.debug "sqlserver_v79131_shared_accounts.rb sql...\n#{sql}"
 
     client = SqlServerClient.new
     client.open
     client.simple_array(sql)
-    # An ADO Recordset's GetRows method returns an array
-    # of columns, so we'll use the transpose method to
-    # convert it to an array of rows
     resultset = client.data
     client.close unless client.nil? || client.closed?
     resultset

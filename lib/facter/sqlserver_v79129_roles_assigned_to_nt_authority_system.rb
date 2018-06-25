@@ -31,17 +31,12 @@ Facter.add('sqlserver_v79129_roles_assigned_to_nt_authority_system') do
             WHERE sp1.type = 'R'
               AND sp2.name = 'NT AUTHORITY\\SYSTEM'"
               #AND sp2.name = 'JEFF-WIN-SQLSVR\\Administrator'"
-              #AND sp2.name = 'NT AUTHORITY\\SYSTEM'"
-
 
     Puppet.debug "sqlserver_v79129_roles_assigned_to_nt_authority_system.rb sql...\n#{sql}"
 
     client = SqlServerClient.new
     client.open
     client.simple_array(sql)
-    # An ADO Recordset's GetRows method returns an array
-    # of columns, so we'll use the transpose method to
-    # convert it to an array of rows
     resultset = client.data
     client.close unless client.nil? || client.closed?
     resultset

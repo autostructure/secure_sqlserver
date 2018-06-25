@@ -25,25 +25,17 @@
 #
 require 'sqlserver_client'
 
-Facter.add('sqlserver_v79131_shared_accounts') do
+Facter.add('sqlserver_v79133_auditable_events') do
   confine operatingsystem: :windows
   setcode do
 
-    sql = "SELECT name AS 'audit_name'
-                , status_desc AS 'audit_status'
-                , audit_file_path AS 'current_audit_file'
-             FROM sys.dm_server_audit_status"
+    sql = "SELECT name AS 'audit_name', status_desc AS 'audit_status', audit_file_path AS 'current_audit_file' FROM sys.dm_server_audit_status"
 
-
-
-    Puppet.debug "sqlserver_v79131_shared_accounts.rb sql...\n#{sql}"
+    Puppet.debug "sqlserver_v79133_auditable_events.rb sql...\n#{sql}"
 
     client = SqlServerClient.new
     client.open
     client.simple_array(sql)
-    # An ADO Recordset's GetRows method returns an array
-    # of columns, so we'll use the transpose method to
-    # convert it to an array of rows
     resultset = client.data
     client.close unless client.nil? || client.closed?
     resultset

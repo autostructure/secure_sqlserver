@@ -19,10 +19,12 @@ class secure_sqlserver::stig::v79133 (
   String  $instance = 'MSSQLSERVER',
 ) {
 
+  ##TODO:
+  # 1. Check w/Charlie about necessity of auditpol/secpol setup
+  # 2. Ask about audit criteria i, ii, iii above.
+
   # setup auditable events
   include ::secure_sqlserver::auditpol_setup
   $auditable_events = $facts['sqlserver_v79131_auditable_events']
-
-  }
 
 }
