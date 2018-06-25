@@ -3,7 +3,7 @@
 # https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/write-sql-server-audit-events-to-the-security-log?view=sql-server-2017
 #
 class secure_sqlserver::auditpol_setup (
-  String[1,16] $instance =  'MSSQLSERVER',
+  String[1,16] $instance = 'MSSQLSERVER',
 ) {
 
   $puppet_agent_sid = $facts['sqlserver_whoami_sid']
