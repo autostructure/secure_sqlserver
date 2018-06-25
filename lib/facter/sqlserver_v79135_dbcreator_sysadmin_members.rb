@@ -33,7 +33,7 @@ Facter.add('sqlserver_v79135_dbcreator_sysadmin_members') do
 
     client = SqlServerClient.new
     client.open
-    client.simple_array(sql)
+    client.query(sql)
     resultset = client.data
     client.close unless client.nil? || client.closed?
     resultset
