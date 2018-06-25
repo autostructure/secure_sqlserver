@@ -15,8 +15,7 @@ class secure_sqlserver::secure_instance (
   class { '::secure_sqlserver::stig::v79131':
     instance => $instance,
   }
-  ##TODO:
-  #class { '::secure_sqlserver::stig::v79133':
-  #  instance => $instance,
-  #}
+  class { '::secure_sqlserver::stig::v79133':
+    instance => $instance,
+  }
 }
