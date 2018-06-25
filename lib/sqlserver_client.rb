@@ -3,15 +3,16 @@
 # Attempted using PuppetX::Sqlserver::SqlConnection, but it doesn't return results.
 #
 # @return
-#   Array[Hash] client.data
-#   Array client.fields
+#   Array[Array]  client.data
+#   Array         client.fields
 # @example
 #   sql = 'select * from sys.all_objects'
 #   client = SqlServerClient.new
 #   client.open
 #   client.query(sql)
-#   client.data
-#   client.fields
+#   resultset = client.data
+#   fieldlist = client.fields
+#   client.close unless client.nil? || client.closed?
 #
 require 'win32ole'
 
