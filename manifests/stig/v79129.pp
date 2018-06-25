@@ -16,7 +16,7 @@ class secure_sqlserver::stig::v79129 (
   # make sure the "NT AUTHORITY\SYSTEM" user only has the public role assigned.
   $system_user = 'NT AUTHORITY\SYSTEM'
 
-  $assigned_roles = $facts['sqlserver_roles_assigned_to_nt_authority_system']
+  $assigned_roles = $facts['sqlserver_v79129_roles_assigned_to_nt_authority_system']
 
   $sql_server_roles = "SELECT srm.role_principal_id, sp1.name, srm.member_principal_id, sp2.name
                         FROM sys.server_role_members srm

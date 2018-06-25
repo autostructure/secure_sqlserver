@@ -18,7 +18,7 @@
 #
 require 'sqlserver_client'
 
-Facter.add('sqlserver_roles_assigned_to_nt_authority_system') do
+Facter.add('sqlserver_v79129_roles_assigned_to_nt_authority_system') do
   confine operatingsystem: :windows
   setcode do
 
