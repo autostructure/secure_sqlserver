@@ -35,7 +35,7 @@ Facter.add('sqlserver_v79131_shared_accounts') do
 
 
 
-    Puppet.debug "sqlserver_roles_assigned_to_nt_authority_system.rb sql...\n#{sql}"
+    Puppet.debug "sqlserver_v79131_shared_accounts.rb sql...\n#{sql}"
 
     client = SqlServerClient.new
     client.open

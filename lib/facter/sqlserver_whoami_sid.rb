@@ -31,8 +31,8 @@ Facter.add('sqlserver_whoami_sid') do
 
     cmd = "whoami /user /nh"
     line = Facter::Core::Execution.exec("powershell.exe -Command \"#{cmd}\"")
-    /\s.+$/.match(line)
-
+    sid = line.match(/\s.+$/)
+    sid
 
   end
 end

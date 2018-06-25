@@ -34,7 +34,7 @@ Facter.add('sqlserver_v79129_roles_assigned_to_nt_authority_system') do
               #AND sp2.name = 'NT AUTHORITY\\SYSTEM'"
 
 
-    Puppet.debug "sqlserver_roles_assigned_to_nt_authority_system.rb sql...\n#{sql}"
+    Puppet.debug "sqlserver_v79129_roles_assigned_to_nt_authority_system.rb sql...\n#{sql}"
 
     client = SqlServerClient.new
     client.open
