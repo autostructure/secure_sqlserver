@@ -40,7 +40,7 @@ class secure_sqlserver::stig::v79129 (
 
     $sql_ddl = "ALTER SERVER ROLE '${single_role}' DROP MEMBER '${system_user}';"
 
-    ::secure_sqlserver::log { "sql_ddl=${sql_ddl}": }
+    ::secure_sqlserver::log { "v79129_sql_ddl=${sql_ddl}": }
 
     sqlserver_tsql{ "drop_nt_authority_system_role_${single_role}":
       instance => $instance,

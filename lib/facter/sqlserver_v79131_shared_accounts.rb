@@ -11,8 +11,16 @@
 # can log into the instance and perform actions. These actions cannot be
 # traced back to a specific user or process.
 #
-# @return   An array of strings representing roles assigned to the 'NT AUTHORITY\SYSTEM' user.
-# @example  ['public', 'sysadmin']
+# Type Description
+# ---- ------------------------
+# C    CERTIFICATE_MAPPED_LOGIN
+# R    SERVER_ROLE
+# S    SQL_LOGIN
+# U    WINDOWS_LOGIN
+# G    GROUP
+#
+# @return   An array of strings representing shared accounts.
+# @example  ['some_user$','another_user$']
 #
 require 'sqlserver_client'
 

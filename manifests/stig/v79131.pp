@@ -11,19 +11,27 @@
 # can log into the instance and perform actions. These actions cannot be
 # traced back to a specific user or process.
 #
+# Type Description
+# ---- ------------------------
+# C    CERTIFICATE_MAPPED_LOGIN
+# R    SERVER_ROLE
+# S    SQL_LOGIN
+# U    WINDOWS_LOGIN
+# G    GROUP
+#
 class secure_sqlserver::stig::v79131 (
   Boolean $enforced = false,
   String  $instance = 'MSSQLSERVER',
 ) {
   $shared_accounts = $facts['sqlserver_v79131_shared_accounts']
 
-  $shared_accounts.each |$remove_user| {
+  $shared_accounts.each |$drop_user| {
 
-    $sql_ddl = "REMOVE USER '${remove_user}';"
+    $sql_ddl = "DROP USER '${drop_user}';"
 
-    ::secure_sqlserver::log { "sql_ddl=${sql_ddl}": }
+    ::secure_sqlserver::log { "v79131_sql_ddl=${sql_ddl}": }
 
-    sqlserver_tsql{ "remove_shared_account_${remove_user}":
+    sqlserver_tsql{ "remove_shared_account_${drop_user}":
       instance => $instance,
       command  => $sql_ddl,
     }
