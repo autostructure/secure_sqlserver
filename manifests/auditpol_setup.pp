@@ -6,6 +6,11 @@ class secure_sqlserver::auditpol_setup (
   String[1,16] $instance = 'MSSQLSERVER',
 ) {
 
+  ##TODO:
+  # 1. Ask if audit setup is necessary.
+  # 2. Find a powershell command to simulate secpol.msc interface
+
+
   $puppet_agent_sid = $facts['sqlserver_whoami_sid']
   $sqlserver_service_user_sid = ''
 
@@ -38,7 +43,7 @@ class secure_sqlserver::auditpol_setup (
   #  path    => 'c:\windows\system32',
   #}
 
-  # TODO:
+  ##TODO:
   # Find PS command to simulate secpol.msc interface
   #
   # To grant the generate security audits permission to an account using secpol
