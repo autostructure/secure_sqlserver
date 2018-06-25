@@ -1,4 +1,6 @@
 # This class sets up secpol for event auditing to the Windows Security Log.
+# See:
+# https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/write-sql-server-audit-events-to-the-security-log?view=sql-server-2017
 #
 class secure_sqlserver::auditpol_setup (
   String[1,16] $instance =  'MSSQLSERVER',
