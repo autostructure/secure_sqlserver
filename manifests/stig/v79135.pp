@@ -51,11 +51,11 @@ class secure_sqlserver::stig::v79135 (
     case $role {
       undef: {
         # no role represents a revoke-permission-related record.
-        notify {'v79135 role/user = undef / ${user}':}
+        notify {"v79135 role/user = undef / ${user}":}
       }
       '': {
         # no role represents a revoke-permission-related record.
-        notify {'v79135 role/user = empty / ${user}':}
+        notify {"v79135 role/user = empty / ${user}":}
       }
     default: {
       notify {"v79135 role/user = ${role} / ${user}":}
@@ -68,7 +68,7 @@ class secure_sqlserver::stig::v79135 (
       # }
     }
 
-    notify {"v79135 add member role/user = ${role} / ${user}":}
+    notify { "v79135 add member role/user = ${role} / ${user}": }
     # add user to new audit role (in either case, revoke permission or drop role)
     $sql_dcl_add_member = "ALTER SERVER ROLE ${new_audit_role} ADD MEMBER ${user};"
     ::secure_sqlserver::log { "v79135_sql_dcl=${sql_dcl_add_member}": }
