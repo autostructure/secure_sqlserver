@@ -21,10 +21,7 @@ class secure_sqlserver::stig::v79135 (
   # Create a server role specifically for audit maintainers and give it permission to
   # maintain audits without granting it unnecessary permissions...
 
-  $sql_create_role = "CREATE SERVER ROLE ${new_audit_role};
-  GO
-  GRANT ALTER ANY SERVER AUDIT TO ${new_audit_role};
-  GO"
+  $sql_create_role = "CREATE SERVER ROLE '${new_audit_role}'; GRANT ALTER ANY SERVER AUDIT TO '${new_audit_role}';"
 
   ::secure_sqlserver::log { "v79135_sql_create_role = \n${sql_create_role}": }
 
@@ -57,23 +54,23 @@ class secure_sqlserver::stig::v79135 (
       default: {
         notify {"v79135 drop role loop ${user} = ${role}":}
         # a not-empty role field = drop this user from this role.
-        $sql_dcl_drop_member = "ALTER SERVER ROLE ${role} DROP MEMBER ${user};"
+        $sql_dcl_drop_member = "ALTER SERVER ROLE '${role}' DROP MEMBER '${user}';"
         notify { "v79135_sql_dcl=${sql_dcl_drop_member}": }
-        # sqlserver_tsql{ "v79135_alter_${role}_drop_member_${user}":
-        #   instance => $instance,
-        #   command  => $sql_dcl_drop_member,
-        # }
+        sqlserver_tsql{ "v79135_alter_${role}_drop_member_${user}":
+          instance => $instance,
+          command  => $sql_dcl_drop_member,
+        }
       }
     }
 
     notify { "v79135 add member role-user = ${role}-${user}": }
     # add user to new audit role (in either case, revoke permission or drop role)
-    $sql_dcl_add_member = "ALTER SERVER ROLE ${new_audit_role} ADD MEMBER ${user};"
+    $sql_dcl_add_member = "ALTER SERVER ROLE '${new_audit_role}' ADD MEMBER '${user}';"
     ::secure_sqlserver::log { "v79135_sql_dcl=${sql_dcl_add_member}": }
-    # sqlserver_tsql{ "v79135_alter_${new_audit_role}_add_member_${user}":
-    #   instance => $instance,
-    #   command  => $sql_dcl_add_member,
-    # }
+    sqlserver_tsql{ "v79135_alter_${new_audit_role}_add_member_${user}":
+      instance => $instance,
+      command  => $sql_dcl_add_member,
+    }
 
   }
 
@@ -97,19 +94,19 @@ class secure_sqlserver::stig::v79135 (
         # no role represents a revoke-permission-related record.
         notify {"v79135 permission = undef / empty [${class}, ${user}]":}
       }
-      'CONTROL SERVER', 'ALTER ANY DATABASE', 'CRETE ANY DATABASE': {
+      'CONTROL SERVER', 'ALTER ANY DATABASE', 'CREATE ANY DATABASE': {
         # no role represents a revoke-permission-related record.
         notify {"v79135 (1 of 3) permissions = ${permission} [${class}, ${user}]":}
       }
       default: {
         notify {"v79135 (default) permission = ${permission} [${class}, ${user}]":}
         # a not-empty role field = drop this user from this role.
-        $sql_dcl_revoke_permission = "REVOKE ${permission} FROM ${user};"
+        $sql_dcl_revoke_permission = "REVOKE ${permission} FROM '${user}';"
         ::secure_sqlserver::log { "v79135_sql_dcl=${sql_dcl_revoke_permission}": }
-        #sqlserver_tsql{ "v79135_revoke_${permission}_from_${user}":
-        #  instance => $instance,
-        #  command  => $sql_dcl_revoke_permission,
-        #}
+        sqlserver_tsql{ "v79135_revoke_${permission}_from_${user}":
+          instance => $instance,
+          command  => $sql_dcl_revoke_permission,
+        }
       }
 
     }
