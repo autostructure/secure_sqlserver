@@ -68,7 +68,8 @@ class secure_sqlserver::stig::v79135 (
       # }
     }
 
-    notify { "v79135 add member role/user = ${role} / ${user}": }
+    $msg = "v79135 add member role/user = ${role} / ${user}"
+    notify { $msg: }
     # add user to new audit role (in either case, revoke permission or drop role)
     $sql_dcl_add_member = "ALTER SERVER ROLE ${new_audit_role} ADD MEMBER ${user};"
     ::secure_sqlserver::log { "v79135_sql_dcl=${sql_dcl_add_member}": }
