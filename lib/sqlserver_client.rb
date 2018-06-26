@@ -3,8 +3,12 @@
 # Attempted using PuppetX::Sqlserver::SqlConnection, but it doesn't return results.
 #
 # @return
-#   Array[Array]  client.data
-#   Array         client.fields
+#   Array[String] client.data (when calling 'column(sql)')
+#   Array[Array]  client.data (when calling 'rows(sql)')
+#   Array[Hash]   client.data (when calling 'hasharray(sql)')
+#
+#   Array[String] client.fields
+#
 # @example
 #   sql = 'select * from sys.all_objects'
 #   client = SqlServerClient.new
@@ -83,43 +87,12 @@ class SqlServerClient
     connection_string
   end
 
-  # This loads the query results into the Recordset object.
-  # The Recordset object's GetRows method returns an array of columns
-  # (not rows, as you might expect), so use the Ruby array's transpose method
-  # to convert it to an array of rows:
-  # data = recordset.GetRows.transpose
+  # Returns a single column of data as an array list.
+  # If the resultset has multiple columns, only the first columns is returned.
   #
-  def query(sql)
-    return nil if closed?
-    @data = []
-    begin
-      recordset = WIN32OLE.new('ADODB.Recordset')
-      recordset.Open(sql, @connection)
-      # Create and populate an array of field names
-      @fields = []
-      recordset.Fields.each do |field|
-        @fields << field.Name
-      end
-      begin
-        recordset.MoveFirst
-        @data = recordset.GetRows
-        # An ADO Recordset's GetRows method returns an array of columns,
-        # so we'll use the transpose method to convert it to an array of rows
-        @data = @data.transpose
-      rescue
-        @data = []
-      end
-      begin
-        recordset.Close
-      rescue
-      end
-    rescue win32_exception => e
-      Puppet.debug "sqlserver_client.rb error: query(sql): #{e.message}"
-    end
-    @data
-  end
-
-  def simple_array(sql)
+  # @return Array[String]
+  #
+  def column(sql)
     return nil if closed?
     @data = []
     begin
@@ -151,6 +124,48 @@ class SqlServerClient
     @data
   end
 
+  # This loads the query results into the Recordset object.
+  # The Recordset object's GetRows method returns an array of columns
+  # (not rows, as you might expect), so use the Ruby array's transpose method
+  # to convert it to an array of rows:
+  # data = recordset.GetRows.transpose
+  #
+  # @return Array[Array[String]]
+  #
+  def rows(sql)
+    return nil if closed?
+    @data = []
+    begin
+      recordset = WIN32OLE.new('ADODB.Recordset')
+      recordset.Open(sql, @connection)
+      # Create and populate an array of field names
+      @fields = []
+      recordset.Fields.each do |field|
+        @fields << field.Name
+      end
+      begin
+        recordset.MoveFirst
+        @data = recordset.GetRows
+        # An ADO Recordset's GetRows method returns an array of columns,
+        # so we'll use the transpose method to convert it to an array of rows
+        @data = @data.transpose
+      rescue
+        @data = []
+      end
+      begin
+        recordset.Close
+      rescue
+      end
+    rescue win32_exception => e
+      Puppet.debug "sqlserver_client.rb error: query(sql): #{e.message}"
+    end
+    @data
+  end
+
+  # Returns an array of hashes, using the field names as the hash keys.
+  #
+  # @return Array[Hash]
+  #
   def hasharray(sql)
     return nil if closed?
     @data = []

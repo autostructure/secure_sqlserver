@@ -35,7 +35,7 @@ Facter.add('sqlserver_v79133_auditable_events') do
 
     client = SqlServerClient.new
     client.open
-    client.simple_array(sql)
+    client.column(sql)
     resultset = client.data
     client.close unless client.nil? || client.closed?
     resultset

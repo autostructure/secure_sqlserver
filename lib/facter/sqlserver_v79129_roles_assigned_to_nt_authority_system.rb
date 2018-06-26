@@ -36,7 +36,7 @@ Facter.add('sqlserver_v79129_roles_assigned_to_nt_authority_system') do
 
     client = SqlServerClient.new
     client.open
-    client.simple_array(sql)
+    client.column(sql)
     resultset = client.data
     client.close unless client.nil? || client.closed?
     resultset

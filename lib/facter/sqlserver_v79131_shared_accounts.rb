@@ -34,7 +34,7 @@ Facter.add('sqlserver_v79131_shared_accounts') do
 
     client = SqlServerClient.new
     client.open
-    client.simple_array(sql)
+    client.column(sql)
     resultset = client.data
     client.close unless client.nil? || client.closed?
     resultset
