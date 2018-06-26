@@ -43,7 +43,7 @@ class secure_sqlserver::stig::v79135 (
 
   $audit_permission_findings.each |$finding| {
 
-    notify {"v79135 audit_permission_findings...\n${audit_permission_findings}":}
+    notify {"v79135 audit_permission_finding (role loop)...\n${finding}":}
 
     $user = $finding['Securable']
     $role = $finding['Role Name']
@@ -88,7 +88,7 @@ class secure_sqlserver::stig::v79135 (
 
   $audit_permission_findings.each |$finding| {
 
-    notify {"v79135 audit_permission_findings...\n${audit_permission_findings}":}
+    notify {"v79135 audit_permission_finding (permission loop)...\n${finding}":}
 
     $class = $finding['Securable Class']
     $permission = $finding['Permission']
@@ -106,7 +106,7 @@ class secure_sqlserver::stig::v79135 (
       }
       'CONTROL SERVER', 'ALTER ANY DATABASE', 'CRETE ANY DATABASE': {
         # no role represents a revoke-permission-related record.
-        notify {"v79135 1 of 3 permissions = ${permission}":}
+        notify {"v79135 1 of 3 permissions = ${permission} for user ${user}":}
       }
       default: {
         notify {"v79135 permission/class = ${permission} / ${class}":}
