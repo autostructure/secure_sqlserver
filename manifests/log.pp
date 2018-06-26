@@ -3,7 +3,7 @@
 #
 define secure_sqlserver::log (
   Optional[Boolean] $enabled = true,
-  Optional[Enum['alert', 'crit', 'debug', 'emerg', 'err', 'info', 'notice', 'warning']] $loglevel = 'warning',
+  Optional[Enum['alert', 'crit', 'debug', 'emerg', 'err', 'info', 'notice', 'warning']] $loglevel = 'debug',
 ) {
 
   if $enabled {
