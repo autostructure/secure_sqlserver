@@ -2,6 +2,9 @@
 # SQL Server must allow only the ISSM (or individuals or roles appointed by the ISSM)
 # to select which auditable events are to be audited.
 #
+# This is a separation of roles.
+# Separating the audit administration from other administration (like blanket sysadmin).
+#
 class secure_sqlserver::stig::v79135 (
   Boolean $enforced = false,
   String  $instance = 'MSSQLSERVER',
