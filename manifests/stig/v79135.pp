@@ -98,18 +98,18 @@ class secure_sqlserver::stig::v79135 (
     case $permission {
       undef: {
         # no role represents a revoke-permission-related record.
-        notify {'v79135 permission = undef':}
+        notify {"v79135 permission = undef [${class}, ${user}]":}
       }
       '': {
         # no role represents a revoke-permission-related record.
-        notify {'v79135 permission = empty':}
+        notify {"v79135 permission = empty [${class}, ${user}]":}
       }
       'CONTROL SERVER', 'ALTER ANY DATABASE', 'CRETE ANY DATABASE': {
         # no role represents a revoke-permission-related record.
-        notify {"v79135 1 of 3 permissions = ${permission} for user ${user}":}
+        notify {"v79135 (1 of 3) permissions = ${permission} [${class}, ${user}]":}
       }
       default: {
-        notify {"v79135 permission/class = ${permission} / ${class}":}
+        notify {"v79135 (default) permission = ${permission} [${class}, ${user}]":}
         # a not-empty role field = drop this user from this role.
         $sql_dcl_revoke_permission = "REVOKE ${permission} FROM ${user};"
         ::secure_sqlserver::log { "v79135_sql_dcl=${sql_dcl_revoke_permission}": }
