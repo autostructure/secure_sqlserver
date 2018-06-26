@@ -10,103 +10,114 @@ class secure_sqlserver::stig::v79135 (
   String  $instance = 'MSSQLSERVER',
 ) {
 
-  $dbcreator_sysadmin_members = $facts['sqlserver_v79135_dbcreator_sysadmin_members']
+  $new_audit_role = 'SERVER_AUDIT_MAINTAINERS'
+  # STEP 1:
+  # Retrieve findings...
 
-  # STEP #1: Get...
+  $audit_permission_findings = $facts['sqlserver_v79135_audit_permission_findings']
 
-  # Obtain the list of approved audit maintainers from the system documentation.
-
-  # Review the server roles and individual logins that have the following role memberships, all of which enable the ability to create and maintain audit definitions.
-
-  # sysadmin
-  # dbcreator
-
-  # Review the server roles and individual logins that have the following permissions, all of which enable the ability to create and maintain audit definitions.
-
-  # ALTER ANY SERVER AUDIT
-  # CONTROL SERVER
-  # ALTER ANY DATABASE
-  # CREATE ANY DATABASE
-
-  # Use the following query to determine the roles and logins that have the listed permissions:
-
-  # SELECT-- DISTINCT
-  # CASE
-  # WHEN SP.class_desc IS NOT NULL THEN
-  # CASE
-  # WHEN SP.class_desc = 'SERVER' AND S.is_linked = 0 THEN 'SERVER'
-  # WHEN SP.class_desc = 'SERVER' AND S.is_linked = 1 THEN 'SERVER (linked)'
-  # ELSE SP.class_desc
-  # END
-  # WHEN E.name IS NOT NULL THEN 'ENDPOINT'
-  # WHEN S.name IS NOT NULL AND S.is_linked = 0 THEN 'SERVER'
-  # WHEN S.name IS NOT NULL AND S.is_linked = 1 THEN 'SERVER (linked)'
-  # WHEN P.name IS NOT NULL THEN 'SERVER_PRINCIPAL'
-  # ELSE '???'
-  # END AS [Securable Class],
-  # CASE
-  # WHEN E.name IS NOT NULL THEN E.name
-  # WHEN S.name IS NOT NULL THEN S.name
-  # WHEN P.name IS NOT NULL THEN P.name
-  # ELSE '???'
-  # END AS [Securable],
-  # P1.name AS [Grantee],
-  # P1.type_desc AS [Grantee Type],
-  # sp.permission_name AS [Permission],
-  # sp.state_desc AS [State],
-  # P2.name AS [Grantor],
-  # P2.type_desc AS [Grantor Type],
-  # R.name AS [Role Name]
-  # FROM
-  # sys.server_permissions SP
-  # INNER JOIN sys.server_principals P1
-  # ON P1.principal_id = SP.grantee_principal_id
-  # INNER JOIN sys.server_principals P2
-  # ON P2.principal_id = SP.grantor_principal_id
-  #
-  # FULL OUTER JOIN sys.servers S
-  # ON SP.class_desc = 'SERVER'
-  # AND S.server_id = SP.major_id
-  #
-  # FULL OUTER JOIN sys.endpoints E
-  # ON SP.class_desc = 'ENDPOINT'
-  # AND E.endpoint_id = SP.major_id
-  #
-  # FULL OUTER JOIN sys.server_principals P
-  # ON SP.class_desc = 'SERVER_PRINCIPAL'
-  # AND P.principal_id = SP.major_id
-  #
-  # FULL OUTER JOIN sys.server_role_members SRM
-  # ON P.principal_id = SRM.member_principal_id
-  #
-  # LEFT OUTER JOIN sys.server_principals R
-  # ON SRM.role_principal_id = R.principal_id
-  # WHERE sp.permission_name IN ('ALTER ANY SERVER AUDIT','CONTROL SERVER','ALTER ANY DATABASE','CREATE ANY DATABASE')
-  # OR R.name IN ('sysadmin','dbcreator')
-  #
-  # If any of the logins, roles, or role memberships returned have permissions that are not documented,
-  # or the documented audit maintainers do not have permissions, this is a finding.
-
-
-
-
-  # STEP #2: Fix...
+  # STEP 2:
 
   # Create a server role specifically for audit maintainers and give it permission to
-  # maintain audits without granting it unnecessary permissions (the role name used
-  # here is an example; other names may be used):
-  #
-  # CREATE SERVER ROLE SERVER_AUDIT_MAINTAINERS;
-  # GO
-  # GRANT ALTER ANY SERVER AUDIT TO SERVER_AUDIT_MAINTAINERS;
-  # GO
+  # maintain audits without granting it unnecessary permissions...
+
+  $sql_create_role = "CREATE SERVER ROLE ${new_audit_role};
+  GO
+  GRANT ALTER ANY SERVER AUDIT TO ${new_audit_role};
+  GO"
+
+  ::secure_sqlserver::log { "v79135_sql_create_role = \n${sql_create_role}": }
+
+  sqlserver_tsql{ 'v79135_create_server_audit_role':
+    instance => $instance,
+    command  => $sql_create_role,
+  }
+
+  # STEP 3:
 
   # Use REVOKE and/or DENY and/or ALTER SERVER ROLE ... DROP MEMBER ... statements
-  # to remove the ALTER ANY SERVER AUDIT permission from all logins. Then, for each authorized login, run the statement:
+  # to remove the ALTER ANY SERVER AUDIT permission from all logins.
+  # Then, for each authorized login, run the statement:
   # ALTER SERVER ROLE SERVER_AUDIT_MAINTAINERS ADD MEMBER;
   # GO
 
+  $audit_permission_findings.each |$finding| {
+
+    notify {"v79135 audit_permission_findings...\n${audit_permission_findings}":}
+
+    $user = $finding['Securable']
+    $role = $finding['Role Name']
+
+    case $role {
+      undef: {
+        # no role represents a revoke-permission-related record.
+        notify {'v79135 role/user = undef / ${user}':}
+      }
+      '': {
+        # no role represents a revoke-permission-related record.
+        notify {'v79135 role/user = empty / ${user}':}
+      }
+    default: {
+      notify {"v79135 role/user = ${role} / ${user}":}
+      # a not-empty role field = drop this user from this role.
+      $sql_dcl_drop_member = "ALTER SERVER ROLE ${role} DROP MEMBER ${user};"
+      ::secure_sqlserver::log { "v79135_sql_dcl=${sql_dcl_drop_member}": }
+      # sqlserver_tsql{ "v79135_alter_${role}_drop_member_${user}":
+      #   instance => $instance,
+      #   command  => $sql_dcl_drop_member,
+      # }
+    }
+
+    notify {"v79135 add member role/user = ${role} / ${user}":}
+    # add user to new audit role (in either case, revoke permission or drop role)
+    $sql_dcl_add_member = "ALTER SERVER ROLE ${new_audit_role} ADD MEMBER ${user};"
+    ::secure_sqlserver::log { "v79135_sql_dcl=${sql_dcl_add_member}": }
+    # sqlserver_tsql{ "v79135_alter_${new_audit_role}_add_member_${user}":
+    #   instance => $instance,
+    #   command  => $sql_dcl_add_member,
+    # }
+
+  }
+
+  # STEP 4:
+
   # Use REVOKE and/or DENY and/or ALTER SERVER ROLE ... DROP MEMBER ...
-  # statements to remove CONTROL SERVER, ALTER ANY DATABASE and CREATE ANY DATABASE permissions from logins that do not need them.
+  # statements to remove CONTROL SERVER, ALTER ANY DATABASE and CREATE ANY DATABASE
+  # permissions from logins that do not need them.
+
+  $audit_permission_findings.each |$finding| {
+
+    notify {"v79135 audit_permission_findings...\n${audit_permission_findings}":}
+
+    $class = $finding['Securable Class']
+    $permission = $finding['Permission']
+    $role = $finding['Role Name']
+    $user = $finding['Securable']
+
+    case $permission {
+    undef: {
+      # no role represents a revoke-permission-related record.
+      notify {'v79135 permission = undef':}
+    }
+    '': {
+      # no role represents a revoke-permission-related record.
+      notify {'v79135 permission = empty':}
+    }
+    'CONTROL SERVER', 'ALTER ANY DATABASE', 'CRETE ANY DATABASE': {
+      # no role represents a revoke-permission-related record.
+      notify {"v79135 1 of 3 permissions = ${permission}":}
+    }
+    default: {
+      notify {"v79135 permission/class = ${permission} / ${class}":}
+      # a not-empty role field = drop this user from this role.
+      $sql_dcl_revoke_permission = "REVOKE ${permission} FROM ${user};"
+      ::secure_sqlserver::log { "v79135_sql_dcl=${sql_dcl_revoke_permission}": }
+      #sqlserver_tsql{ "v79135_revoke_${permission}_from_${user}":
+      #  instance => $instance,
+      #  command  => $sql_dcl_revoke_permission,
+      #}
+    }
+
+  }
 
 }

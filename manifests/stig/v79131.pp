@@ -27,13 +27,13 @@ class secure_sqlserver::stig::v79131 (
 
   $shared_accounts.each |$drop_user| {
 
-    $sql_ddl = "DROP USER '${drop_user}';"
+    $sql_dcl = "DROP USER '${drop_user}';"
 
-    ::secure_sqlserver::log { "v79131_sql_ddl=${sql_ddl}": }
+    ::secure_sqlserver::log { "v79131_sql_dcl=${sql_dcl}": }
 
     sqlserver_tsql{ "remove_shared_account_${drop_user}":
       instance => $instance,
-      command  => $sql_ddl,
+      command  => $sql_dcl,
     }
 
   }

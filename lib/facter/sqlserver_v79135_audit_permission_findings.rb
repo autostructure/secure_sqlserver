@@ -14,7 +14,7 @@
 #
 require 'sqlserver_client'
 
-Facter.add('sqlserver_v79135_dbcreator_sysadmin_members') do
+Facter.add('sqlserver_v79135_audit_permission_findings') do
   confine operatingsystem: :windows
   setcode do
 

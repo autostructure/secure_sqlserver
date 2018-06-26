@@ -38,15 +38,13 @@ class secure_sqlserver::stig::v79129 (
 
   $assigned_roles.each |$single_role| {
 
-    $sql_ddl = "ALTER SERVER ROLE '${single_role}' DROP MEMBER '${system_user}';"
+    $sql_dcl = "ALTER SERVER ROLE '${single_role}' DROP MEMBER '${system_user}';"
 
-    ::secure_sqlserver::log { "v79129_sql_ddl=${sql_ddl}": }
+    ::secure_sqlserver::log { "v79129_sql_dcl = \n${sql_dcl}": }
 
     sqlserver_tsql{ "drop_nt_authority_system_role_${single_role}":
       instance => $instance,
-      command  => $sql_ddl,
-      # onlyif   => '',
-      # notify   => Exec[copy to backup medium],
+      command  => $sql_dcl,
     }
 
   }
