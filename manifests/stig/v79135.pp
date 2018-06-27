@@ -48,7 +48,7 @@ class secure_sqlserver::stig::v79135 (
 
     if $class == 'SERVER_PRINCIPAL' {
       # DROP MEMBER
-      unless $role == undef || $role == '' {
+      unless $role == undef or $role == '' {
         # no role represents a revoke-permission-related record.
         # nil or empty facts are not undef, but an empty string ('').
         # a not-empty role field = drop this user from this role.
@@ -84,17 +84,9 @@ class secure_sqlserver::stig::v79135 (
     $role = $finding['Role Name']
     $user = $finding['Securable']
 
-    case $permission {
-      undef, '': {
-        # no role represents a revoke-permission-related record.
-        notify {"v79135 permission = undef / empty [${class}, ${user}]":}
-      }
-      'CONTROL SERVER', 'ALTER ANY DATABASE', 'CREATE ANY DATABASE': {
-        # no role represents a revoke-permission-related record.
-        notify {"v79135 (1 of 3) permissions = ${permission} [${class}, ${user}]":}
-      }
-      default: {
-        notify {"v79135 (default) permission = ${permission} [${class}, ${user}]":}
+    if $role == undef or $role == '' {
+
+      unless $permission == undef or $permission == '' {
         # a not-empty role field = drop this user from this role.
         $sql_dcl_revoke_permission = "REVOKE ${permission} FROM \"${user}\";"
         ::secure_sqlserver::log { "v79135_sql_dcl=${sql_dcl_revoke_permission}": }
@@ -103,6 +95,11 @@ class secure_sqlserver::stig::v79135 (
           command  => $sql_dcl_revoke_permission,
         }
       }
+      # 'CONTROL SERVER', 'ALTER ANY DATABASE', 'CREATE ANY DATABASE': {
+      #   # no role represents a revoke-permission-related record.
+      #   notify {"v79135 (1 of 3) permissions = ${permission} [${class}, ${user}]":}
+      # }
+
     }
   }
 }
