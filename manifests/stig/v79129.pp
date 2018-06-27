@@ -47,6 +47,6 @@ class secure_sqlserver::stig::v79129 (
       command  => $sql_dcl,
     }
 
-  }
+  } unless $assigned_roles == []
 
 }
