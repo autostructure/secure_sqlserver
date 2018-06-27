@@ -25,6 +25,6 @@ class secure_sqlserver::stig::v79133 (
 
   # setup auditable events
   include ::secure_sqlserver::auditpol_setup
-  $auditable_events = $facts['sqlserver_v79131_auditable_events']
+  $auditable_events = $facts['sqlserver_auditable_events']
 
 }

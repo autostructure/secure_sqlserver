@@ -1,4 +1,4 @@
-# sqlserver_v79131_shared_accounts.rb
+# sqlserver_shared_accounts.rb
 # SQL Server must protect against a user falsely repudiating by ensuring only
 # clearly unique Active Directory user accounts can connect to the instance.
 #
@@ -22,9 +22,12 @@
 # @return   An array of strings representing shared accounts.
 # @example  ['shared_user1$','shared_user2$']
 #
+# Dependencies:
+# v79131
+# 
 require 'sqlserver_client'
 
-Facter.add('sqlserver_v79131_shared_accounts') do
+Facter.add('sqlserver_shared_accounts') do
   confine operatingsystem: :windows
   setcode do
 

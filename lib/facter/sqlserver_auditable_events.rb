@@ -1,4 +1,4 @@
-# sqlserver_v79133_auditable_events.rb
+# sqlserver_auditable_events.rb
 # SQL Server must be configured to generate audit records for DoD-defined
 # auditable events within all DBMS/database components.
 #
@@ -20,12 +20,16 @@
 # Source:
 # https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/write-sql-server-audit-events-to-the-security-log?view=sql-server-2017
 #
+# Dependencies:
+# v79133
+# v79137
+#
 # @return   An array of hashes representing audit event rule records.
 # @example
 #
 require 'sqlserver_client'
 
-Facter.add('sqlserver_v79133_auditable_events') do
+Facter.add('sqlserver_auditable_events') do
   confine operatingsystem: :windows
   setcode do
 

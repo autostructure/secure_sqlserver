@@ -1,15 +1,32 @@
-# sqlserver_v79135_dbcreator_sysadmin_members.rb
+# sqlserver_v79135_audit_permission_findings.rb
 # Review the server roles and individual logins that have the following role memberships,
 # all of which enable the ability to create and maintain audit definitions:
 # sysadmin
 # dbcreator
 #
 # @return   An array of hashes representing role and user name data.
-# @example  [{
-#             login => 'NT Service\MSSQLSERVER',
-#             role => 'sysadmin',
-#             type => 'U',
-#             type_description => 'WINDOWS_LOGIN'
+# @example  Below is a result that includes a permission and a role:
+#           [{
+#             Securable Class => "SERVER",
+#             Securable => "windows-server-hostname",
+#             Grantee => "##MS_PolicySigningCertificate##",
+#             Grantee Type => "CERTIFICATE_MAPPED_LOGIN",
+#             Permission => "CONTROL SERVER",
+#             State => "GRANT",
+#             Grantor => "sa",
+#             Grantor Type => "SQL_LOGIN",
+#             Role Name =>
+#           },
+#           {
+#             Securable Class => "SERVER_PRINCIPAL",
+#             Securable => "NT Service\MSSQLSERVER",
+#             Grantee => ,
+#             Grantee Type => ,
+#             Permission => ,
+#             State => ,
+#             Grantor => ,
+#             Grantor Type => ,
+#             Role Name => "sysadmin"
 #           }]
 #
 ##TODO:

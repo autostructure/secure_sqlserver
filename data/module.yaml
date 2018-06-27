@@ -15,3 +15,4 @@ secure_sqlserver::stig::v79129::enforced: true
 secure_sqlserver::stig::v79131::enforced: true
 secure_sqlserver::stig::v79133::enforced: true
 secure_sqlserver::stig::v79135::enforced: true
+secure_sqlserver::stig::v79137::enforced: true
