@@ -12,6 +12,14 @@
 #             type_description => 'WINDOWS_LOGIN'
 #           }]
 #
+##TODO:
+#       1. REVOKE CONTROL SERVER FROM <SERVER_NAME>
+#          Results in an error: <SERVER_NAME> is not a login
+#          Format as REVOKE on OBJECT?
+#       2. Don't have permission to remove 'sa','NT SERVICE\MSSQLSERVER', or 'NT SERVICE\SQLWriter' from 'sysadmin' role.
+#          Add logic to skip 'sa'
+#          Skip other two as well?  Or not?
+#
 require 'sqlserver_client'
 
 Facter.add('sqlserver_v79135_audit_permission_findings') do
