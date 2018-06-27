@@ -2,7 +2,7 @@
 # SQL Server must allow only the ISSM (or individuals or roles appointed by the ISSM)
 # to select which auditable events are to be audited.
 #
-# This is a separation of roles.
+# This is a separation of responsibilities.
 # Separating the audit administration from other administration (like blanket sysadmin).
 #
 class secure_sqlserver::stig::v79135 (
@@ -42,36 +42,31 @@ class secure_sqlserver::stig::v79135 (
 
     notify {"v79135 audit_permission_finding (role loop)...\n${finding}":}
 
+    $class = $finding['Securable Class']
     $user = $finding['Securable']
     $role = $finding['Role Name']
 
-    case $role {
-      undef,'': {
+    if $class == 'SERVER_PRINCIPAL' {
+      # DROP MEMBER
+      unless $role == undef || $role == '' {
         # no role represents a revoke-permission-related record.
         # nil or empty facts are not undef, but an empty string ('').
-        notify {"v79135 drop role loop ${user} = undef/empty":}
-      }
-      default: {
-        notify {"v79135 drop role loop ${user} = ${role}":}
         # a not-empty role field = drop this user from this role.
         $sql_dcl_drop_member = "ALTER SERVER ROLE \"${role}\" DROP MEMBER \"${user}\";"
-        notify { "v79135_sql_dcl=${sql_dcl_drop_member}": }
+        ::secure_sqlserver::log { "v79135_sql_dcl=${sql_dcl_drop_member}": }
         sqlserver_tsql{ "v79135_alter_${role}_drop_member_${user}":
           instance => $instance,
           command  => $sql_dcl_drop_member,
         }
       }
+      # ADD MEMBER
+      $sql_dcl_add_member = "ALTER SERVER ROLE \"${new_audit_role}\" ADD MEMBER \"${user}\";"
+      ::secure_sqlserver::log { "v79135_sql_dcl=${sql_dcl_add_member}": }
+      sqlserver_tsql{ "v79135_alter_${new_audit_role}_add_member_${user}":
+        instance => $instance,
+        command  => $sql_dcl_add_member,
+      }
     }
-
-    notify { "v79135 add member role-user = ${role}-${user}": }
-    # add user to new audit role (in either case, revoke permission or drop role)
-    $sql_dcl_add_member = "ALTER SERVER ROLE \"${new_audit_role}\" ADD MEMBER \"${user}\";"
-    ::secure_sqlserver::log { "v79135_sql_dcl=${sql_dcl_add_member}": }
-    sqlserver_tsql{ "v79135_alter_${new_audit_role}_add_member_${user}":
-      instance => $instance,
-      command  => $sql_dcl_add_member,
-    }
-
   }
 
   # STEP 4:
@@ -108,7 +103,6 @@ class secure_sqlserver::stig::v79135 (
           command  => $sql_dcl_revoke_permission,
         }
       }
-
     }
   }
 }
