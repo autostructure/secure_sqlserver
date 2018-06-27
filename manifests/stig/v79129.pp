@@ -36,17 +36,16 @@ class secure_sqlserver::stig::v79129 (
                        WHERE dp1.type = 'R'
                          AND dp2.name = '${system_user}'"
 
-  $assigned_roles.each |$single_role| {
+  unless $assigned_roles == [] {
+    $assigned_roles.each |$single_role| {
+      $sql_dcl = "ALTER SERVER ROLE '${single_role}' DROP MEMBER '${system_user}';"
 
-    $sql_dcl = "ALTER SERVER ROLE '${single_role}' DROP MEMBER '${system_user}';"
+      ::secure_sqlserver::log { "v79129_sql_dcl = \n${sql_dcl}": }
 
-    ::secure_sqlserver::log { "v79129_sql_dcl = \n${sql_dcl}": }
-
-    sqlserver_tsql{ "drop_nt_authority_system_role_${single_role}":
-      instance => $instance,
-      command  => $sql_dcl,
+      sqlserver_tsql{ "drop_nt_authority_system_role_${single_role}":
+        instance => $instance,
+        command  => $sql_dcl,
+      }
     }
-
-  } unless $assigned_roles == []
-
+  }
 }
