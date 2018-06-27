@@ -36,7 +36,7 @@ class secure_sqlserver::stig::v79129 (
                        WHERE dp1.type = 'R'
                          AND dp2.name = '${system_user}'"
 
-  unless $assigned_roles.each == undef {
+  unless $assigned_roles == undef or $assigned_roles == '' {
     $assigned_roles.each |$single_role| {
       $sql_dcl = "ALTER SERVER ROLE '${single_role}' DROP MEMBER '${system_user}';"
 
