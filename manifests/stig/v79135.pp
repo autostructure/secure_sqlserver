@@ -53,7 +53,7 @@ class secure_sqlserver::stig::v79135 (
       if $class == 'SERVER_PRINCIPAL' {
         # DROP MEMBER
         unless $role == undef or $role == '' {
-          if $user in ('NT SERVICE\SQLWriter', 'NT SERVICE\MSSQLSERVER', 'sa') {
+          if $user in ['NT SERVICE\SQLWriter', 'NT SERVICE\MSSQLSERVER', 'sa'] {
             ::secure_sqlserver::log {"v79135: Skipping user: ${user}, do not have permissions to drop from role: ${role}.":
               loglevel => 'warning',
             }
