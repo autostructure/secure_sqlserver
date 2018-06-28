@@ -36,7 +36,7 @@ Facter.add('sqlserver_auditable_events') do
 
     sql = "SELECT name AS 'audit_name', status_desc AS 'audit_status', audit_file_path AS 'current_audit_file' FROM sys.dm_server_audit_status"
 
-    Puppet.debug "sqlserver_v79133_auditable_events.rb sql...\n#{sql}"
+    Puppet.debug "sqlserver_auditable_events.rb sql...\n#{sql}"
 
     client = SqlServerClient.new
     client.open

@@ -24,7 +24,7 @@ Facter.add('sqlserver_schema_object_access_group') do
   JOIN sys.server_audit_specification_details d ON s.server_specification_id = d.server_specification_id
  WHERE a.is_state_enabled = 1 AND d.audit_action_name = 'SCHEMA_OBJECT_ACCESS_GROUP'"
 
-    Puppet.debug "sqlserver_v79133_auditable_events.rb sql...\n#{sql}"
+    Puppet.debug "sqlserver_schema_object_access_group.rb sql...\n#{sql}"
 
     client = SqlServerClient.new
     client.open

@@ -98,7 +98,7 @@ ON SRM.role_principal_id = R.principal_id
 WHERE sp.permission_name IN ('ALTER ANY SERVER AUDIT','CONTROL SERVER','ALTER ANY DATABASE','CREATE ANY DATABASE')
 OR R.name IN ('sysadmin','dbcreator')"
 
-    Puppet.debug "sqlserver_v79135_dbcreator_sysadmin_members.rb sql...\n#{sql}"
+    Puppet.debug "sqlserver_v79135_audit_permission_findings.rb sql...\n#{sql}"
 
     client = SqlServerClient.new
     client.open

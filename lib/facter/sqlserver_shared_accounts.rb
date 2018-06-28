@@ -34,7 +34,7 @@ Facter.add('sqlserver_shared_accounts') do
 
     sql = "SELECT name FROM sys.server_principals WHERE type in ('U','G') AND name LIKE '%$'"
 
-    Puppet.debug "sqlserver_v79131_shared_accounts.rb sql...\n#{sql}"
+    Puppet.debug "sqlserver_shared_accounts.rb sql...\n#{sql}"
 
     client = SqlServerClient.new
     client.open
