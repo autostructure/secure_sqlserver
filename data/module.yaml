@@ -10,9 +10,9 @@ secure_sqlserver::stig::v79061::enforced: true
 # Instance STIGs...
 secure_sqlserver::stig::v79119::enforced: true
 secure_sqlserver::stig::v79121::enforced: true
-secure_sqlserver::stig::v79123::enforced: true
+secure_sqlserver::stig::v79123::enforced: false
 secure_sqlserver::stig::v79129::enforced: true
 secure_sqlserver::stig::v79131::enforced: true
-secure_sqlserver::stig::v79133::enforced: true
-secure_sqlserver::stig::v79135::enforced: true
+secure_sqlserver::stig::v79133::enforced: false
+secure_sqlserver::stig::v79135::enforced: false
 secure_sqlserver::stig::v79137::enforced: true
