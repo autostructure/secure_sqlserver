@@ -54,7 +54,7 @@ class secure_sqlserver::stig::v79135 (
         # DROP MEMBER
         unless $role == undef or $role == '' {
           if $user in ['NT SERVICE\SQLWriter', 'NT SERVICE\MSSQLSERVER', 'sa'] {
-            ::secure_sqlserver::log {"v79135: Skipping user: ${user}, do not have permissions to drop from role: ${role}.":
+            ::secure_sqlserver::log {"v79135: Do not have permissions to drop user, ${user}, from role, ${role}.  Skipping SQL DCL statement processing.":# lint:ignore:140chars
               loglevel => 'warning',
             }
           } else {
@@ -67,11 +67,17 @@ class secure_sqlserver::stig::v79135 (
           }
         }
         # ADD MEMBER
-        $sql_dcl_add_member = "ALTER SERVER ROLE \"${new_audit_role}\" ADD MEMBER \"${user}\";"
-        ::secure_sqlserver::log { "v79135_sql_dcl=${sql_dcl_add_member}": }
-        sqlserver_tsql{ "v79135_alter_${new_audit_role}_add_member_${user}":
-          instance => $instance,
-          command  => $sql_dcl_add_member,
+        unless $user == 'sa' { # can't alter the sa user.
+          $sql_dcl_add_member = "ALTER SERVER ROLE \"${new_audit_role}\" ADD MEMBER \"${user}\";"
+          ::secure_sqlserver::log { "v79135_sql_dcl=${sql_dcl_add_member}": }
+          sqlserver_tsql{ "v79135_alter_${new_audit_role}_add_member_${user}":
+            instance => $instance,
+            command  => $sql_dcl_add_member,
+          }
+        } else {
+          ::secure_sqlserver::log {"v79135: Do not have permissions to add user, ${user}, to role, ${role}.   Skipping SQL DCL statement processing.":# lint:ignore:140chars
+            loglevel => 'warning',
+          }
         }
       }
     }
