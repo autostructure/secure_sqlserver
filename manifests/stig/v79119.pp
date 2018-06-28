@@ -32,7 +32,7 @@ class secure_sqlserver::stig::v79119 (
     instance => $instance,
     command  => $sql_trigger,
     onlyif   => $sql_check,
+    require  => Sqlserver::Config[$instance],
   }
-    # require  => Sqlserver::Config[$instance]
 
 }
