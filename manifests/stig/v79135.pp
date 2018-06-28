@@ -61,7 +61,7 @@ class secure_sqlserver::stig::v79135 (
         # DROP MEMBER
         unless $role == undef or $role == '' {
           # Users Winmgmt and SQLSERVERAGENT didn't fail, but they might be causing the '???' values that are encountered.
-          if $user in ['NT SERVICE\SQLWriter', 'NT SERVICE\MSSQLSERVER', 'sa', 'NT SERVICE\Winmgmt', 'NT SERVICE\SQLSERVERAGENT'] {
+          if $user in ['NT SERVICE\SQLWriter', 'NT SERVICE\MSSQLSERVER', 'sa'] {
             ::secure_sqlserver::log {"v79135: Do not have permissions to drop user, ${user}, from role, ${role}.  Skipping SQL DCL statement processing.":# lint:ignore:140chars
               loglevel => 'warning',
             }
