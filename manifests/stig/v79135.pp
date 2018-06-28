@@ -37,41 +37,42 @@ class secure_sqlserver::stig::v79135 (
   # Then, for each authorized login, run the statement:
   # ALTER SERVER ROLE SERVER_AUDIT_MAINTAINERS ADD MEMBER;
   # GO
+  unless $audit_permission_findings == undef or $audit_permission_findings == '' {
+    $audit_permission_findings.each |$finding| {
 
-  $audit_permission_findings.each |$finding| {
+      notify {"v79135 audit_permission_finding (role loop)...\n${finding}":}
 
-    notify {"v79135 audit_permission_finding (role loop)...\n${finding}":}
+      $class = $finding['Securable Class']
+      $user = $finding['Securable']
+      $role = $finding['Role Name']
 
-    $class = $finding['Securable Class']
-    $user = $finding['Securable']
-    $role = $finding['Role Name']
+      # no role represents a revoke-permission-related record.
+      # nil or empty facts are not undef, but an empty string ('').
+      # a not-empty role field = drop this user from this role.
 
-    # no role represents a revoke-permission-related record.
-    # nil or empty facts are not undef, but an empty string ('').
-    # a not-empty role field = drop this user from this role.
-
-    if $class == 'SERVER_PRINCIPAL' {
-      # DROP MEMBER
-      unless $role == undef or $role == '' {
-        if $user in ('NT SERVICE\SQLWriter', 'NT SERVICE\MSSQLSERVER', 'sa') {
-          ::secure_sqlserver::log {"v79135: Skipping user: ${user}, do not have permissions to drop from role: ${role}.":
-            loglevel => 'warning',
-          }
-        } else {
-          $sql_dcl_drop_member = "ALTER SERVER ROLE \"${role}\" DROP MEMBER \"${user}\";"
-          ::secure_sqlserver::log { "v79135_sql_dcl=${sql_dcl_drop_member}": }
-          sqlserver_tsql{ "v79135_alter_${role}_drop_member_${user}":
-            instance => $instance,
-            command  => $sql_dcl_drop_member,
+      if $class == 'SERVER_PRINCIPAL' {
+        # DROP MEMBER
+        unless $role == undef or $role == '' {
+          if $user in ('NT SERVICE\SQLWriter', 'NT SERVICE\MSSQLSERVER', 'sa') {
+            ::secure_sqlserver::log {"v79135: Skipping user: ${user}, do not have permissions to drop from role: ${role}.":
+              loglevel => 'warning',
+            }
+          } else {
+            $sql_dcl_drop_member = "ALTER SERVER ROLE \"${role}\" DROP MEMBER \"${user}\";"
+            ::secure_sqlserver::log { "v79135_sql_dcl=${sql_dcl_drop_member}": }
+            sqlserver_tsql{ "v79135_alter_${role}_drop_member_${user}":
+              instance => $instance,
+              command  => $sql_dcl_drop_member,
+            }
           }
         }
-      }
-      # ADD MEMBER
-      $sql_dcl_add_member = "ALTER SERVER ROLE \"${new_audit_role}\" ADD MEMBER \"${user}\";"
-      ::secure_sqlserver::log { "v79135_sql_dcl=${sql_dcl_add_member}": }
-      sqlserver_tsql{ "v79135_alter_${new_audit_role}_add_member_${user}":
-        instance => $instance,
-        command  => $sql_dcl_add_member,
+        # ADD MEMBER
+        $sql_dcl_add_member = "ALTER SERVER ROLE \"${new_audit_role}\" ADD MEMBER \"${user}\";"
+        ::secure_sqlserver::log { "v79135_sql_dcl=${sql_dcl_add_member}": }
+        sqlserver_tsql{ "v79135_alter_${new_audit_role}_add_member_${user}":
+          instance => $instance,
+          command  => $sql_dcl_add_member,
+        }
       }
     }
   }
@@ -82,31 +83,34 @@ class secure_sqlserver::stig::v79135 (
   # statements to remove CONTROL SERVER, ALTER ANY DATABASE and CREATE ANY DATABASE
   # permissions from logins that do not need them.
 
-  $audit_permission_findings.each |$finding| {
+unless $audit_permission_findings == undef or $audit_permission_findings == '' {
 
-    notify {"v79135 audit_permission_finding (permission loop)...\n${finding}":}
+    $audit_permission_findings.each |$finding| {
 
-    $class = $finding['Securable Class']
-    $permission = $finding['Permission']
-    $role = $finding['Role Name']
-    $user = $finding['Securable']
+      notify {"v79135 audit_permission_finding (permission loop)...\n${finding}":}
 
-    if $role == undef or $role == '' {
+      $class = $finding['Securable Class']
+      $permission = $finding['Permission']
+      $role = $finding['Role Name']
+      $user = $finding['Securable']
 
-      unless $permission == undef or $permission == '' {
-        # a not-empty role field = drop this user from this role.
-        $sql_dcl_revoke_permission = "REVOKE ${permission} FROM \"${user}\";"
-        ::secure_sqlserver::log { "v79135_sql_dcl=${sql_dcl_revoke_permission}": }
-        sqlserver_tsql{ "v79135_revoke_${permission}_from_${user}":
-          instance => $instance,
-          command  => $sql_dcl_revoke_permission,
+      if $role == undef or $role == '' {
+
+        unless $permission == undef or $permission == '' {
+          # a not-empty role field = drop this user from this role.
+          $sql_dcl_revoke_permission = "REVOKE ${permission} FROM \"${user}\";"
+          ::secure_sqlserver::log { "v79135_sql_dcl=${sql_dcl_revoke_permission}": }
+          sqlserver_tsql{ "v79135_revoke_${permission}_from_${user}":
+            instance => $instance,
+            command  => $sql_dcl_revoke_permission,
+          }
         }
-      }
-      # 'CONTROL SERVER', 'ALTER ANY DATABASE', 'CREATE ANY DATABASE': {
-      #   # no role represents a revoke-permission-related record.
-      #   notify {"v79135 (1 of 3) permissions = ${permission} [${class}, ${user}]":}
-      # }
+        # 'CONTROL SERVER', 'ALTER ANY DATABASE', 'CREATE ANY DATABASE': {
+        #   # no role represents a revoke-permission-related record.
+        #   notify {"v79135 (1 of 3) permissions = ${permission} [${class}, ${user}]":}
+        # }
 
+      }
     }
   }
 }
