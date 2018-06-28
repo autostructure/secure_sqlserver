@@ -3,14 +3,20 @@
 # to select which auditable events are to be audited.
 #
 # This is a separation of responsibilities.
-# Separating the audit administration from other administration (like blanket sysadmin).
+# Separating the audit administration from other system administration.
+#
+##TODO:
+# 1. This statement fails: "REVOKE CONTROL SERVER FROM <SERVER_NAME>".
+#    It fails on a CERTIFICATE_MAPPED_LOGIN record.
 #
 class secure_sqlserver::stig::v79135 (
   Boolean $enforced = false,
   String  $instance = 'MSSQLSERVER',
 ) {
 
+  # name of new role for audit only, separating auditing from other sysadmin duties.
   $new_audit_role = 'SERVER_AUDIT_MAINTAINERS'
+
   # STEP 1:
   # Retrieve findings...
 
