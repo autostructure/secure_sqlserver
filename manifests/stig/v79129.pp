@@ -45,6 +45,7 @@ class secure_sqlserver::stig::v79129 (
       sqlserver_tsql{ "drop_nt_authority_system_role_${single_role}":
         instance => $instance,
         command  => $sql_dcl,
+        require  => Sqlserver::Config[$instance],
       }
     }
   }

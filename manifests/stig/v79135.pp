@@ -35,6 +35,7 @@ class secure_sqlserver::stig::v79135 (
   sqlserver_tsql{ 'v79135_create_server_audit_role':
     instance => $instance,
     command  => $sql_create_role,
+    require  => Sqlserver::Config[$instance],
   }
 
   # STEP 3:
@@ -71,6 +72,7 @@ class secure_sqlserver::stig::v79135 (
             sqlserver_tsql{ "v79135_alter_${role}_drop_member_${user}":
               instance => $instance,
               command  => $sql_dcl_drop_member,
+              require  => Sqlserver::Config[$instance],
             }
           }
         }
@@ -81,6 +83,7 @@ class secure_sqlserver::stig::v79135 (
           sqlserver_tsql{ "v79135_alter_${new_audit_role}_add_member_${user}":
             instance => $instance,
             command  => $sql_dcl_add_member,
+            require  => Sqlserver::Config[$instance],
           }
         } else {
           ::secure_sqlserver::log {"v79135: Do not have permissions to add user, ${user}, to role, ${role}.   Skipping SQL DCL statement processing.":# lint:ignore:140chars

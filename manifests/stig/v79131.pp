@@ -23,6 +23,7 @@ class secure_sqlserver::stig::v79131 (
       sqlserver_tsql{ "remove_shared_account_${drop_user}":
         instance => $instance,
         command  => $sql_dcl,
+        require  => Sqlserver::Config[$instance],
       }
     }
   }
