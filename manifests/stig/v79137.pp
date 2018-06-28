@@ -18,7 +18,9 @@ class secure_sqlserver::stig::v79137 (
   # status_desc AS 'Audit Status',
   # audit_file_path AS 'Current Audit File'
   # FROM sys.dm_server_audit_status
-  #
+
+  $auditable_events = $facts['sqlserver_auditable_events']
+
   # If the auditing the retrieval of privilege/permission/role membership information is required,
   # execute the following query to verify the SCHEMA_OBJECT_ACCESS_GROUP is included in the server audit specification:
   #

@@ -1,4 +1,5 @@
 # sqlserver_whoami_sid.rb
+# 
 # Some registry resources require a SID.
 #
 # @return   The SID of the current user.

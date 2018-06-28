@@ -1,3 +1,5 @@
+# sqlserver_roles.rb
+#
 # The 'sqlserver_roles' fact returns an array list of all server roles.
 # Two types of roles are reported:
 # 'server roles', 'database roles'

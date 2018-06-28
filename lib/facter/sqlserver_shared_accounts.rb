@@ -1,4 +1,5 @@
 # sqlserver_shared_accounts.rb
+#
 # SQL Server must protect against a user falsely repudiating by ensuring only
 # clearly unique Active Directory user accounts can connect to the instance.
 #
@@ -24,7 +25,7 @@
 #
 # Dependencies:
 # v79131
-# 
+#
 require 'sqlserver_client'
 
 Facter.add('sqlserver_shared_accounts') do

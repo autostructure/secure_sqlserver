@@ -1,10 +1,11 @@
-# sqlserver_auditable_events.rb
+# sqlserver_schema_object_access_group.rb
 #
 # SQL Server must be configured to generate audit records for DoD-defined
 # auditable events within all DBMS/database components.
 #
 # DoD has defined the list of events for which SQL Server will provide an
 # audit record generation capability as the following:
+#
 # (i) Successful and unsuccessful attempts to access, modify, or delete privileges,
 #     security objects, security levels, or categories of information
 #     (e.g., classification levels);
@@ -30,7 +31,7 @@
 #
 require 'sqlserver_client'
 
-Facter.add('sqlserver_auditable_events') do
+Facter.add('sqlserver_schema_object_access_group') do
   confine operatingsystem: :windows
   setcode do
 

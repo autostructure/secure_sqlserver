@@ -1,4 +1,5 @@
 # sqlserver_v79135_audit_permission_findings.rb
+#
 # Review the server roles and individual logins that have the following role memberships,
 # all of which enable the ability to create and maintain audit definitions:
 # sysadmin

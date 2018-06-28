@@ -1,3 +1,5 @@
+# sqlserver_v79129_roles_assigned_to_nt_authority_system.#!/usr/bin/env ruby -wKU
+#
 # The 'sqlserver_roles_assigned_to_nt_authority_system' fact returns an array list
 # of all server roles assigned to the 'NT AUTHORITY\SYSTEM' user.
 # Currently, only returning 'server roles'.

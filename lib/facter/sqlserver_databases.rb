@@ -1,3 +1,5 @@
+# sqlserver_databases.rb
+#
 # The 'sqlserver_databases' fact returns an array list of all databases found in an instance.
 # The databases are discovered by querying the 'sys.sysdatabases' table.
 #
