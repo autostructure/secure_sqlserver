@@ -46,17 +46,24 @@ class secure_sqlserver::stig::v79135 (
     $user = $finding['Securable']
     $role = $finding['Role Name']
 
+    # no role represents a revoke-permission-related record.
+    # nil or empty facts are not undef, but an empty string ('').
+    # a not-empty role field = drop this user from this role.
+
     if $class == 'SERVER_PRINCIPAL' {
       # DROP MEMBER
       unless $role == undef or $role == '' {
-        # no role represents a revoke-permission-related record.
-        # nil or empty facts are not undef, but an empty string ('').
-        # a not-empty role field = drop this user from this role.
-        $sql_dcl_drop_member = "ALTER SERVER ROLE \"${role}\" DROP MEMBER \"${user}\";"
-        ::secure_sqlserver::log { "v79135_sql_dcl=${sql_dcl_drop_member}": }
-        sqlserver_tsql{ "v79135_alter_${role}_drop_member_${user}":
-          instance => $instance,
-          command  => $sql_dcl_drop_member,
+        if $user in ('NT SERVICE\SQLWriter', 'NT SERVICE\MSSQLSERVER', 'sa') {
+          ::secure_sqlserver::log {"v79135: Skipping user: ${user}, do not have permissions to drop from role: ${role}.":
+            loglevel => 'warning',
+          }
+        } else {
+          $sql_dcl_drop_member = "ALTER SERVER ROLE \"${role}\" DROP MEMBER \"${user}\";"
+          ::secure_sqlserver::log { "v79135_sql_dcl=${sql_dcl_drop_member}": }
+          sqlserver_tsql{ "v79135_alter_${role}_drop_member_${user}":
+            instance => $instance,
+            command  => $sql_dcl_drop_member,
+          }
         }
       }
       # ADD MEMBER
