@@ -24,8 +24,16 @@ class secure_sqlserver::stig::v79137 (
 
     # Fix...
 
-    ::secure_sqlserver::log { "v79137 - auditable_events:\n${auditable_events}": }
-    ::secure_sqlserver::log { "v79137 - schema_object_access_group:\n${schema_object_access_group}": }
+    ::secure_sqlserver::log { "v79137_auditable_events: >>${auditable_events}<<": }
+    ::secure_sqlserver::log { "v79137_schema_object_access_group: >>${schema_object_access_group}<<": }
+
+    $test1 = $auditable_events==''?'empty_string':'empty_string_failed'
+    ::secure_sqlserver::log { "empty string test result = ${test1}": }
+    $test2 = $auditable_events==undef?'undef':'undef_failed'
+    ::secure_sqlserver::log { "undef test result = ${test2}": }
+    $test3 = $auditable_events==[]?'empty_array':'empty_array_failed'
+    ::secure_sqlserver::log { "empty array test result = ${test3}": }
+
 
     if $auditable_events == '' and $schema_object_access_group == '' {
 
@@ -217,6 +225,6 @@ class secure_sqlserver::stig::v79137 (
         command  => $sql_ddl6_clean_up,
         require  => Sqlserver::Config[$instance],
       }
-    }
+    },
   }
 }
