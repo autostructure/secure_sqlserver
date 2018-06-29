@@ -236,6 +236,6 @@ class secure_sqlserver::stig::v79137 (
         command  => $sql_ddl6_clean_up,
         require  => Sqlserver::Config[$instance],
       }
-    },
+    }
   }
 }
