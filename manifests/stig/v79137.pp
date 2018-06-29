@@ -46,7 +46,7 @@ class secure_sqlserver::stig::v79137 (
     ::secure_sqlserver::log { "empty array test result = ${test3}": }
 
 
-    if $auditable_events == '' and $schema_object_access_group == '' {
+    if $auditable_events == [] and $schema_object_access_group == [] {
 
       ::secure_sqlserver::log { 'v79137 - creating audit to capture privilege-permission-role changes.': }
 
@@ -231,6 +231,7 @@ class secure_sqlserver::stig::v79137 (
       --Clean up:
       DROP TABLE #SetupVars
       "
+
       sqlserver_tsql{ 'v79137-sql_ddl6_clean_up':
         instance => $instance,
         command  => $sql_ddl6_clean_up,
