@@ -23,36 +23,13 @@ class secure_sqlserver::stig::v79137 (
     $schema_object_access_group = $facts['sqlserver_schema_object_access_group']
 
     # Fix...
-
-    ::secure_sqlserver::log { "v79137_auditable_events: >>${auditable_events}<<": }
-    ::secure_sqlserver::log { "v79137_schema_object_access_group: >>${schema_object_access_group}<<": }
-
-    $test1 = ($auditable_events=='') ? {
-      true    => 'empty_string',
-      default => 'empty_string failed',
-    }
-    ::secure_sqlserver::log { "empty string test result = ${test1}": }
-
-    $test2 = ($auditable_events==undef) ? {
-      true    => 'undef',
-      default => 'undef failed',
-    }
-    ::secure_sqlserver::log { "undef test result = ${test2}": }
-
-    $test3 = ($auditable_events==[]) ? {
-      true    => 'empty_array',
-      default => 'empty_array failed',
-    }
-    ::secure_sqlserver::log { "empty array test result = ${test3}": }
-
-
     if $auditable_events == [] and $schema_object_access_group == [] {
 
       ::secure_sqlserver::log { 'v79137 - creating audit to capture privilege-permission-role changes.': }
 
       # Create a dedicated audit to capture the retrieval of privilege/permission/role membership information.
 
-      $sql_ddl1_create_temp_table = "--Create a dedicated audit to capture the retrieval of privilege/permission/role membership information.
+      $sql_ddl1_create_temp_table = "--Create a dedicated audit to capture privilege/permission/role membership information.
 
       --Set variables needed by setup script:
       DECLARE @auditName varchar(50), @auditPath varchar(260), @auditGuid uniqueidentifier, @auditFileSize varchar(4), @auditFileCount varchar(4)
@@ -91,7 +68,7 @@ class secure_sqlserver::stig::v79137 (
         require  => Sqlserver::Config[$instance],
       }
 
-      $sql_ddl2_delete_audit_spec = "--Delete the audit if it currently exists:
+      $sql_ddl2_disable_audit_spec = "--Delete the audit if it currently exists:
 
       --Disable the Server Audit Specification:
       DECLARE @auditName varchar(50), @disableSpecification nvarchar(max)
@@ -99,25 +76,43 @@ class secure_sqlserver::stig::v79137 (
       SET @disableSpecification = '
       IF EXISTS (SELECT 1 FROM sys.server_audit_specifications WHERE name = N''' + @auditName + '_SERVER_SPECIFICATION'')
       ALTER SERVER AUDIT SPECIFICATION [' + @auditName + '_SERVER_SPECIFICATION] WITH (STATE = OFF);'
-      EXEC(@disableSpecification)
+      EXEC(@disableSpecification)"
 
-      --Drop the Server Audit Specification:
+      sqlserver_tsql{ 'v79137-sql_ddl2_disable_audit_spec':
+        instance => $instance,
+        command  => $sql_ddl2_disable_audit_spec,
+        require  => Sqlserver::Config[$instance],
+      }
+
+      $sql_ddl3_drop_server_audit_spec = "--Drop the Server Audit Specification:
       DECLARE @auditName varchar(50), @dropSpecification nvarchar(max)
       SET @auditName = (SELECT Value FROM #SetupVars WHERE Variable = 'auditName')
       SET @dropSpecification = '
       IF EXISTS (SELECT 1 FROM sys.server_audit_specifications WHERE name = N''' + @auditName + '_SERVER_SPECIFICATION'')
       DROP SERVER AUDIT SPECIFICATION [' + @auditName + '_SERVER_SPECIFICATION];'
-      EXEC(@dropSpecification)
+      EXEC(@dropSpecification)"
 
-      --Disable the Server Audit:
+      sqlserver_tsql{ 'v79137-sql_ddl3_drop_server_audit_spec':
+        instance => $instance,
+        command  => $sql_ddl3_drop_server_audit_spec,
+        require  => Sqlserver::Config[$instance],
+      }
+
+      $sql_ddl4_disable_server_audit = "--Disable the Server Audit:
       DECLARE @auditName varchar(50), @disableAudit nvarchar(max)
       SET @auditName = (SELECT Value FROM #SetupVars WHERE Variable = 'auditName')
       SET @disableAudit = '
       IF EXISTS (SELECT 1 FROM sys.server_audits WHERE name = N''' + @auditName + ''')
       ALTER SERVER AUDIT [' + @auditName + '] WITH (STATE = OFF);'
-      EXEC(@disableAudit)
+      EXEC(@disableAudit)"
 
-      --Drop the Server Audit:
+      sqlserver_tsql{ 'v79137-sql_ddl4_disable_server_audit':
+        instance => $instance,
+        command  => $sql_ddl4_disable_server_audit,
+        require  => Sqlserver::Config[$instance],
+      }
+
+      $sql_ddl5_drop_server_audit = "--Drop the Server Audit:
       DECLARE @auditName varchar(50), @dropAudit nvarchar(max)
       SET @auditName = (SELECT Value FROM #SetupVars WHERE Variable = 'auditName')
       SET @dropAudit = '
@@ -125,13 +120,13 @@ class secure_sqlserver::stig::v79137 (
       DROP SERVER AUDIT [' + @auditName + '];'
       EXEC(@dropAudit)"
 
-      sqlserver_tsql{ 'v79137-sql_ddl2_delete_audit_spec':
+      sqlserver_tsql{ 'v79137-sql_ddl5_drop_server_audit':
         instance => $instance,
-        command  => $sql_ddl2_delete_audit_spec,
+        command  => $sql_ddl5_drop_server_audit,
         require  => Sqlserver::Config[$instance],
       }
 
-      $sql_ddl3_create_server_audit = "--Set up the SQL Server Audit:
+      $sql_ddl6_create_server_audit = "--Set up the SQL Server Audit:
       --Create the Server Audit:
       DECLARE @auditName varchar(50), @auditPath varchar(260), @auditGuid varchar(40), @auditFileSize varchar(4), @auditFileCount varchar(5)
 
@@ -189,13 +184,13 @@ class secure_sqlserver::stig::v79137 (
       '
       EXEC(@createStatement)"
 
-      sqlserver_tsql{ 'v79137-sql_ddl3_create_server_audit':
+      sqlserver_tsql{ 'v79137-sql_ddl6_create_server_audit':
         instance => $instance,
-        command  => $sql_ddl3_create_server_audit,
+        command  => $sql_ddl6_create_server_audit,
         require  => Sqlserver::Config[$instance],
       }
 
-      $sql_ddl4_turn_audit_on = "
+      $sql_ddl7_turn_audit_on = "
       --Turn on the Audit:
       DECLARE @auditName varchar(50), @enableAudit nvarchar(max)
       SET @auditName = (SELECT Value FROM #SetupVars WHERE Variable = 'auditName')
@@ -204,13 +199,13 @@ class secure_sqlserver::stig::v79137 (
       ALTER SERVER AUDIT [' + @auditName + '] WITH (STATE = ON);'
       EXEC(@enableAudit)"
 
-      sqlserver_tsql{ 'v79137-sql_ddl4_turn_audit_on':
+      sqlserver_tsql{ 'v79137-sql_ddl7_turn_audit_on':
         instance => $instance,
-        command  => $sql_ddl4_turn_audit_on,
+        command  => $sql_ddl7_turn_audit_on,
         require  => Sqlserver::Config[$instance],
       }
 
-      $sql_ddl5_create_server_audit_spec = "
+      $sql_ddl8_create_server_audit_spec = "
       --Create the server audit specifications:
       DECLARE @auditName varchar(50), @createSpecification nvarchar(max)
       SET @auditName = (SELECT Value FROM #SetupVars WHERE Variable = 'auditName')
@@ -221,20 +216,20 @@ class secure_sqlserver::stig::v79137 (
       WITH (STATE = ON);'
       EXEC(@createSpecification)"
 
-      sqlserver_tsql{ 'v79137-sql_ddl5_create_server_audit_spec':
+      sqlserver_tsql{ 'v79137-sql_ddl8_create_server_audit_spec':
         instance => $instance,
-        command  => $sql_ddl5_create_server_audit_spec,
+        command  => $sql_ddl8_create_server_audit_spec,
         require  => Sqlserver::Config[$instance],
       }
 
-      $sql_ddl6_clean_up = "
+      $sql_ddl9_clean_up = "
       --Clean up:
       DROP TABLE #SetupVars
       "
 
-      sqlserver_tsql{ 'v79137-sql_ddl6_clean_up':
+      sqlserver_tsql{ 'v79137-sql_ddl9_clean_up':
         instance => $instance,
-        command  => $sql_ddl6_clean_up,
+        command  => $sql_ddl9_clean_up,
         require  => Sqlserver::Config[$instance],
       }
     }
