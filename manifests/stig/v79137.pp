@@ -91,29 +91,29 @@ class secure_sqlserver::stig::v79137 (
       DROP SERVER AUDIT [' + @auditName5 + '];'
       EXEC(@dropAudit)
 
-      DECLARE @auditName6 varchar(50), @auditPath varchar(260), @auditGuid varchar(40), @auditFileSize varchar(4), @auditFileCount varchar(5)
+      DECLARE @auditName6 varchar(50), @auditPath2 varchar(260), @auditGuid2 varchar(40), @auditFileSize2 varchar(4), @auditFileCount2 varchar(5)
 
       SELECT @auditName6 = Value FROM #SetupVars WHERE Variable = 'auditName'
-      SELECT @auditPath = Value FROM #SetupVars WHERE Variable = 'auditPath'
-      SELECT @auditGuid = Value FROM #SetupVars WHERE Variable = 'auditGuid'
-      SELECT @auditFileSize = Value FROM #SetupVars WHERE Variable = 'auditFileSize'
-      SELECT @auditFileCount = Value FROM #SetupVars WHERE Variable = 'auditFileCount'
+      SELECT @auditPath2 = Value FROM #SetupVars WHERE Variable = 'auditPath'
+      SELECT @auditGuid2 = Value FROM #SetupVars WHERE Variable = 'auditGuid'
+      SELECT @auditFileSize2 = Value FROM #SetupVars WHERE Variable = 'auditFileSize'
+      SELECT @auditFileCount2 = Value FROM #SetupVars WHERE Variable = 'auditFileCount'
 
       DECLARE @createStatement nvarchar(max)
       SET @createStatement = '
       CREATE SERVER AUDIT [' + @auditName6 + ']
       TO FILE
       (
-      FILEPATH = ''' + @auditPath + '''
-      , MAXSIZE = ' + @auditFileSize + ' MB
-      , MAX_ROLLOVER_FILES = ' + CASE WHEN @auditFileCount = -1 THEN 'UNLIMITED' ELSE @auditFileCount END + '
+      FILEPATH = ''' + @auditPath2 + '''
+      , MAXSIZE = ' + @auditFileSize2 + ' MB
+      , MAX_ROLLOVER_FILES = ' + CASE WHEN @auditFileCount2 = -1 THEN 'UNLIMITED' ELSE @auditFileCount2 END + '
       , RESERVE_DISK_SPACE = OFF
       )
       WITH
       (
       QUEUE_DELAY = 1000
       , ON_FAILURE = SHUTDOWN
-      , AUDIT_GUID = ''' + @auditGuid + '''
+      , AUDIT_GUID = ''' + @auditGuid2 + '''
       )
       WHERE ([Schema_Name] = ''sys'' AND [Object_Name] = ''all_objects'')
       OR ([Schema_Name] = ''sys'' AND [Object_Name] = ''database_permissions'')
