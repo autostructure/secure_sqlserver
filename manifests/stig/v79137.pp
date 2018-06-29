@@ -27,11 +27,22 @@ class secure_sqlserver::stig::v79137 (
     ::secure_sqlserver::log { "v79137_auditable_events: >>${auditable_events}<<": }
     ::secure_sqlserver::log { "v79137_schema_object_access_group: >>${schema_object_access_group}<<": }
 
-    $test1 = $auditable_events==''?'empty_string':'empty_string_failed'
+    $test1 = ($auditable_events=='') ? {
+      true    => 'empty_string',
+      default => 'empty_string failed',
+    }
     ::secure_sqlserver::log { "empty string test result = ${test1}": }
-    $test2 = $auditable_events==undef?'undef':'undef_failed'
+
+    $test2 = ($auditable_events==undef) ? {
+      true    => 'undef',
+      default => 'undef failed',
+    }
     ::secure_sqlserver::log { "undef test result = ${test2}": }
-    $test3 = $auditable_events==[]?'empty_array':'empty_array_failed'
+
+    $test3 = ($auditable_events==[]) ? {
+      true    => 'empty_array',
+      default => 'empty_array failed',
+    }
     ::secure_sqlserver::log { "empty array test result = ${test3}": }
 
 
