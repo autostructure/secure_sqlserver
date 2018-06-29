@@ -24,6 +24,9 @@ class secure_sqlserver::stig::v79137 (
 
     # Fix...
 
+    ::secure_sqlserver::log { "v79137 - auditable_events:\n${auditable_events}": }
+    ::secure_sqlserver::log { "v79137 - schema_object_access_group:\n${schema_object_access_group}": }
+
     if $auditable_events == '' and $schema_object_access_group == '' {
 
       ::secure_sqlserver::log { 'v79137 - creating audit to capture privilege-permission-role changes.': }
