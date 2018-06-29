@@ -5,7 +5,7 @@ secure_sqlserver::log::loglevel: info
 # STIG enforcement
 
 # Database STIGs...
-secure_sqlserver::stig::v79061::enforced: true
+secure_sqlserver::stig::v79061::enforced: false
 
 # Instance STIGs...
 secure_sqlserver::stig::v79119::enforced: true
