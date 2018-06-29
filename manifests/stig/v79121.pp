@@ -7,13 +7,13 @@ class secure_sqlserver::stig::v79121 (
   Boolean          $enforced = false,
   Optional[String] $instance = 'MSSQLSERVER',
 ) {
-
-  # this requires a restart to take effect...
-  registry::value { 'v79121':
-    key   => 'HKEY_LOCAL_MACHINE\Software\Microsoft\MSSQLServer\MSSQLServer',
-    value => 'LoginMode',
-    type  => 'dword',
-    data  => '0x00000002',
+  if $enforced {
+    # this requires a restart to take effect...
+    registry::value { 'v79121':
+      key   => 'HKEY_LOCAL_MACHINE\Software\Microsoft\MSSQLServer\MSSQLServer',
+      value => 'LoginMode',
+      type  => 'dword',
+      data  => '0x00000002',
+    }
   }
-
 }

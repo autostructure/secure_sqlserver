@@ -14,17 +14,20 @@
 #      and all direct access to the information system; and
 # (iii) All account creation, modification, disabling, and termination actions.
 #
+##TODO:
+# 1. Check w/Charlie about necessity of auditpol/secpol setup
+# 2. Ask about audit criteria i, ii, iii above.
+#
 class secure_sqlserver::stig::v79133 (
   Boolean $enforced = false,
   String  $instance = 'MSSQLSERVER',
 ) {
 
-  ##TODO:
-  # 1. Check w/Charlie about necessity of auditpol/secpol setup
-  # 2. Ask about audit criteria i, ii, iii above.
+  if $enforced {
 
-  # setup auditable events
-  include ::secure_sqlserver::auditpol_setup
-  $auditable_events = $facts['sqlserver_auditable_events']
+    # setup auditable events
+    include ::secure_sqlserver::auditpol_setup
+    $auditable_events = $facts['sqlserver_auditable_events']
 
+  }
 }

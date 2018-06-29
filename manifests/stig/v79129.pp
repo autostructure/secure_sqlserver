@@ -13,39 +13,42 @@ class secure_sqlserver::stig::v79129 (
   Boolean $enforced = false,
   String  $instance = 'MSSQLSERVER',
 ) {
-  # make sure the "NT AUTHORITY\SYSTEM" user only has the public role assigned.
-  $system_user = 'NT AUTHORITY\SYSTEM'
+  if $enforced {
 
-  $assigned_roles = $facts['sqlserver_v79129_roles_assigned_to_nt_authority_system']
+    # make sure the "NT AUTHORITY\SYSTEM" user only has the public role assigned.
+    $system_user = 'NT AUTHORITY\SYSTEM'
 
-  $sql_server_roles = "SELECT srm.role_principal_id, sp1.name, srm.member_principal_id, sp2.name
-                        FROM sys.server_role_members srm
-             FULL OUTER JOIN sys.server_principals sp1
-                          ON srm.role_principal_id = sp1.principal_id
-             LEFT OUTER JOIN sys.server_principals sp2
-                          ON srm.member_principal_id = sp2.principal_id
-                       WHERE sp1.type = 'R'
-                         AND sp2.name = '${system_user}'"
+    $assigned_roles = $facts['sqlserver_v79129_roles_assigned_to_nt_authority_system']
 
-  $sql_db_roles =    "SELECT drm.role_principal_id, dp1.name, drm.member_principal_id, dp2.name
-                        FROM sys.database_role_members drm
-             FULL OUTER JOIN sys.database_principals dp1
-                          ON drm.role_principal_id = dp1.principal_id
-             LEFT OUTER JOIN sys.database_principals dp2
-                          ON drm.member_principal_id = dp2.principal_id
-                       WHERE dp1.type = 'R'
-                         AND dp2.name = '${system_user}'"
+    $sql_server_roles = "SELECT srm.role_principal_id, sp1.name, srm.member_principal_id, sp2.name
+                          FROM sys.server_role_members srm
+               FULL OUTER JOIN sys.server_principals sp1
+                            ON srm.role_principal_id = sp1.principal_id
+               LEFT OUTER JOIN sys.server_principals sp2
+                            ON srm.member_principal_id = sp2.principal_id
+                         WHERE sp1.type = 'R'
+                           AND sp2.name = '${system_user}'"
 
-  unless $assigned_roles == undef or $assigned_roles == '' {
-    $assigned_roles.each |$single_role| {
-      $sql_dcl = "ALTER SERVER ROLE '${single_role}' DROP MEMBER '${system_user}';"
+    $sql_db_roles =    "SELECT drm.role_principal_id, dp1.name, drm.member_principal_id, dp2.name
+                          FROM sys.database_role_members drm
+               FULL OUTER JOIN sys.database_principals dp1
+                            ON drm.role_principal_id = dp1.principal_id
+               LEFT OUTER JOIN sys.database_principals dp2
+                            ON drm.member_principal_id = dp2.principal_id
+                         WHERE dp1.type = 'R'
+                           AND dp2.name = '${system_user}'"
 
-      ::secure_sqlserver::log { "v79129_sql_dcl = \n${sql_dcl}": }
+    unless $assigned_roles == undef or $assigned_roles == '' {
+      $assigned_roles.each |$single_role| {
+        $sql_dcl = "ALTER SERVER ROLE '${single_role}' DROP MEMBER '${system_user}';"
 
-      sqlserver_tsql{ "drop_nt_authority_system_role_${single_role}":
-        instance => $instance,
-        command  => $sql_dcl,
-        require  => Sqlserver::Config[$instance],
+        ::secure_sqlserver::log { "v79129_sql_dcl = \n${sql_dcl}": }
+
+        sqlserver_tsql{ "drop_nt_authority_system_role_${single_role}":
+          instance => $instance,
+          command  => $sql_dcl,
+          require  => Sqlserver::Config[$instance],
+        }
       }
     }
   }
