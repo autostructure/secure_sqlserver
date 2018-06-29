@@ -60,7 +60,8 @@ class secure_sqlserver::stig::v79137 (
       ('auditPath', @auditPath),
       ('auditGuid', convert(varchar(40), @auditGuid)),
       ('auditFileSize', @auditFileSize),
-      ('auditFileCount', @auditFileCount)"
+      ('auditFileCount', @auditFileCount);
+      GO"
 
       sqlserver_tsql{ 'v79137-sql_ddl1_create_temp_table':
         instance => $instance,
