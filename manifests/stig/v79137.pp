@@ -1,9 +1,5 @@
-# v79135.pp
-# SQL Server must allow only the ISSM (or individuals or roles appointed by the ISSM)
-# to select which auditable events are to be audited.
-#
-# This is a separation of responsibilities.
-# Separating the audit administration from other administration (like blanket sysadmin).
+# v79137.pp
+# SQL Server must generate audit records when privileges/permissions are retrieved.
 #
 class secure_sqlserver::stig::v79137 (
   Boolean $enforced = false,
@@ -29,13 +25,14 @@ class secure_sqlserver::stig::v79137 (
 
       # Create a dedicated audit to capture the retrieval of privilege/permission/role membership information.
 
-      $sql_ddl = "--Create a dedicated audit to capture privilege/permission/role membership information.
+      $sql_ddl = "--
+      --Create a dedicated audit to capture the retrieval of privilege/permission/role-membership jinformation.
 
       --Set variables needed by setup script:
       DECLARE @auditName varchar(50), @auditPath varchar(260), @auditGuid uniqueidentifier, @auditFileSize varchar(4), @auditFileCount varchar(4)
 
       --Define the name of the audit:
-      SET @auditName = 'STIG_Audit_Permissions_Queries'
+      SET @auditName = 'STIG_AUDIT_PERMISSIONS_QUERIES'
 
       --Define the directory in which audit log files reside:
       SET @auditPath = 'C:\Program Files\Microsoft SQL Server\MSSQL13.SQL2016\MSSQL\Audits'
