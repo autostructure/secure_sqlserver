@@ -10,11 +10,11 @@
 Facter.add('sqlserver_v79165_file_changes') do
   confine operatingsystem: :windows
   setcode do
-    root = "c:\\Program Files\\Microsoft SQL Server\\MSSQL14.MSSQLSERVER\\MSSQL\\*"
-    cmd1 = "if (-NOT (Test-Path \"c:\\puppet.secure-sqlserver.filehash-baseline.json\")) { Get-FileHash -Path \"#{root}\" -Algorithm MD5 | ConvertTo-Json | Out-File \"c:\\puppet.secure-sqlserver.filehash-baseline.json\" }"# lint:ignore:140chars
-    cmd2 = "Get-FileHash -Path \"#{root}\" -Algorithm MD5 | ConvertTo-Json | Out-File \"c:\\puppet.secure-sqlserver.filehash-tempfile.json\""# lint:ignore:140chars
-    cmd3 = "Compare-Object $(Get-Content \"c:\\puppet.secure-sqlserver.filehash-baseline.json\") $(Get-Content \"c:\\puppet.secure-sqlserver.filehash-tempfile.json\")"# lint:ignore:140chars
-    cmd4 = "del \"c:\\puppet.secure-sqlserver.filehash-tempfile.json\""
+    root = 'c:\Program Files\Microsoft SQL Server\MSSQL14.MSSQLSERVER\MSSQL\*'
+    cmd1 = "if (-NOT (Test-Path 'c:\\puppet.secure-sqlserver.filehash-baseline.json')) { Get-FileHash -Path '#{root}' -Algorithm MD5 | ConvertTo-Json | Out-File 'c:\\puppet.secure-sqlserver.filehash-baseline.json' }"# lint:ignore:140chars
+    cmd2 = "Get-FileHash -Path '#{root}' -Algorithm MD5 | ConvertTo-Json | Out-File 'c:\\puppet.secure-sqlserver.filehash-tempfile.json'"# lint:ignore:140chars
+    cmd3 = "Compare-Object $(Get-Content 'c:\\puppet.secure-sqlserver.filehash-baseline.json') $(Get-Content 'c:\\puppet.secure-sqlserver.filehash-tempfile.json')"# lint:ignore:140chars
+    cmd4 = "del 'c:\\puppet.secure-sqlserver.filehash-tempfile.json'"
     Facter::Core::Execution.exec("powershell.exe -Command \"#{cmd1}\"")
     Facter::Core::Execution.exec("powershell.exe -Command \"#{cmd2}\"")
     result = Facter::Core::Execution.exec("powershell.exe -Command \"#{cmd3}\"")
