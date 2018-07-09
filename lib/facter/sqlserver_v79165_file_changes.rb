@@ -13,7 +13,7 @@ Facter.add('sqlserver_v79165_file_changes') do
     root = 'c:\Program Files\Microsoft SQL Server\MSSQL14.MSSQLSERVER\MSSQL\*'
     cmd1 = "if (-NOT (Test-Path 'c:\\puppet.secure-sqlserver.filehash-baseline.csv')) { Get-FileHash -Path '#{root}' -Algorithm MD5 | ConvertTo-Csv | Out-File 'c:\\puppet.secure-sqlserver.filehash-baseline.csv' }"# lint:ignore:140chars
     cmd2 = "Get-FileHash -Path '#{root}' -Algorithm MD5 | ConvertTo-Csv | Out-File 'c:\\puppet.secure-sqlserver.filehash-tempfile.csv'"# lint:ignore:140chars
-    cmd3 = "Compare-Object $(Get-Content 'c:\\puppet.secure-sqlserver.filehash-baseline.csv') $(Get-Content 'c:\\puppet.secure-sqlserver.filehash-tempfile.csv') | Select InputObject | Format-Table -HideTableHeaders"# lint:ignore:140chars
+    cmd3 = "Compare-Object $(Get-Content 'c:\\puppet.secure-sqlserver.filehash-baseline.csv') $(Get-Content 'c:\\puppet.secure-sqlserver.filehash-tempfile.csv') | Select InputObject | Format-Table -Wrap -HideTableHeaders"# lint:ignore:140chars
     cmd4 = "del 'c:\\puppet.secure-sqlserver.filehash-tempfile.json'"
     Facter::Core::Execution.exec("powershell.exe -Command \"#{cmd1}\"")
     Facter::Core::Execution.exec("powershell.exe -Command \"#{cmd2}\"")
