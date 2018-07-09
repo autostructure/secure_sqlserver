@@ -1,11 +1,13 @@
 # sqlserver_v79165_file_changes.rb
+# Rule: SQL Server must limit privileges to change software modules,
+# to include stored procedures, functions and triggers,
+# and links to software external to SQL Server.
 #
-# @return
-# @example
-#
-# Get-FileHash -Path "c:\Windows\Temp\* -Algorithm MD5 | ConvertTo-Json | Out-File "c:\puppet.secure-sqlserver.filehashes.json"
-# Get-FileHash -Path "c:\Windows\Temp\* -Algorithm MD5 | ConvertTo-Json | Out-File "c:\puppet.secure-sqlserver.temp.json"
-# Compare-Object $(Get-Content "c:\puppet.secure-sqlserver.filehashes.json") $(Get-Content "c:\puppet.secure-sqlserver.temp.json")
+# @return   Array of comma-separated values.
+# @example  facter -p
+#           sqlserver_v79165_file_changes =>
+#           "MD5","C5B78318255BDBED9B74A691E65A341D","C:\Program Files\Microsoft SQL Server\MSSQL14.MSSQLSERVER\MSSQL\testfile.txt"
+#           "MD5","68E4B3679171FA49D61E094789A54008","C:\Program Files\Microsoft SQL Server\MSSQL14.MSSQLSERVER\MSSQL\testfile.txt"
 #
 Facter.add('sqlserver_v79165_file_changes') do
   confine operatingsystem: :windows
@@ -19,6 +21,6 @@ Facter.add('sqlserver_v79165_file_changes') do
     Facter::Core::Execution.exec("powershell.exe -Command \"#{cmd2}\"")
     result = Facter::Core::Execution.exec("powershell.exe -Command \"#{cmd3}\"")
     Facter::Core::Execution.exec("powershell.exe -Command \"#{cmd4}\"")
-    result
+    result.split("\n")
   end
 end
