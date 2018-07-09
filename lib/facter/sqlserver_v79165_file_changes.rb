@@ -3,7 +3,10 @@
 # to include stored procedures, functions and triggers,
 # and links to software external to SQL Server.
 #
-# @return   Array of comma-separated values.
+# @return   List of comma-separated values.
+#           The powershell command might wrap the path, so newlines
+#           can divide rows or the path column value.  Therefore,
+#           Could not split results into an array via split("\n").
 # @example  facter -p
 #           sqlserver_v79165_file_changes =>
 #           "MD5","C5B78318255BDBED9B74A691E65A341D","C:\Program Files\Microsoft SQL Server\MSSQL14.MSSQLSERVER\MSSQL\testfile.txt"
@@ -21,6 +24,7 @@ Facter.add('sqlserver_v79165_file_changes') do
     Facter::Core::Execution.exec("powershell.exe -Command \"#{cmd2}\"")
     result = Facter::Core::Execution.exec("powershell.exe -Command \"#{cmd3}\"")
     Facter::Core::Execution.exec("powershell.exe -Command \"#{cmd4}\"")
-    result.split("\n")
+    result
+    #result.split("\n")
   end
 end
