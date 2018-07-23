@@ -20,24 +20,6 @@ class secure_sqlserver::stig::v79129 (
 
     $assigned_roles = $facts['sqlserver_v79129_roles_assigned_to_nt_authority_system']
 
-    $sql_server_roles = "SELECT srm.role_principal_id, sp1.name, srm.member_principal_id, sp2.name
-                          FROM sys.server_role_members srm
-               FULL OUTER JOIN sys.server_principals sp1
-                            ON srm.role_principal_id = sp1.principal_id
-               LEFT OUTER JOIN sys.server_principals sp2
-                            ON srm.member_principal_id = sp2.principal_id
-                         WHERE sp1.type = 'R'
-                           AND sp2.name = '${system_user}'"
-
-    $sql_db_roles =    "SELECT drm.role_principal_id, dp1.name, drm.member_principal_id, dp2.name
-                          FROM sys.database_role_members drm
-               FULL OUTER JOIN sys.database_principals dp1
-                            ON drm.role_principal_id = dp1.principal_id
-               LEFT OUTER JOIN sys.database_principals dp2
-                            ON drm.member_principal_id = dp2.principal_id
-                         WHERE dp1.type = 'R'
-                           AND dp2.name = '${system_user}'"
-
     unless $assigned_roles == undef or $assigned_roles == '' {
       $assigned_roles.each |$single_role| {
         $sql_dcl = "ALTER SERVER ROLE '${single_role}' DROP MEMBER '${system_user}';"
