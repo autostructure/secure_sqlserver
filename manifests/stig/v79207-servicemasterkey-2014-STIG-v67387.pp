@@ -1,9 +1,13 @@
-# This class manages DISA STIG vulnerability: V-67387
+# v79207.pp
 # The Service Master Key must be backed up, stored offline and off-site.
-# 
-class secure_sqlserver::stig::v67387 (
+#
+class secure_sqlserver::stig::v79207 (
   Boolean $enforced = false,
 ) {
+
+  # NOTE!!!!!
+  # 2014_STIG_v67387 code below (adapt this 2014 code for 2016)...
+
 
   #TODO: SME Questions...
   # 1. Is this handled procedurally?  Can it be automated?
