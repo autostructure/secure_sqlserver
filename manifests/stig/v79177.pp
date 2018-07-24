@@ -1,21 +1,18 @@
-# v79171.pp
-# Default demonstration and sample databases, database objects, and applications must be removed.
+# v79177.pp
+# Access to xp_cmdshell must be disabled, unless specifically required and approved.
 #
-# Remove demonstration databases:
-# 1. pubs
-# 2. Northwinds
-# 3. AdventureWorks
-# 4. WorldwideImporters
-#
-class secure_sqlserver::stig::v79171 (
+class secure_sqlserver::stig::v79177 (
   Boolean $enforced = false,
   String  $instance = 'MSSQLSERVER',
 ) {
   if $enforced {
 
-    $sql = 'DROP DATABASE IF EXISTS pubs, Northwinds, AdventureWorks, WorldwideImporters'
+    $sql = "EXEC sp_configure 'show advanced options', 1;
+RECONFIGURE;
+EXEC sp_configure 'xp_cmdshell', 0;
+RECONFIGURE;"
 
-    sqlserver_tsql{ 'v79171-drop-demo-databases':
+    sqlserver_tsql{ 'v79177-tsql-disable-xpcmdshell':
       instance => $instance,
       command  => $sql,
       require  => Sqlserver::Config[$instance],
