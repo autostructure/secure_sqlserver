@@ -15,7 +15,7 @@ class secure_sqlserver::stig::v79171 (
 
     $sql = 'DROP DATABASE IF EXISTS pubs, Northwinds, AdventureWorks, WorldwideImporters'
 
-    sqlserver_tsql{ 'v79171-drop-demo-databases':
+    sqlserver_tsql{ 'v79171-tsql-drop-demo-databases':
       instance => $instance,
       command  => $sql,
       require  => Sqlserver::Config[$instance],
