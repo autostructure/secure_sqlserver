@@ -8,7 +8,8 @@ Facter.add('sqlserver_service_account') do
   setcode do
 
     #Hiera.lookup('profile::windows_sqlserver::svc_acct')
-    Hiera.lookup('secure_sqlserver::stig::v79119::enforced')
-    
+    retval = Hiera.lookup('secure_sqlserver::stig::v79119::enforced')
+    retval
+
   end
 end
