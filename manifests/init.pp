@@ -3,9 +3,12 @@
 # @Usage
 # class { '::secure_sqlserver': }
 #
-class secure_sqlserver
-{
+class secure_sqlserver (
+  String $svc_acct,
+) {
 
-  class { '::secure_sqlserver::controller': }
+  class { '::secure_sqlserver::controller':
+    svc_acct => $svc_acct,
+  }
 
 }

@@ -2,14 +2,15 @@
 # Usage:
 # Class['::secure_sqlserver::controller']
 #
-class secure_sqlserver::controller
-{
+class secure_sqlserver::controller (
+  String $svc_acct,
+) {
 
   # TODO: Convert to 2016 after done w/2017 dev environment...
   #       $instances = $facts['sqlserver_instances']['SQL_2016'].keys
   # NOTE: using 'Down-Level Logon Name' format for usernames.
   $port = 1433
-  $service_account = "${facts['domain']}\\${facts['sqlserver_service_account']}"
+  $service_account = "${facts['domain']}\\${svc_acct}"
   $netbios_user = "${facts['domain']}\\${facts['id']}"
   $fqdn_user = "${facts['fqdn']}\\${facts['id']}"
 
