@@ -1,6 +1,7 @@
 # sqlserver_service_account.rb
 #
 require 'hiera'
+include 'lib/hiera.rb'
 
 Facter.add('sqlserver_service_account') do
   confine operatingsystem: :windows
