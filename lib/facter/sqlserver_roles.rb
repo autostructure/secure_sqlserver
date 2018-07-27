@@ -12,6 +12,8 @@ Facter.add('sqlserver_roles') do
   confine operatingsystem: :windows
   setcode do
 
+    # TODO: remove hard-coded return result and query the database.
+
     roles = []
 
     $sql_check_server_roles = "SELECT srm.role_principal_id, sp1.name, srm.member_principal_id, sp2.name

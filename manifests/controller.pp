@@ -9,6 +9,7 @@ class secure_sqlserver::controller
   #       $instances = $facts['sqlserver_instances']['SQL_2016'].keys
   # NOTE: using 'Down-Level Logon Name' format for usernames.
   $port = 1433
+  $service_account = "${facts['domain']}\\${facts['sqlserver_service_account']}"
   $netbios_user = "${facts['domain']}\\${facts['id']}"
   $fqdn_user = "${facts['fqdn']}\\${facts['id']}"
 
