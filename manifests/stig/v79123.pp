@@ -9,9 +9,9 @@ class secure_sqlserver::stig::v79123 (
   if $enforced {
     $fqdn = $facts['fqdn']
     $port = $::secure_sqlserver::controller::port
-    $netbios_user = $::secure_sqlserver::controller::netbios_user
-    $cmd_setspn_fqdn = "setspn -S MSSQLSvc/${fqdn} '${netbios_user}'"
-    $cmd_setspn_port = "setspn -S MSSQLSvc/${fqdn}:${port} '${netbios_user}'"
+    $user = $::secure_sqlserver::controller::service_account
+    $cmd_setspn_fqdn = "setspn -S MSSQLSvc/${fqdn} '${user}'"
+    $cmd_setspn_port = "setspn -S MSSQLSvc/${fqdn}:${port} '${user}'"
 
     exec { 'v79123_setspn_fqdn':
       path    => 'C:\Windows\system32',
