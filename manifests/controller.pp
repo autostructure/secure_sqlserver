@@ -10,9 +10,14 @@ class secure_sqlserver::controller (
   #       $instances = $facts['sqlserver_instances']['SQL_2016'].keys
   # NOTE: using 'Down-Level Logon Name' format for usernames.
   $port = 1433
-  $service_account = "${facts['domain']}\\${svc_acct}"
-  $netbios_user = "${facts['domain']}\\${facts['id']}"
+  $service_account = "${facts['hostname']}\\${svc_acct}"
+  $netbios_user = $facts['identity']['user']
   $fqdn_user = "${facts['fqdn']}\\${facts['id']}"
+
+  notify { 'secure_sqlserver:_controller_msg0_debug':
+    message  => "users: service_account=${service_account}; netbios_user=${netbios_user}; fqdn_user=${fqdn_user}",
+    loglevel => warning,
+  }
 
   ## TODO: Convert code to 2016
   #$instances = $facts['sqlserver_instances']['SQL_2016'].keys
