@@ -1,13 +1,17 @@
-# This class manages sqlserver classes.
+# This class manages other sqlserver classes.
+#
 # Usage:
-# Class['::secure_sqlserver::controller']
+# class { '::secure_sqlserver':
+#   svc_acct => '<username>',
+# }
+#
+# TODO: Convert to 2016 after done w/2017 dev environment...
+#       $instances = $facts['sqlserver_instances']['SQL_2016'].keys
 #
 class secure_sqlserver::controller (
   String $svc_acct,
 ) {
 
-  # TODO: Convert to 2016 after done w/2017 dev environment...
-  #       $instances = $facts['sqlserver_instances']['SQL_2016'].keys
   # NOTE: using 'Down-Level Logon Name' format for usernames.
   $port = 1433
   $service_account = "${facts['hostname']}\\${svc_acct}"
