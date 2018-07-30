@@ -1,5 +1,6 @@
 # This class manages DISA STIG vulnerability: V-79123
 # SQL Server must be configured to utilize the most-secure authentication method available.
+#
 # *** RESTART REQ'D ***
 #
 class secure_sqlserver::stig::v79123 (
