@@ -12,7 +12,7 @@
 # GROUP
 #
 # @return   An array of strings representing accounts using SQL Server authentication.
-# @example  ['user1','user2']
+# @example  ["public","dbo","guest"]
 #
 #
 require 'sqlserver_client'
@@ -21,8 +21,7 @@ Facter.add('sqlserver_sql_logins.rb') do
   confine operatingsystem: :windows
   setcode do
 
-    #sql = "SELECT name FROM sys.database_principals WHERE type_desc = 'SQL_USER' AND authentication_type_desc = 'DATABASE';"
-    sql = "SELECT name FROM sys.database_principals"
+    sql = "SELECT name FROM sys.database_principals WHERE type_desc = 'SQL_USER' AND authentication_type_desc = 'DATABASE';"
 
     Puppet.debug "sqlserver_sql_logins.rb sql...\n#{sql}"
 
