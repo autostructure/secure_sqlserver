@@ -19,7 +19,7 @@
 #
 require 'sqlserver_client'
 
-Facter.add('sqlserver_sql_authenticated_users.rb') do
+Facter.add('sqlserver_sql_authenticated_users') do
   confine operatingsystem: :windows
   setcode do
 
