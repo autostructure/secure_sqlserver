@@ -1,4 +1,4 @@
-# sqlserver_sql_logins.rb
+# sqlserver_sql_authenticated_users.rb
 #
 # Return users using SQL Server authentication, not Windows authentication.
 #
@@ -19,13 +19,13 @@
 #
 require 'sqlserver_client'
 
-Facter.add('sqlserver_sql_logins.rb') do
+Facter.add('sqlserver_sql_authenticated_users.rb') do
   confine operatingsystem: :windows
   setcode do
 
     sql = "SELECT name FROM sys.database_principals WHERE type_desc = 'SQL_USER' AND authentication_type_desc = 'DATABASE';"
 
-    Puppet.debug "sqlserver_sql_logins.rb sql...\n#{sql}"
+    Puppet.debug "sqlserver_sql_authenticated_users.rb sql...\n#{sql}"
 
     client = SqlServerClient.new
     client.open
