@@ -47,18 +47,30 @@ class secure_sqlserver::controller (
     instance => $single_instance,
   }
 
-  #$databases = $facts['sqlserver_databases']
+  # Next, cycle through all the databases and secure them...
 
-  #if empty($databases) {
-  #  fail('secure_sqlserver failure: No SQL Server 2016 databases were discovered.')
-  #}
+  $databases = $facts['sqlserver_databases']
 
-  #$databases.each |String $current_database| {
-  #  # using a define type over class, since we make multiple calls...
-  #  ::secure_windows::secure_database { "secure_database_${current_database}":
-  #    instance => $single_instance,
-  #    database => $current_database,
-  #  }
-  #}
+  if empty($databases) {
+    # fail('secure_sqlserver failure: No SQL Server 2016 databases were discovered.')
+    ::secure_sqlserver::log { 'No SQL Server 2016 databases were discovered.':
+      loglevel => warning,
+    }
+
+  }
+
+  $databases.each |String $database| {
+
+    ::secure_sqlserver::log { "Securing the '${database}' database...":
+      loglevel => notice,
+    }
+
+    # using a define type over class, since we make multiple calls...
+    ::secure_windows::secure_database { "secure_database_${database}":
+      instance => $single_instance,
+      database => $database,
+    }
+
+  }
 
 }
