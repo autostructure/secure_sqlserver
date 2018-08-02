@@ -13,7 +13,7 @@ Facter.add('sqlserver_enabled_contained_databases') do
 
     sql = "EXEC sp_configure 'contained database authentication'"
 
-    Puppet.debug "sqlserver_shared_accounts.rb sql...\n#{sql}"
+    Puppet.debug "sqlserver_enabled_contained_databases.rb sql...\n#{sql}"
 
     client = SqlServerClient.new
     client.open
@@ -21,6 +21,6 @@ Facter.add('sqlserver_enabled_contained_databases') do
     resultset = client.data
     client.close unless client.nil? || client.closed?
     resultset['config_value']) ? true : false
-    
+
   end
 end

@@ -21,14 +21,18 @@ class secure_sqlserver::stig::v79061 (
       }
     }
 
-    # Use Windows Authentication...
-    # set login mode to Windows authentication (not SQL Server authentication)
-    # this requires a restart to take effect...
-    registry::value { 'v79061':
-      key   => 'HKEY_LOCAL_MACHINE\Software\Microsoft\MSSQLServer\MSSQLServer',
-      value => 'LoginMode',
-      type  => 'dword',
-      data  => '0x00000002',
+    if $facts['sqlserver_authentication_mode'] != 'Windows Authentication' {
+      # Use Windows Authentication...
+      # set login mode to Windows authentication (not SQL Server authentication)
+      # this requires a restart to take effect...
+      registry::value { 'v79061':
+        key   => 'HKEY_LOCAL_MACHINE\Software\Microsoft\MSSQLServer\MSSQLServer',
+        value => 'LoginMode',
+        type  => 'dword',
+        data  => '0x00000002',
+      }
+
+      # reboot
     }
 
   }
