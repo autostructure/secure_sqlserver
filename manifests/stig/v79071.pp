@@ -2,6 +2,9 @@
 # SQL Server must protect against a user falsely repudiating by ensuring databases
 # are not in a trust relationship.
 #
+# NOTE:
+# If the database is MSDB, trustworthy is required to be enabled and therefore, this is not a finding.
+#
 class secure_sqlserver::stig::v79071 (
   Boolean       $enforced = false,
   String[1,16]  $instance = 'MSSQLSERVER',
@@ -10,14 +13,26 @@ class secure_sqlserver::stig::v79071 (
 
   if $enforced {
 
-    $sql_dcl = "ALTER DATABASE ${database} SET TRUSTWORTHY OFF"
+    $is_trustworthy_disabled = false
 
-    ::secure_sqlserver::log { "v79061_sql_dcl = \n${sql_dcl}": }
+    $db_array = $facts['sqlserver_databases_trustworthy_property']
+    $db_array.each |$db_hash| {
+      if downcase($db_hash['database_name']) == downcase($database) {
+        $is_trustworthy_disabled = $db_hash['is_trustworthy_on'] ? { 0 => true, 1 => false }
+      }
+    }
 
-    sqlserver_tsql{ "drop_user_${database}_${username}":
-      instance => $instance,
-      command  => $sql_dcl,
-      require  => Sqlserver::Config[$instance],
+    # If the database is MSDB, trustworthy is required to be enabled...
+    unless downcase($database) == 'msdb' || $is_trustworthy_disabled {
+      $sql_dcl = "ALTER DATABASE ${database} SET TRUSTWORTHY OFF"
+
+      ::secure_sqlserver::log { "v79071_sql_dcl = \n${sql_dcl}": }
+
+      sqlserver_tsql{ "drop_user_${database}_${username}":
+        instance => $instance,
+        command  => $sql_dcl,
+        require  => Sqlserver::Config[$instance],
+      }
     }
 
   }
