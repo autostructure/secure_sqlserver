@@ -7,16 +7,16 @@
 # *** RESTART REQ'D ***
 #
 class secure_sqlserver::stig::v79061 (
-  Boolean          $enforced = false,
-  Optional[String] $instance = 'MSSQLSERVER',
-  Optional[String] $database,
+  Boolean       $enforced = false,
+  String[1,16]  $instance = 'MSSQLSERVER',
+  String        $database,
 ) {
 
   if $enforced {
 
     # Disable Contained Databases...
     if !$facts['sqlserver_enabled_contained_databases'] {
-      notify { "Contained databases is enabled.  This is a finding per vulnerability V-79061.":
+      ::secure_sqlserver::log { "Contained databases is enabled.  This is a finding per vulnerability V-79061.":
         loglevel => warning,
       }
     }
@@ -31,8 +31,21 @@ class secure_sqlserver::stig::v79061 (
         type  => 'dword',
         data  => '0x00000002',
       }
-
       # reboot
+    }
+
+    $facts['sqlserver_sql_authenticated_users'].each |String $sql_login| {
+      unless $sql_login in ['dbo', 'public', 'sa'] {
+        $sql_dcl = "USE ${database}; DROP USER '${sql_login}';"
+
+        ::secure_sqlserver::log { "v79061_sql_dcl = \n${sql_dcl}": }
+
+        sqlserver_tsql{ "drop_user_${database}_${username}":
+          instance => $instance,
+          command  => $sql_dcl,
+          require  => Sqlserver::Config[$instance],
+        }
+      }
     }
 
   }
