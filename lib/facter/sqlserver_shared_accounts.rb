@@ -15,7 +15,7 @@
 # Type Description
 # ---- ------------------------
 # C    CERTIFICATE_MAPPED_LOGIN
-# R    SERVER_ROLE
+# R    DATABASE_ROLE
 # S    SQL_LOGIN
 # U    WINDOWS_LOGIN
 # G    GROUP

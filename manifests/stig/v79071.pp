@@ -28,7 +28,7 @@ class secure_sqlserver::stig::v79071 (
 
       ::secure_sqlserver::log { "v79071_sql_dcl = \n${sql_dcl}": }
 
-      sqlserver_tsql{ "drop_user_${database}_${username}":
+      sqlserver_tsql{ "v79071_alter_db_disable_trustworthy_${database}":
         instance => $instance,
         command  => $sql_dcl,
         require  => Sqlserver::Config[$instance],
