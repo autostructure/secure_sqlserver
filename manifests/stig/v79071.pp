@@ -23,7 +23,7 @@ class secure_sqlserver::stig::v79071 (
     }
 
     # If the database is MSDB, trustworthy is required to be enabled...
-    unless downcase($database) == 'msdb' || $is_trustworthy_disabled {
+    unless downcase($database) == 'msdb' or $is_trustworthy_disabled {
       $sql_dcl = "ALTER DATABASE ${database} SET TRUSTWORTHY OFF"
 
       ::secure_sqlserver::log { "v79071_sql_dcl = \n${sql_dcl}": }
