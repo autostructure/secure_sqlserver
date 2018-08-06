@@ -66,7 +66,7 @@ class secure_sqlserver::controller (
     }
 
     # using a define type over class, since we make multiple calls...
-    ::secure_windows::secure_database { "secure_database_${database}":
+    ::secure_sqlserver::secure_database { "secure_database_${database}":
       instance => $single_instance,
       database => $database,
     }
