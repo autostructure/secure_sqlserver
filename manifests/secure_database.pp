@@ -5,18 +5,17 @@ define secure_sqlserver::secure_database (
   String[1,128] $database,
 ) {
 
-  $class1 = "${instance}::${database}::secure_sqlserver::stig::v79061"
-  $class2 = "${instance}::${database}::secure_sqlserver::stig::v79071"
-
-  ::secure_sqlserver::log { "secure_database...\n${class1}\n${class2}": }
+  $prefix = "${instance}::${database}"
 
   # Database STIGs...
-  class { $class1 :
+  # using a define type over class, since we make multiple calls...
+
+  ::secure_sqlserver::stig::v79061 { "${prefix}-v79061":
     instance => $instance,
     database => $database,
   }
 
-  class { $class2 :
+  ::secure_sqlserver::stig::v79071 { "${prefix}-v79071":
     instance => $instance,
     database => $database,
   }
