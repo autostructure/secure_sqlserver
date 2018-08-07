@@ -6,7 +6,7 @@
 # U    WINDOWS_LOGIN
 # G    GROUP
 #
-class secure_sqlserver::stig::v79067 (
+define secure_sqlserver::stig::v79067 (
   Boolean       $enforced = false,
   String[1,16]  $instance = 'MSSQLSERVER',
   String        $database,

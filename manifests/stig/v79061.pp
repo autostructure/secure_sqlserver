@@ -6,7 +6,7 @@
 #
 # *** RESTART REQ'D ***
 #
-class secure_sqlserver::stig::v79061 (
+define secure_sqlserver::stig::v79061 (
   Boolean       $enforced = false,
   String[1,16]  $instance = 'MSSQLSERVER',
   String        $database,
