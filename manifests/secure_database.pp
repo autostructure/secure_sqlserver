@@ -6,12 +6,12 @@ define secure_sqlserver::secure_database (
 ) {
 
   # Database STIGs...
-  class { '::secure_sqlserver::stig::v79061':
+  class { "${instance}::${database}::secure_sqlserver::stig::v79061":
     instance => $instance,
     database => $database,
   }
 
-  class { '::secure_sqlserver::stig::v79071':
+  class { "${instance}::${database}::secure_sqlserver::stig::v79071":
     instance => $instance,
     database => $database,
   }
