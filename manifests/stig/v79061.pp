@@ -16,7 +16,7 @@ define secure_sqlserver::stig::v79061 (
 
     # Disable Contained Databases...
     if !$facts['sqlserver_enabled_contained_databases'] {
-      ::secure_sqlserver::log { "Contained databases is enabled.  This is a finding per vulnerability V-79061.":
+      ::secure_sqlserver::log { "***WARNING*** Contained databases is enabled. This is a finding per vulnerability V-79061.":
         loglevel => warning,
       }
     }
