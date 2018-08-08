@@ -3,7 +3,8 @@
 
 # Database STIGs...
 secure_sqlserver::stig::v79061::enforced: true
-secure_sqlserver::stig::v79061::enforced: true
+secure_sqlserver::stig::v79065::enforced: true
+secure_sqlserver::stig::v79071::enforced: true
 
 # Instance STIGs...
 secure_sqlserver::stig::v79119::enforced: true

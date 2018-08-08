@@ -14,7 +14,10 @@ define secure_sqlserver::secure_database (
     instance => $instance,
     database => $database,
   }
-
+  ::secure_sqlserver::stig::v79065 { "${prefix}-v79065":
+    instance => $instance,
+    database => $database,
+  }
   ::secure_sqlserver::stig::v79071 { "${prefix}-v79071":
     instance => $instance,
     database => $database,
