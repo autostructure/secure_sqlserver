@@ -33,7 +33,7 @@ define secure_sqlserver::secure_database (
     database => $database,
   }
   ::secure_sqlserver::stig::v79071 { "${prefix}-v79071":
-    enforced => true,
+    enforced => false,
     instance => $instance,
     database => $database,
   }
