@@ -21,7 +21,7 @@ class secure_sqlserver::stig::v79131 (
       $shared_accounts.each |$drop_user| {
         $sql_dcl = "DROP USER '${drop_user}';"
         ::secure_sqlserver::log { "v79131_sql_dcl = \n${sql_dcl}": }
-        sqlserver_tsql{ "remove_shared_account_${drop_user}":
+        sqlserver_tsql{ "remove_shared_server_account_${drop_user}":
           instance => $instance,
           command  => $sql_dcl,
           require  => Sqlserver::Config[$instance],
