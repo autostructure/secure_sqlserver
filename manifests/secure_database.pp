@@ -12,6 +12,11 @@ define secure_sqlserver::secure_database (
 
   # $enforced = hiera_lookup(::secure_sqlserver::stig::v79061::enforced)
 
+  notify{"${prefix}_secure_database_out":
+    message  => "instance=${instance}",
+    loglevel => warning,
+  }
+
   ::secure_sqlserver::stig::v79061 { "${prefix}-v79061":
     enforced => true,
     instance => $instance,
