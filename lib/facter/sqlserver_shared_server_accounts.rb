@@ -1,4 +1,4 @@
-# sqlserver_shared_accounts.rb
+# sqlserver_shared_server_accounts.rb
 #
 # SQL Server must protect against a user falsely repudiating by ensuring only
 # clearly unique Active Directory user accounts can connect to the instance.
@@ -28,13 +28,13 @@
 #
 require 'sqlserver_client'
 
-Facter.add('sqlserver_shared_accounts') do
+Facter.add('sqlserver_shared_server_accounts') do
   confine operatingsystem: :windows
   setcode do
 
     sql = "SELECT name FROM sys.server_principals WHERE type in ('U','G') AND name LIKE '%$'"
 
-    Puppet.debug "sqlserver_shared_accounts.rb sql...\n#{sql}"
+    Puppet.debug "sqlserver_shared_server_accounts.rb sql...\n#{sql}"
 
     client = SqlServerClient.new
     client.open

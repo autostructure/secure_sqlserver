@@ -15,7 +15,7 @@ define secure_sqlserver::stig::v79067 (
 
     $drop_users = []
 
-    $drop_users = $facts['sqlserver_shared_accounts_detail']
+    $drop_users = $facts['sqlserver_shared_database_accounts']
     $drop_users.each |$potential_dropped_user| {
 
       $sql_dcl = "DROP USER IF EXISTS ${potential_dropped_user}"

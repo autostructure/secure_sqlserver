@@ -16,7 +16,7 @@ class secure_sqlserver::stig::v79131 (
   String  $instance = 'MSSQLSERVER',
 ) {
   if $enforced {
-    $shared_accounts = $facts['sqlserver_shared_accounts']
+    $shared_accounts = $facts['sqlserver_shared_server_accounts']
     unless $shared_accounts == undef or $shared_accounts == '' {
       $shared_accounts.each |$drop_user| {
         $sql_dcl = "DROP USER '${drop_user}';"
