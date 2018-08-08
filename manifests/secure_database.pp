@@ -28,7 +28,7 @@ define secure_sqlserver::secure_database (
     database => $database,
   }
   ::secure_sqlserver::stig::v79067 { "${prefix}-v79067":
-    enforced => true,
+    enforced => false,
     instance => $instance,
     database => $database,
   }
