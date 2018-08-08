@@ -390,7 +390,7 @@ ExitFunction:
 END;
 GO"
 
-    notify { 'show_sql_1':
+    notify { 'show_sql_${database}_${username}':
       message  => $sql_database_permissions,
       loglevel => warning,
     }
