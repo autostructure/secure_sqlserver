@@ -4,7 +4,7 @@
 #
 # Similar to v79121
 #
-# *** RESTART REQ'D ***
+# *** REBOOT REQ'D ***
 #
 define secure_sqlserver::stig::v79061 (
   Boolean       $enforced = false,
@@ -40,7 +40,7 @@ define secure_sqlserver::stig::v79061 (
 
         ::secure_sqlserver::log { "${instance}\\${database}: v79061_sql_dcl = \n${sql_dcl}": }
 
-        sqlserver_tsql{ "drop_user_${instance}_${database}_${username}":
+        sqlserver_tsql { "v79061_drop_user_${instance}_${database}_${username}":
           instance => $instance,
           command  => $sql_dcl,
           require  => Sqlserver::Config[$instance],
