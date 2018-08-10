@@ -11,22 +11,21 @@ Facter.add('sqlserver_v79087_databases_is_master_key_encrypted_by_server') do
   confine operatingsystem: :windows
   setcode do
 
-    sql = "SELECT name FROM [master].sys.databases WHERE is_master_key_encrypted_by_server = 1 AND owner_sid <> 1 AND state = 0 AND name = #{database}"
-    sql = "SELECT name FROM [master].sys.databases WHERE is_master_key_encrypted_by_server = 1 AND owner_sid <> 1 AND state = 0 AND name = $database"
-
-    # (Note that this query assumes that the [sa] account is not used as the owner of application databases, in keeping with other STIG guidance. If this is not the case, modify the query accordingly.)
+    # Note:
+    # The query below assumes that the [sa] account is not used as the owner of application databases,
+    # in keeping with other STIG guidance. If this is not the case, modify the query accordingly.
+    # I removed the condition:
+    # AND owner_sid <> 1
+    sql = "SELECT name FROM [master].sys.databases WHERE is_master_key_encrypted_by_server = 1 AND state = 0"
 
     Puppet.debug "sqlserver_v79087_databases_is_master_key_encrypted_by_server.rb sql...\n#{sql}"
 
     client = SqlServerClient.new
     client.open
-    client.hasharray(sql)
+    client.columns(sql)
     resultset = client.data
     client.close unless client.nil? || client.closed?
-
-    #Puppet.debug "resultset[0]=#{resultset[0]}"
-
-    resultset[0]['config_value']==1 ? true : false
+    resultset
 
   end
 end
