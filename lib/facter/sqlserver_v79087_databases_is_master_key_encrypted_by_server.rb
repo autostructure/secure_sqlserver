@@ -22,7 +22,7 @@ Facter.add('sqlserver_v79087_databases_is_master_key_encrypted_by_server') do
 
     client = SqlServerClient.new
     client.open
-    client.columns(sql)
+    client.column(sql)
     resultset = client.data
     client.close unless client.nil? || client.closed?
     resultset

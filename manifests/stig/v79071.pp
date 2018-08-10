@@ -18,7 +18,7 @@ define secure_sqlserver::stig::v79071 (
     $db_array = $facts['sqlserver_databases_trustworthy_property']
     $db_array.each |$db_hash| {
       if downcase($db_hash['database_name']) == downcase($database) {
-        $is_trustworthy_disabled = $db_hash['is_trustworthy_on'] ? { 0 => true, 1 => false }
+        $is_trustworthy_disabled = $db_hash['is_trustworthy_on']
       }
     }
 
