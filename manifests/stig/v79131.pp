@@ -17,13 +17,13 @@ class secure_sqlserver::stig::v79131 (
 ) {
   if $enforced {
     $shared_accounts = $facts['sqlserver_shared_server_accounts']
-    unless $shared_accounts == undef or $shared_accounts == '' {
+    unless $shared_accounts == undef or empty($shared_accounts) {
       $shared_accounts.each |$drop_user| {
-        $sql_dcl = "DROP USER '${drop_user}';"
-        ::secure_sqlserver::log { "v79131_sql_dcl = \n${sql_dcl}": }
+        $sql = "DROP USER '${drop_user}';"
+        ::secure_sqlserver::log { "v79131 sql = \n${sql}": }
         sqlserver_tsql{ "remove_shared_server_account_${drop_user}":
           instance => $instance,
-          command  => $sql_dcl,
+          command  => $sql,
           require  => Sqlserver::Config[$instance],
         }
       }

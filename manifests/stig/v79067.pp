@@ -13,42 +13,17 @@ define secure_sqlserver::stig::v79067 (
   String        $database,
 ) {
   if $enforced {
-
-    $drop_users = []
-
-    $drop_users = $facts['sqlserver_shared_database_accounts']
-    $drop_users.each |$potential_dropped_user| {
-
-      $sql_dcl = "DROP USER IF EXISTS ${potential_dropped_user}"
-
-      ::secure_sqlserver::log { "v79067_sql_dcl = \n${sql_dcl}": }
-
-      sqlserver_tsql{ "v79067_drop_user_${database}_${username}":
-        instance => $instance,
-        command  => $sql_dcl,
-        require  => Sqlserver::Config[$instance],
-      }
-
-    }
-
-
-
-    # v79131
     $shared_accounts = $facts['sqlserver_shared_database_accounts']
-    unless $shared_accounts == undef or $shared_accounts == '' {
+    unless $shared_accounts == undef or empty($shared_accounts) {
       $shared_accounts.each |$drop_user| {
-        $sql_dcl = "DROP USER '${drop_user}';"
-        ::secure_sqlserver::log { "v79067_sql_dcl = \n${sql_dcl}": }
-        sqlserver_tsql{ "remove_shared_database_account_${drop_user}":
+        $sql = "DROP USER IF EXISTS ${drop_user}"
+        ::secure_sqlserver::log { "v79067 sql = \n${sql}": }
+        sqlserver_tsql{ "v79067_drop_user_${database}_${username}":
           instance => $instance,
-          command  => $sql_dcl,
+          command  => $sql,
           require  => Sqlserver::Config[$instance],
         }
       }
     }
-
-
-
-
   }
 }
