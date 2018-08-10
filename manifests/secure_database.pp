@@ -8,9 +8,7 @@ define secure_sqlserver::secure_database (
   $prefix = "${instance}::${database}"
 
   # Database STIGs...
-  # using a define type over class, since we make multiple calls...
-
-  # $enforced = hiera_lookup(::secure_sqlserver::stig::v79061::enforced)
+  # Using a define types over classes, since we invoke it more than once...
 
   notify { "${prefix}_secure_database_output" :
     message  => "instance=${instance}",
@@ -18,22 +16,22 @@ define secure_sqlserver::secure_database (
   }
 
   ::secure_sqlserver::stig::v79061 { "${prefix}-v79061":
-    enforced => false,
+    enforced => lookup('::secure_sqlserver::stig::v79061::enforced'),
     instance => $instance,
     database => $database,
   }
   ::secure_sqlserver::stig::v79065 { "${prefix}-v79065":
-    enforced => true,
+    enforced => lookup('::secure_sqlserver::stig::v79065::enforced'),
     instance => $instance,
     database => $database,
   }
   ::secure_sqlserver::stig::v79067 { "${prefix}-v79067":
-    enforced => false,
+    enforced => lookup('::secure_sqlserver::stig::v79067::enforced'),
     instance => $instance,
     database => $database,
   }
   ::secure_sqlserver::stig::v79071 { "${prefix}-v79071":
-    enforced => false,
+    enforced => lookup('::secure_sqlserver::stig::v79071::enforced'),
     instance => $instance,
     database => $database,
   }
