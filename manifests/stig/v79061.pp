@@ -14,11 +14,15 @@ define secure_sqlserver::stig::v79061 (
 
   if $enforced {
 
-    # Disable Contained Databases...
-    if !$facts['sqlserver_enabled_contained_databases'] {
+    # A contained databases contains both dats & metadata.
+    # Instead of storing metadata in the system databases, it is all contained within the database
+    # and not stored in master.
+    # Fail hardening if it is a contained database...
+    if $facts['sqlserver_enabled_contained_databases'] {
       ::secure_sqlserver::log { "***WARNING*** Contained databases is enabled on ${instance}\\${database}. This is a finding per vulnerability V-79061.":
         loglevel => warning,
       }
+      fail("***FAIL*** Contained databases is enabled on ${instance}\\${database}. This is a finding per vulnerability V-79061.  Stopping module execution.")
     }
 
     if $facts['sqlserver_authentication_mode'] != 'Windows Authentication' {
@@ -34,15 +38,18 @@ define secure_sqlserver::stig::v79061 (
       # reboot
     }
 
-    $facts['sqlserver_sql_authenticated_users'].each |String $sql_login| {
-      unless $sql_login in ['dbo', 'public', 'sa'] {
-        $sql_dcl = "USE ${database}; DROP USER '${sql_login}';"
+    # TODO: create yaml file for approved_users list.
+    $approved_users = ['guest']
 
-        ::secure_sqlserver::log { "${instance}\\${database}: v79061_sql_dcl = \n${sql_dcl}": }
+    $facts['sqlserver_sql_authenticated_users'].each |String $sql_login| {
+      unless $sql_login in $approved_users {
+        $sql = "USE ${database}; DROP USER '${sql_login}';"
+
+        ::secure_sqlserver::log { "${instance}\\${database}: v79061 sql = \n${sql}": }
 
         sqlserver_tsql { "v79061_drop_user_${instance}_${database}_${username}":
           instance => $instance,
-          command  => $sql_dcl,
+          command  => $sql,
           require  => Sqlserver::Config[$instance],
         }
       }
