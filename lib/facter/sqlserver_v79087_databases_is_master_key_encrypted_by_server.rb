@@ -14,8 +14,8 @@ Facter.add('sqlserver_v79087_databases_is_master_key_encrypted_by_server') do
     # Note:
     # The query below assumes that the [sa] account is not used as the owner of application databases,
     # in keeping with other STIG guidance. If this is not the case, modify the query accordingly.
-    # I removed the condition:
-    # AND owner_sid <> 1
+    # I don't want to exclude the [sa] account so I removed the condition:
+    # "AND owner_sid <> 1"
     sql = "SELECT name FROM [master].sys.databases WHERE is_master_key_encrypted_by_server = 1 AND state = 0"
 
     Puppet.debug "sqlserver_v79087_databases_is_master_key_encrypted_by_server.rb sql...\n#{sql}"
