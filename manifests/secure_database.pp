@@ -11,7 +11,7 @@ define secure_sqlserver::secure_database (
   # Using a define types over classes, since we invoke it more than once...
 
   notify { "${prefix}_secure_database_output" :
-    message  => "instance=${instance}",
+    message  => "instance\/database=${instance}\/${database}",
     loglevel => warning,
   }
 
