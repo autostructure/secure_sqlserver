@@ -1,13 +1,13 @@
-# sqlserver_v79087_databases_is_master_key_encrypted_by_server.rb
+# sqlserver_encryption_is_master_key_encrypted_by_server.rb
 #
-# @return   Hash array of databases and thier master key setting
+# @return   true/false
 #
 # Dependencies:
 # v79087
 #
 require 'sqlserver_client'
 
-Facter.add('sqlserver_v79087_databases_is_master_key_encrypted_by_server') do
+Facter.add('sqlserver_encryption_is_master_key_encrypted_by_server') do
   confine operatingsystem: :windows
   setcode do
 
@@ -18,7 +18,7 @@ Facter.add('sqlserver_v79087_databases_is_master_key_encrypted_by_server') do
     # "AND owner_sid <> 1"
     sql = "SELECT name FROM [master].sys.databases WHERE is_master_key_encrypted_by_server = 1 AND state = 0"
 
-    Puppet.debug "sqlserver_v79087_databases_is_master_key_encrypted_by_server.rb sql...\n#{sql}"
+    Puppet.debug "sqlserver_encryption_is_master_key_encrypted_by_server.rb sql...\n#{sql}"
 
     client = SqlServerClient.new
     client.open

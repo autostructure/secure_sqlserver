@@ -20,7 +20,7 @@ define secure_sqlserver::stig::v79087 (
     # AND name = $database
     # (Note that this query assumes that the [sa] account is not used as the owner of application databases, in keeping with other STIG guidance. If this is not the case, modify the query accordingly.)
 
-    if $facts['sqlserver_v79087_databases_is_master_key_encrypted_by_server'] {
+    if $facts['sqlserver_encryption_is_master_key_encrypted_by_server'] {
 
       # password regex test for at least:
       # a lowercase letter,
@@ -37,7 +37,7 @@ define secure_sqlserver::stig::v79087 (
       if $password =~ $regex_password_check {
         $sql = "USE ${database}; BACKUP MASTER KEY TO FILE = '${filepath}' ENCRYPTION BY PASSWORD = '${password}';"
         ::secure_sqlserver::log { "${instance}\\${database}: v79087 sql = \n${sql}": }
-        sqlserver_tsql{ "v79087_backup_database_master_key_${instance}_${database}_${username}":
+        sqlserver_tsql{ "v79087_database_master_key_backup_${instance}_${database}_${username}":
           instance => $instance,
           command  => $sql,
           require  => Sqlserver::Config[$instance],
