@@ -22,7 +22,7 @@ Facter.add('sqlserver_shared_database_accounts_detail') do
   confine operatingsystem: :windows
   setcode do
 
-    ret = []
+    retval = []
 
     sql = "SELECT name FROM sys.database_principals WHERE type in ('U','G') AND name LIKE '%$'"
 
@@ -33,14 +33,23 @@ Facter.add('sqlserver_shared_database_accounts_detail') do
     client.column(sql)
     resultset = client.data
     client.close unless client.nil? || client.closed?
-    
+
     resultset.each do |domain_user|
+
+      # username should NOT have a dollar sign at the end per STIG (you omit the $)...
       username = domain_user.match(/(?<=(?:\\|\/)).*$/)[1]
       cmd = "([ADSISearcher]\"(&(!ObjectCategory=Computer)(Name=#{username}))\").FindAll()"
-      line = Facter::Core::Execution.exec("powershell.exe -Command \"#{cmd}\"")
-      ret.push(line)
+
+      begin
+        line = Facter::Core::Execution.exec("powershell.exe -Command \"#{cmd}\"")
+        retval.push(username)
+      rescue StandardError => e
+        # Skip if there is no Active Directory, it will error.
+      end
+
     end
 
-    ret
+    retval
+
   end
 end
