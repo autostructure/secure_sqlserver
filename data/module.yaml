@@ -1,4 +1,24 @@
 ---
+# General defaults
+
+# V-79061
+secure_sqlserver::approved_sql_login_users:
+  - charlie
+  - jeff
+# Turn on encryption (TDE) for confidential or sensitive information.
+secure_sqlserver::transparent_data_encryption:
+  fakedb1:
+    certname: STIG_CERT_ENCRYPT_DB_FAKEDB1
+    password: password
+  fakedb2:
+    certname: STIG_CERT_ENCRYPT_DB_FAKEDB1
+    password: password
+# V-79085
+secure_sqlserver::database_master_key_encryption_password: p=P%BJ5E5h/;e8Xb
+secure_sqlserver::database_master_key_backup_file_encryption_password: p=P%BJ5E5h/;e8Xb
+secure_sqlserver::database_master_key_backup_file_encryption_filepath: C:\v79087-keyfile.txt
+
+
 # STIG enforcement
 
 # Database STIGs...

@@ -38,8 +38,9 @@ define secure_sqlserver::stig::v79061 (
       # reboot
     }
 
-    # TODO: create yaml file for approved_users list.
-    $approved_users = ['guest']
+    # yaml file contains approved_users, skip the DROP for any in the list.
+    # $approved_users = ['guest']
+    $approved_users = lookup('secure_sqlserver::approved_sql_login_users')
 
     $facts['sqlserver_sql_authenticated_users'].each |String $sql_login| {
       unless $sql_login in $approved_users {

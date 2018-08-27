@@ -9,7 +9,7 @@ class secure_sqlserver::stig::v79119 (
   if $enforced {
     # Make sure to use the renamed SA account here.
     $sa = 'sa'
-    $trigger_name = 'SQL_STIG_V79119_CONNECTION_LIMIT'
+    $trigger_name = 'STIG_TRIGGER_V79119_SESSIONLIMIT'
     $connection_limit = 1000
     $sql_check = "IF (SELECT COUNT(*) FROM master.sys.server_triggers WHERE name='${trigger_name}') = 0 THROW 50000, 'Missing STIG Trigger for V-79119.', 10"# lint:ignore:140chars
     $sql_trigger = "CREATE TRIGGER ${trigger_name}

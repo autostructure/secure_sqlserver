@@ -1,0 +1,6 @@
+---
+# MS SQL Server hardening properties...
+
+# Turn on encryption (TDE) for confidential or sensitive information.
+secure_sqlserver::enable_transparent_data_encryption: true
+secure_sqlserver::databases_targeted_for_encryption: fakedb

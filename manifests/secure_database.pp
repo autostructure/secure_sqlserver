@@ -5,13 +5,13 @@ define secure_sqlserver::secure_database (
   String[1,128] $database,
 ) {
 
-  $prefix = "${instance}::${database}"
+  $prefix = "${instance}\/${database}"
 
   # Database STIGs...
   # Using a define types over classes, since we invoke it more than once...
 
   notify { "${prefix}_secure_database_output" :
-    message  => "instance\/database=${instance}\/${database}",
+    message  => "instance\/database=${prefix}",
     loglevel => warning,
   }
 
