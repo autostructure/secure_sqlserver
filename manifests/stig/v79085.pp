@@ -10,7 +10,9 @@ define secure_sqlserver::stig::v79085 (
 ) {
   if $enforced {
 
-    unless empty($facts['sqlserver_encryption_is_master_key_encrypted_by_server'][${database}]) {
+    $master_key_is_encrypted = $database in $facts['sqlserver_encryption_is_master_key_encrypted_by_server']
+
+    if $master_key_is_encrypted {
 
       # password regex test for at least:
       # a lowercase letter,
@@ -38,7 +40,7 @@ define secure_sqlserver::stig::v79085 (
       }
 
     } else {
-      ::secure_sqlserver::log { "V-79085: ${instance}\\${database} is not encrypted.":
+      ::secure_sqlserver::log { "V-79085: ${instance}\\${database}: the master key is not encrypted.":
         loglevel => debug,
       }
     }
