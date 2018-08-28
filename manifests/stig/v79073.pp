@@ -52,6 +52,7 @@ define secure_sqlserver::stig::v79073 (
 
     # Step 3: Use REVOKE and/or DENY and/or ALTER SERVER ROLE ... DROP MEMBER ... statements
     #         to remove CONTROL DATABASE permission from logins that do not need it.
+    #         The database_principal cannot be a fixed database role or a server principal.
 
     $fact_array = $facts['sqlserver_audit_maintainer_roles_and_users']
 

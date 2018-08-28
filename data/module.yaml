@@ -15,6 +15,9 @@ secure_sqlserver::audit_maintainer_username:
   fakedb1: bogususer0
   fakedb2: bogususer1
 
+# V-79087
+secure_sqlserver::audit_filepath: C:\Windows\Temp
+
 # Turn on encryption (TDE) for confidential or sensitive information.
 secure_sqlserver::transparent_data_encryption:
   fakedb1:
