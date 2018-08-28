@@ -1,5 +1,5 @@
 ---
-# General defaults
+# Configuration Parameters
 
 # V-79061
 secure_sqlserver::approved_sql_login_users:
@@ -9,6 +9,11 @@ secure_sqlserver::approved_sql_login_users:
 # V-79067
 secure_sqlserver::approved_shared_accounts:
   - app1$
+
+# V-79073
+secure_sqlserver::audit_maintainer_username:
+  fakedb1: bogususer0
+  fakedb2: bogususer1
 
 # Turn on encryption (TDE) for confidential or sensitive information.
 secure_sqlserver::transparent_data_encryption:
@@ -25,7 +30,8 @@ secure_sqlserver::database_master_key_backup_file_encryption_password: p=P%BJ5E5
 secure_sqlserver::database_master_key_backup_file_encryption_filepath: C:\v79087-keyfile.txt
 
 
-# STIG enforcement
+
+# STIG Enforcement
 
 # Database STIGs...
 secure_sqlserver::stig::v79061::enforced: true

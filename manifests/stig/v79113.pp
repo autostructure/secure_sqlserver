@@ -4,14 +4,31 @@
 # SQL Server must use NSA-approved cryptography to protect classified information
 # in accordance with the data owners requirements.
 #
-# QUESTION: Am I creating a new master key here, or did 79085 take care of encrypting it???
-# $sql_master = "USE master;
-# CREATE MASTER KEY ENCRYPTION BY PASSWORD='${tde_password}';
+# NOTE:
+# Once the encryption is turned on, depending on the size of the database, it may take some time to complete.
+# You can monitor the status by querying the sys.dm_database_encryption_keys DMV.
+#
+# QUESTION:
+# Am I creating a new master key here, or did 79085 take care of encrypting it???
+# $sql_master = "USE master; CREATE MASTER KEY ENCRYPTION BY PASSWORD='${tde_password}';
 #
 # Enable Transparent Data Encryption (TDE):
 # There are two encryptions involved with TDE:
 # 1) a TDE certificate or TDE asymmetric key, and
 # 2) a symmetric database encryption key (DEK).
+#
+# DATA STRUCTURE:
+# {<database1> => {certname => <certificate1>, password => <cert_pwd1>}, <database2> => {certname => <certificate2>, password => <cert_pwd2>}, ...}
+#
+# EXAMPLE YAML:
+# ---
+# secure_sqlserver::transparent_data_encryption:
+#   fakedb1:
+#     certname: STIG_CERT_ENCRYPT_DB_FAKEDB1
+#     password: password
+#   fakedb2:
+#     certname: STIG_CERT_ENCRYPT_DB_FAKEDB1
+#     password: password
 #
 define secure_sqlserver::stig::v79113 (
   Boolean       $enforced = false,
@@ -60,9 +77,6 @@ define secure_sqlserver::stig::v79113 (
         command  => $sql,
         require  => Sqlserver::Config[$instance],
       }
-
-      # Once the encryption is turned on, depending on the size of the database, it may take some time to complete.
-      # You can monitor the status by querying the sys.dm_database_encryption_keys DMV.
 
       # Backup Certificate (not a requirement of this vulnerability)
       #
