@@ -64,7 +64,7 @@ define secure_sqlserver::stig::v79073 (
         $permission = $fact_hash['GrantedPermission']
         $user = empty($principal) ? { true => $role, false => $principal, default => $principal, }
         $sql_syntax = empty($permission) ? { true => 'ALTER ROLE db_owner DROP MEMBER', false => 'REVOKE CONTROL DATABASE FROM', }
-        $sql = $sql_syntax + " [${user}];"
+        $sql = "${sql_syntax} [${user}];"
         ::secure_sqlserver::log { "V-79073: revoke permission or alter role on ${instance}\\${database}: sql = \n${sql}": }
         sqlserver_tsql{ "v79073_database_audit_maintainers_revoke_or_drop_member_${user}_on_${instance}_${database}":
           instance => $instance,
