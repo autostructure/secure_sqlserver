@@ -101,7 +101,10 @@ define secure_sqlserver::stig::v79087 (
   if $enforced {
 
     # Add audit rule to detect access of the database master key (DMK):
-    unless empty($facts['sqlserver_encryption_is_master_key_encrypted_by_server'][${database}]) {
+
+    $master_key_is_encrypted = $database in $facts['sqlserver_encryption_is_master_key_encrypted_by_server']
+
+    if $master_key_is_encrypted {
 
       $audit_filepath = lookup('secure_sqlserver::audit_filepath')
 
