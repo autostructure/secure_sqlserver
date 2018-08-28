@@ -121,10 +121,6 @@ TO FILE ( FILEPATH ='${audit_filepath}' )
 
       $sql_enable_audit = "ALTER SERVER AUDIT [STIG_AUDIT_ENCRYPTION_KEYS] WITH (STATE = ON);"
 
-
-      #, ADD (UPDATE ON OBJECT::[sys].[key_encryptions] by [public])
-      #, ADD (DELETE ON OBJECT::[sys].[key_encryptions] by [public])
-
       ::secure_sqlserver::log { "V-79087: ${instance}\\${database}: sql (create_audit) = \n${sql_create_audit}": }
 
       sqlserver_tsql{ "v79087_create_audit_for_keys_${instance}_${database}":
@@ -152,5 +148,5 @@ TO FILE ( FILEPATH ='${audit_filepath}' )
     }
 
   }
-  
+
 }
