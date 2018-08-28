@@ -19,10 +19,10 @@ define secure_sqlserver::stig::v79067 (
 
     # yaml file contains approved_users, skip the DROP for any in the list...
     $approved_users = lookup('secure_sqlserver::approved_shared_accounts')
-    $shared_accounts = $facts['sqlserver_shared_database_accounts']
+    $remote_accounts = $facts['sqlserver_remote_database_accounts']
 
-    unless $shared_accounts == undef or empty($shared_accounts) {
-      $shared_accounts.each |$drop_user| {
+    unless $remote_accounts == undef or empty($remote_accounts) {
+      $remote_accounts.each |$drop_user| {
         unless $drop_user in $approved_users {
           $sql = "DROP USER IF EXISTS ${drop_user}"
           ::secure_sqlserver::log { "v79067 sql = \n${sql}": }

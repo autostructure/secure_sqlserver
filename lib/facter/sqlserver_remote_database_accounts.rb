@@ -1,6 +1,6 @@
-# sqlserver_shared_database_accounts_detail.rb
+# sqlserver_remote_database_accounts.rb
 # Same as 'sqlserver_shared_accounts', except more detail is added by calling
-# a powershell command.
+# a powershell command to check if user is from a remote computer.
 #
 # Type Description
 # ---- ------------------------
@@ -18,7 +18,7 @@
 #
 require 'sqlserver_client'
 
-Facter.add('sqlserver_shared_database_accounts_detail') do
+Facter.add('sqlserver_remote_database_accounts') do
   confine operatingsystem: :windows
   setcode do
 
@@ -26,7 +26,7 @@ Facter.add('sqlserver_shared_database_accounts_detail') do
 
     sql = "SELECT name FROM sys.database_principals WHERE type in ('U','G') AND name LIKE '%$'"
 
-    Puppet.debug "sqlserver_shared_database_accounts_detail.rb sql...\n#{sql}"
+    Puppet.debug "sqlserver_remote_database_accounts.rb sql...\n#{sql}"
 
     client = SqlServerClient.new
     client.open
