@@ -12,8 +12,10 @@ secure_sqlserver::approved_shared_accounts:
 
 # V-79073
 secure_sqlserver::audit_maintainer_username:
-  fakedb1: bogususer0
-  fakedb2: bogususer1
+  master: whoami1
+  model:  whoami2
+  msdb:   whoami3
+  tempdb: whoami4
 
 # V-79087
 secure_sqlserver::audit_filepath: C:\Windows\Temp

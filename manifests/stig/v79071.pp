@@ -22,8 +22,8 @@ define secure_sqlserver::stig::v79071 (
       }
     }
 
-    ::secure_sqlserver::log { "v79071: ${database}: is_trustworthy_disabled = ${is_trustworthy_enabled}":
-      loglevel => warning,
+    ::secure_sqlserver::log { "v79071: ${database}: is_trustworthy_enabled = ${is_trustworthy_enabled}":
+      loglevel => debug,
     }
 
     # If the database is MSDB, trustworthy is required to be enabled...
