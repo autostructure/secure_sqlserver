@@ -35,6 +35,7 @@ define secure_sqlserver::stig::v79073 (
       instance => $instance,
       command  => $sql_create,
       require  => Sqlserver::Config[$instance],
+      onlyif => "SELECT name FROM sys.database_principals WHERE name = 'DATABASE_AUDIT_MAINTAINERS' and type='R'",
     }
 
     # Step 2: Add audit maintainer user to new DATABASE_AUDIT_MAINTAINERS role...
@@ -63,7 +64,8 @@ define secure_sqlserver::stig::v79073 (
         $role = $fact_hash['Role']
         $permission = $fact_hash['GrantedPermission']
         # ALTER ROLE SQL...
-        if !empty($principal) and !empty($role) and $role=='db_owner' {
+        # NOTE: cannot use the special principal 'dbo'
+        if !empty($principal) and !empty($role) and $role=='db_owner' and downcase($principal)!='dbo' {
           $user = $principal
           $sql = "ALTER ROLE db_owner DROP MEMBER ${user};"
           ::secure_sqlserver::log { "V-79073: alter role on ${instance}\\${database}: sql = \n${sql}": }
@@ -74,7 +76,7 @@ define secure_sqlserver::stig::v79073 (
           }
         }
         # REVOKE CONTROL DATABASE SQL...
-        if !empty($principal) and !empty($permission) and ($permission=='CONTROL' or $permission=='ALTER ANY DATABASE AUDIT') {
+        if !empty($principal) and downcase($principal)!='dbo' and !empty($permission) and ($permission=='CONTROL' or $permission=='ALTER ANY DATABASE AUDIT') {
           $user = $principal
           $sql = "REVOKE ${permission} FROM ${user};"
           ::secure_sqlserver::log { "V-79073: revoke control database permission for ${user} on ${instance}\\${database}: sql = \n${sql}": }

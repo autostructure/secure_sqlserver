@@ -5,7 +5,7 @@ define secure_sqlserver::secure_database (
   String[1,128] $database,
 ) {
 
-  $prefix = "${instance}\/${database}"
+  $prefix = "${instance}\\${database}"
 
   # Database STIGs...
   # Using a define types over classes, since we invoke it more than once...
