@@ -50,7 +50,7 @@ define secure_sqlserver::stig::v79073 (
         instance => $instance,
         command  => $sql_add,
         require  => Sqlserver::Config[$instance],
-        onlyif   => "SELECT name FROM sys.database_principals WHERE name=${audit_user}",
+        onlyif   => "SELECT NULL WHERE NOT EXISTS (SELECT name FROM sys.database_principals WHERE name=${audit_user})",
       }
 
       $sql_add = "ALTER ROLE DATABASE_AUDIT_MAINTAINERS ADD MEMBER ${audit_user};"
