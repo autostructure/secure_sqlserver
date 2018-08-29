@@ -41,7 +41,7 @@ define secure_sqlserver::stig::v79073 (
 
     $audit_user = lookup('secure_sqlserver::audit_maintainer_username')[$database]
 
-    $sql_add = "ALTER ROLE DATABASE_AUDIT_MAINTAINERS ADD MEMBER [${audit_user}];"
+    $sql_add = "ALTER ROLE DATABASE_AUDIT_MAINTAINERS ADD MEMBER '${audit_user}';"
 
     ::secure_sqlserver::log { "V-79073: add member to role on ${instance}\\${database}: sql = \n${sql_add}": }
     sqlserver_tsql{ "v79073_database_audit_maintainers_add_member_${instance}_${database}":
@@ -62,14 +62,27 @@ define secure_sqlserver::stig::v79073 (
         $principal = $fact_hash['Principal']
         $role = $fact_hash['Role']
         $permission = $fact_hash['GrantedPermission']
-        $user = empty($principal) ? { true => $role, false => $principal, default => $principal, }
-        $sql_syntax = empty($permission) ? { true => 'ALTER ROLE db_owner DROP MEMBER', false => 'REVOKE CONTROL DATABASE FROM', }
-        $sql = "${sql_syntax} [${user}];"
-        ::secure_sqlserver::log { "V-79073: revoke permission or alter role on ${instance}\\${database}: sql = \n${sql}": }
-        sqlserver_tsql{ "v79073_database_audit_maintainers_revoke_or_drop_member_${user}_on_${instance}_${database}":
-          instance => $instance,
-          command  => $sql,
-          require  => Sqlserver::Config[$instance],
+        # ALTER ROLE SQL...
+        if !empty($principal) and !empty($role) and $role=='db_owner' {
+          $user = $principal
+          $sql = "ALTER ROLE db_owner DROP MEMBER ${user};"
+          ::secure_sqlserver::log { "V-79073: alter role on ${instance}\\${database}: sql = \n${sql}": }
+          sqlserver_tsql{ "v79073_database_audit_maintainers_drop_member_${user}_on_${instance}_${database}":
+            instance => $instance,
+            command  => $sql,
+            require  => Sqlserver::Config[$instance],
+          }
+        }
+        # REVOKE CONTROL DATABASE SQL...
+        if !empty($principal) and !empty($permission) and $permission=='CONTROL DATABASE' {
+          $user = $principal
+          $sql = "REVOKE CONTROL DATABASE FROM ${user};"
+          ::secure_sqlserver::log { "V-79073: revoke control database permission for ${user} on ${instance}\\${database}: sql = \n${sql}": }
+          sqlserver_tsql{ "v79073_database_audit_maintainers_revoke_permission_for_${user}_on_${instance}_${database}":
+            instance => $instance,
+            command  => $sql,
+            require  => Sqlserver::Config[$instance],
+          }
         }
       }
     }
