@@ -43,6 +43,16 @@ define secure_sqlserver::stig::v79073 (
     $audit_user = lookup('secure_sqlserver::audit_maintainer_username')[$database]
 
     unless empty($audit_user) {
+
+      $sql_new_user = "CREATE USER ${audit_user};"
+
+      sqlserver_tsql{ "v79073_database_audit_maintainers_add_member_${instance}_${database}":
+        instance => $instance,
+        command  => $sql_add,
+        require  => Sqlserver::Config[$instance],
+        onlyif   => "SELECT name FROM sys.database_principals WHERE name=${audit_user}",
+      }
+
       $sql_add = "ALTER ROLE DATABASE_AUDIT_MAINTAINERS ADD MEMBER ${audit_user};"
 
       ::secure_sqlserver::log { "V-79073: add member to role on ${instance}\\${database}: sql = \n${sql_add}": }
