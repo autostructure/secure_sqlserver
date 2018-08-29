@@ -28,7 +28,7 @@ FROM sys.database_principals DP
 LEFT OUTER JOIN sys.database_permissions DbPerm ON DP.principal_id = DbPerm.grantee_principal_id
 LEFT OUTER JOIN sys.database_role_members DRM ON DP.principal_id = DRM.member_principal_id
 INNER JOIN sys.database_principals R ON DRM.role_principal_id = R.principal_id
-WHERE DbPerm.permission_name IN ('CONTROL','ALTER ANY DATABASE AUDIT')
+WHERE DbPerm.permission_name IN ('CONTROL DATABASE','ALTER ANY DATABASE AUDIT')
 OR R.name IN ('db_owner')"
 
     Puppet.debug "sqlserver_audit_maintainer_roles_and_users.rb sql...\n#{sql}"
