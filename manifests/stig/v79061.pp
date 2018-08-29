@@ -33,12 +33,26 @@ define secure_sqlserver::stig::v79061 (
       # The puppetlabs-registry module has trouble with duplicate resources
       # even though I have a unique title below. So, as a fix, I am only
       # checking the registry once, by only checking when the master database calls this class.
-      registry::value { "v79061_${instance}_${database}":
-        key   => 'HKEY_LOCAL_MACHINE\Software\Microsoft\MSSQLServer\MSSQLServer',
-        value => 'LoginMode',
+      ::secure_sqlserver::log { "***v79061*** ${instance}\\${database}":
+        loglevel => warning,
+      }
+
+      if !defined(Registry_key['HKEY_LOCAL_MACHINE\Software\Microsoft\MSSQLServer\MSSQLServer']) {
+          registry_key { 'HKEY_LOCAL_MACHINE\Software\Microsoft\MSSQLServer\MSSQLServer': }
+      }
+
+      registry_value { 'HKEY_LOCAL_MACHINE\Software\Microsoft\MSSQLServer\MSSQLServer\LoginMode':
+        ensure => present,
         type  => 'dword',
         data  => '0x00000002',
       }
+
+      # registry::value { "v79061_${instance}_${database}":
+      #   key   => 'HKEY_LOCAL_MACHINE\Software\Microsoft\MSSQLServer\MSSQLServer',
+      #   value => 'LoginMode',
+      #   type  => 'dword',
+      #   data  => '0x00000002',
+      # }
       # reboot
     }
 
