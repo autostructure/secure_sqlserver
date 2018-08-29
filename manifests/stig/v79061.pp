@@ -29,17 +29,21 @@ define secure_sqlserver::stig::v79061 (
       # Use Windows Authentication...
       # set login mode to Windows authentication (not SQL Server authentication)
       # this requires a restart to take effect...
-      registry::value { "v79061_${instance}_${database}":
-        key   => 'HKEY_LOCAL_MACHINE\Software\Microsoft\MSSQLServer\MSSQLServer',
-        value => 'LoginMode',
-        type  => 'dword',
+      # registry::value { "v79061_${instance}_${database}":
+      #   key   => 'HKEY_LOCAL_MACHINE\Software\Microsoft\MSSQLServer\MSSQLServer',
+      #   value => 'LoginMode',
+      #   type  => 'dword',
+      #   data  => '0x00000002',
+      # }
+      registry_value { 'HKEY_LOCAL_MACHINE\Software\Microsoft\MSSQLServer\MSSQLServer\LoginMode':
+        ensure => present,
+        type  => dword,
         data  => '0x00000002',
       }
       # reboot
     }
 
     # yaml file contains approved_users, skip the DROP for any in the list.
-    # $approved_users = ['guest']
     $approved_users = lookup('secure_sqlserver::approved_sql_login_users')
 
     $facts['sqlserver_sql_authenticated_users'].each |String $sql_login| {

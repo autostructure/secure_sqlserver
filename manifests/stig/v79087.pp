@@ -92,6 +92,17 @@
 # 19267 COLUMN ENCRYPTION KEY
 # 19779 COLUMN MASTER KEY
 #
+# BEGIN TRY
+#     ALTER SERVER AUDIT SPECIFICATION <server audit spec name>
+#     WITH (STATE = OFF);
+# END TRY BEGIN CATCH END CATCH;
+# GO
+#
+# BEGIN TRY
+#     DROP SERVER AUDIT SPECIFICATION <server audit spec name>;
+# END TRY BEGIN CATCH END CATCH;
+# GO
+#
 define secure_sqlserver::stig::v79087 (
   Boolean       $enforced = false,
   String[1,16]  $instance = 'MSSQLSERVER',
@@ -109,7 +120,10 @@ define secure_sqlserver::stig::v79087 (
       $audit_filepath = lookup('secure_sqlserver::audit_filepath')
 
       $sql_create_audit = "CREATE SERVER AUDIT [STIG_AUDIT_ENCRYPTION_KEYS]
-TO FILE ( FILEPATH ='${audit_filepath}' )
+TO FILE ( FILEPATH ='${audit_filepath}'
+        , MAXSIZE = 10 MB
+        , MAX_FILES = 100000
+        , RESERVE_DISK_SPACE = OFF)
    WITH ( QUEUE_DELAY = 1000
         , ON_FAILURE = FAIL_OPERATION )
   WHERE class_type = 19277
