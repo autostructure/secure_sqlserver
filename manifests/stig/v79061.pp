@@ -2,7 +2,9 @@
 # SQL Server databases must integrate with an organization-level authentication/access mechanism
 # providing account management and automation for all users, groups, roles, and any other principals.
 #
-# Similar to v79121
+# NOTE: The sa login can only connect to the server by using SQL Server Authentication.
+#
+# NOTE: Similar to v79121
 #
 # *** REBOOT REQ'D ***
 #
@@ -30,16 +32,38 @@ define secure_sqlserver::stig::v79061 (
       # set login mode to Windows authentication (not SQL Server authentication)
       # this requires a restart to take effect.
       # NOTE:
+      # The sa login can only connect to the server by using SQL Server Authentication.
+      # NOTE:
       # The puppetlabs-registry module has trouble with duplicate resources
       # even though I have a unique title below. So, as a fix, I am only
       # checking the registry once, by only checking when the master database calls this class.
-      ::secure_sqlserver::log { "***v79061*** ${instance}\\${database}":
-        loglevel => warning,
+      # NOTE:
+      # The puppetlabs-registry module is difficult to work with, trying MS SQL Server's stored procedure for registry settings.
+
+      # ::secure_sqlserver::log { "***v79061*** ${instance}\\${database}":
+      #   loglevel => warning,
+      # }
+
+      $sql_4_reg = "EXECUTE master..xp_instance_regwrite 'HKEY_LOCAL_MACHINE','Software\Microsoft\MSSQLServer\MSSQLServer\','LoginMode','REG_DWORD', 2"
+
+      ::secure_sqlserver::log { "${instance}\\${database}: v79061 sql = \n${sql_4_reg}": }
+
+      sqlserver_tsql { "v79061_regwrite_${instance}_${database}_${username}":
+        instance => $instance,
+        command  => $sql_4_reg,
+        require  => Sqlserver::Config[$instance],
       }
 
-      if !defined(Registry_key['HKEY_LOCAL_MACHINE\Software\Microsoft\MSSQLServer\MSSQLServer']) {
-          registry_key { 'HKEY_LOCAL_MACHINE\Software\Microsoft\MSSQLServer\MSSQLServer': }
-      }
+      # if !defined(Registry_key['HKEY_LOCAL_MACHINE\Software\Microsoft\MSSQLServer\MSSQLServer']) {
+      #     registry_key { 'HKEY_LOCAL_MACHINE\Software\Microsoft\MSSQLServer\MSSQLServer': }
+      # }
+
+      # registry::value { "v79061_${instance}_${database}":
+      #   key   => 'HKEY_LOCAL_MACHINE\Software\Microsoft\MSSQLServer\MSSQLServer',
+      #   value => 'LoginMode',
+      #   type  => 'dword',
+      #   data  => '0x00000002',
+      # }
 
       # registry_value { 'HKEY_LOCAL_MACHINE\Software\Microsoft\MSSQLServer\MSSQLServer\LoginMode':
       #   ensure => present,
@@ -47,12 +71,6 @@ define secure_sqlserver::stig::v79061 (
       #   data  => '0x00000002',
       # }
 
-      registry::value { "v79061_${instance}_${database}":
-        key   => 'HKEY_LOCAL_MACHINE\Software\Microsoft\MSSQLServer\MSSQLServer',
-        value => 'LoginMode',
-        type  => 'dword',
-        data  => '0x00000002',
-      }
       # reboot
     }
 
