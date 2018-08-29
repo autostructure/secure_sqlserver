@@ -392,7 +392,7 @@ GO"
 
     notify { "v79065_show_sql_${instance}_${database}" :
       message  => $sql_database_permissions,
-      loglevel => warning,
+      loglevel => debug,
     }
 
 

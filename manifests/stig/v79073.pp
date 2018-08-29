@@ -69,22 +69,22 @@ define secure_sqlserver::stig::v79073 (
           $user = $principal
           $sql = "ALTER ROLE db_owner DROP MEMBER ${user};"
           ::secure_sqlserver::log { "V-79073: alter role on ${instance}\\${database}: sql = \n${sql}": }
-          sqlserver_tsql{ "v79073_database_audit_maintainers_drop_member_${user}_on_${instance}_${database}":
-            instance => $instance,
-            command  => $sql,
-            require  => Sqlserver::Config[$instance],
-          }
+          # sqlserver_tsql{ "v79073_database_audit_maintainers_drop_member_${user}_on_${instance}_${database}":
+          #   instance => $instance,
+          #   command  => $sql,
+          #   require  => Sqlserver::Config[$instance],
+          # }
         }
         # REVOKE CONTROL DATABASE SQL...
         if !empty($principal) and downcase($principal)!='dbo' and !empty($permission) and ($permission=='CONTROL DATABASE' or $permission=='ALTER ANY DATABASE AUDIT') {
           $user = $principal
           $sql = "REVOKE ${permission} FROM ${user};"
           ::secure_sqlserver::log { "V-79073: revoke control database permission for ${user} on ${instance}\\${database}: sql = \n${sql}": }
-          sqlserver_tsql{ "v79073_database_audit_maintainers_revoke_permission_for_${user}_on_${instance}_${database}":
-            instance => $instance,
-            command  => $sql,
-            require  => Sqlserver::Config[$instance],
-          }
+          # sqlserver_tsql{ "v79073_database_audit_maintainers_revoke_permission_for_${user}_on_${instance}_${database}":
+          #   instance => $instance,
+          #   command  => $sql,
+          #   require  => Sqlserver::Config[$instance],
+          # }
         }
       }
     }
