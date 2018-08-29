@@ -46,7 +46,7 @@ define secure_sqlserver::stig::v79073 (
 
       $sql_new_user = "CREATE USER ${audit_user};"
 
-      sqlserver_tsql{ "v79073_database_audit_maintainers_add_member_${instance}_${database}":
+      sqlserver_tsql{ "v79073_database_audit_maintainers_create_user_${instance}_${database}":
         instance => $instance,
         command  => $sql_add,
         require  => Sqlserver::Config[$instance],
