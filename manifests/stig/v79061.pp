@@ -25,19 +25,18 @@ define secure_sqlserver::stig::v79061 (
       fail("***FAIL*** Contained databases is enabled on ${instance}\\${database}. This is a finding per vulnerability V-79061.  Stopping module execution.")
     }
 
-    if $facts['sqlserver_authentication_mode'] != 'Windows Authentication' {
+    if $facts['sqlserver_authentication_mode'] != 'Windows Authentication' and downcase($database) == 'master' {
       # Use Windows Authentication...
       # set login mode to Windows authentication (not SQL Server authentication)
-      # this requires a restart to take effect...
-      # registry::value { "v79061_${instance}_${database}":
-      #   key   => 'HKEY_LOCAL_MACHINE\Software\Microsoft\MSSQLServer\MSSQLServer',
-      #   value => 'LoginMode',
-      #   type  => 'dword',
-      #   data  => '0x00000002',
-      # }
-      registry_value { 'HKEY_LOCAL_MACHINE\Software\Microsoft\MSSQLServer\MSSQLServer\LoginMode':
-        ensure => present,
-        type  => dword,
+      # this requires a restart to take effect.
+      # NOTE:
+      # The puppetlabs-registry module has trouble with duplicate resources
+      # even though I have a unique title below. So, as a fix, I am only
+      # checking the registry once, by only checking when the master database calls this class.
+      registry::value { "v79061_${instance}_${database}":
+        key   => 'HKEY_LOCAL_MACHINE\Software\Microsoft\MSSQLServer\MSSQLServer',
+        value => 'LoginMode',
+        type  => 'dword',
         data  => '0x00000002',
       }
       # reboot
