@@ -44,13 +44,13 @@ define secure_sqlserver::stig::v79061 (
       #   loglevel => warning,
       # }
 
-      $sql_4_reg = "EXECUTE master..xp_instance_regwrite 'HKEY_LOCAL_MACHINE','Software\Microsoft\MSSQLServer\MSSQLServer\','LoginMode','REG_DWORD', 2"
+      $sql = "EXECUTE master..xp_instance_regwrite 'HKEY_LOCAL_MACHINE','Software\Microsoft\MSSQLServer\MSSQLServer\','LoginMode','REG_DWORD', 2"
 
-      ::secure_sqlserver::log { "${instance}\\${database}: v79061 sql = \n${sql_4_reg}": }
+      ::secure_sqlserver::log { "${instance}\\${database}: v79061 sql = \n${sql}": }
 
       sqlserver_tsql { "v79061_regwrite_${instance}_${database}_${username}":
         instance => $instance,
-        command  => $sql_4_reg,
+        command  => $sql,
         require  => Sqlserver::Config[$instance],
       }
 
