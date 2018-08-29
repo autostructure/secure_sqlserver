@@ -44,11 +44,13 @@ define secure_sqlserver::stig::v79073 (
 
     unless empty($audit_user) {
 
-      $sql_new_user = "CREATE USER ${audit_user} WITHOUT LOGIN;"
+      $sql_new_user = "CREATE USER ${audit_user} WITHOUT LOGIN"
+
+      ::secure_sqlserver::log { "V-79073: create audit maintainer user '${audit_user}' on ${instance}\\${database}: sql = \n${sql_new_user}": }
 
       sqlserver_tsql{ "v79073_database_audit_maintainers_create_user_${instance}_${database}":
         instance => $instance,
-        command  => $sql_add,
+        command  => $sql_new_user,
         require  => Sqlserver::Config[$instance],
         onlyif   => "SELECT NULL WHERE NOT EXISTS (SELECT name FROM sys.database_principals WHERE name=${audit_user})",
       }
