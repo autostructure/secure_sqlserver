@@ -41,18 +41,18 @@ define secure_sqlserver::stig::v79061 (
           registry_key { 'HKEY_LOCAL_MACHINE\Software\Microsoft\MSSQLServer\MSSQLServer': }
       }
 
-      registry_value { 'HKEY_LOCAL_MACHINE\Software\Microsoft\MSSQLServer\MSSQLServer\LoginMode':
-        ensure => present,
-        type  => 'dword',
-        data  => '0x00000002',
-      }
-
-      # registry::value { "v79061_${instance}_${database}":
-      #   key   => 'HKEY_LOCAL_MACHINE\Software\Microsoft\MSSQLServer\MSSQLServer',
-      #   value => 'LoginMode',
+      # registry_value { 'HKEY_LOCAL_MACHINE\Software\Microsoft\MSSQLServer\MSSQLServer\LoginMode':
+      #   ensure => present,
       #   type  => 'dword',
       #   data  => '0x00000002',
       # }
+
+      registry::value { "v79061_${instance}_${database}":
+        key   => 'HKEY_LOCAL_MACHINE\Software\Microsoft\MSSQLServer\MSSQLServer',
+        value => 'LoginMode',
+        type  => 'dword',
+        data  => '0x00000002',
+      }
       # reboot
     }
 
