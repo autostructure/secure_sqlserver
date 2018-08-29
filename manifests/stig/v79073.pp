@@ -35,7 +35,7 @@ define secure_sqlserver::stig::v79073 (
       instance => $instance,
       command  => $sql_create,
       require  => Sqlserver::Config[$instance],
-      onlyif => "SELECT name FROM sys.database_principals WHERE name = 'DATABASE_AUDIT_MAINTAINERS' and type='R'",
+      onlyif => "IF NOT EXISTS (SELECT name FROM sys.database_principals WHERE name = 'DATABASE_AUDIT_MAINTAINERS' and type='R') THROW 50001, 'Missing DATABASE_AUDIT_MAINTAINERS role.', 10",
     }
 
     # Step 2: Add audit maintainer user to new DATABASE_AUDIT_MAINTAINERS role...
@@ -45,6 +45,8 @@ define secure_sqlserver::stig::v79073 (
     unless empty($audit_user) {
 
       $sql_new_user = "CREATE USER ${audit_user} WITHOUT LOGIN"
+      #$sql_check = "SELECT NULL WHERE NOT EXISTS (SELECT name FROM sys.database_principals WHERE name=${audit_user})"
+      $sql_check = "IF NOT EXISTS (SELECT name FROM sys.database_principals WHERE name=${audit_user}) THROW 50002, 'Missing auditing user.',10"
 
       ::secure_sqlserver::log { "V-79073: create audit maintainer user '${audit_user}' on ${instance}\\${database}: sql = \n${sql_new_user}": }
 
@@ -52,7 +54,7 @@ define secure_sqlserver::stig::v79073 (
         instance => $instance,
         command  => $sql_new_user,
         require  => Sqlserver::Config[$instance],
-        onlyif   => "SELECT NULL WHERE NOT EXISTS (SELECT name FROM sys.database_principals WHERE name=${audit_user})",
+        onlyif   => $sql_check,
       }
 
       $sql_add = "ALTER ROLE DATABASE_AUDIT_MAINTAINERS ADD MEMBER ${audit_user};"
