@@ -58,6 +58,7 @@ define secure_sqlserver::stig::v79113 (
 
       sqlserver_tsql{ "v79113_enable_tde_${instance}_${database}":
         instance => $instance,
+        database => $database,
         command  => $sql_master,
         require  => Sqlserver::Config[$instance],
       }
@@ -74,6 +75,7 @@ define secure_sqlserver::stig::v79113 (
 
       sqlserver_tsql{ "v79113_enable_tde_on_${instance}_${database}":
         instance => $instance,
+        database => $database,
         command  => $sql,
         require  => Sqlserver::Config[$instance],
       }

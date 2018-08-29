@@ -50,6 +50,7 @@ define secure_sqlserver::stig::v79061 (
 
       sqlserver_tsql { "v79061_regwrite_${instance}_${database}_${username}":
         instance => $instance,
+        database => $database,
         command  => $sql,
         require  => Sqlserver::Config[$instance],
       }
@@ -85,6 +86,7 @@ define secure_sqlserver::stig::v79061 (
 
         sqlserver_tsql { "v79061_drop_user_${instance}_${database}_${username}":
           instance => $instance,
+          database => $database,
           command  => $sql,
           require  => Sqlserver::Config[$instance],
         }

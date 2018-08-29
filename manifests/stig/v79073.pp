@@ -33,9 +33,10 @@ define secure_sqlserver::stig::v79073 (
     ::secure_sqlserver::log { "V-79073: create audit role on ${instance}\\${database}: sql = \n${sql_create}": }
     sqlserver_tsql{ "v79073_create_database_audit_maintainers_${instance}_${database}":
       instance => $instance,
+      database => $database,
       command  => $sql_create,
       require  => Sqlserver::Config[$instance],
-      onlyif => "IF NOT EXISTS (SELECT name FROM sys.database_principals WHERE name = 'DATABASE_AUDIT_MAINTAINERS' and type='R') THROW 50001, 'Missing DATABASE_AUDIT_MAINTAINERS role.', 10",
+      onlyif   => "IF NOT EXISTS (SELECT name FROM sys.database_principals WHERE name = 'DATABASE_AUDIT_MAINTAINERS' and type='R') THROW 50001, 'Missing DATABASE_AUDIT_MAINTAINERS role.', 10",
     }
 
     # Step 2: Add audit maintainer user to new DATABASE_AUDIT_MAINTAINERS role...
@@ -52,6 +53,7 @@ define secure_sqlserver::stig::v79073 (
 
       sqlserver_tsql{ "v79073_database_audit_maintainers_create_user_${instance}_${database}":
         instance => $instance,
+        database => $database,
         command  => $sql_new_user,
         require  => Sqlserver::Config[$instance],
         onlyif   => "IF NOT EXISTS (SELECT name FROM sys.database_principals WHERE name=${audit_user}) THROW 50002, 'Missing auditing user.',10",
@@ -63,6 +65,7 @@ define secure_sqlserver::stig::v79073 (
 
       sqlserver_tsql{ "v79073_database_audit_maintainers_add_member_${instance}_${database}":
         instance => $instance,
+        database => $database,
         command  => $sql_add,
         require  => Sqlserver::Config[$instance],
       }
@@ -88,6 +91,7 @@ define secure_sqlserver::stig::v79073 (
           ::secure_sqlserver::log { "V-79073: alter role on ${instance}\\${database}: sql = \n${sql}": }
           # sqlserver_tsql{ "v79073_database_audit_maintainers_drop_member_${user}_on_${instance}_${database}":
           #   instance => $instance,
+          #   database => $database,
           #   command  => $sql,
           #   require  => Sqlserver::Config[$instance],
           # }
@@ -101,6 +105,7 @@ define secure_sqlserver::stig::v79073 (
           ::secure_sqlserver::log { "V-79073: revoke control database permission for ${user} on ${instance}\\${database}: sql = \n${sql}": }
           # sqlserver_tsql{ "v79073_database_audit_maintainers_revoke_permission_for_${user}_on_${instance}_${database}":
           #   instance => $instance,
+          #   database => $database,
           #   command  => $sql,
           #   require  => Sqlserver::Config[$instance],
           # }

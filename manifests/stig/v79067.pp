@@ -28,6 +28,7 @@ define secure_sqlserver::stig::v79067 (
           ::secure_sqlserver::log { "v79067 sql = \n${sql}": }
           sqlserver_tsql{ "v79067_drop_shared_user_${database}_${username}":
             instance => $instance,
+            database => $database,
             command  => $sql,
             require  => Sqlserver::Config[$instance],
           }

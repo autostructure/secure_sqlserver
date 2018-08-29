@@ -142,6 +142,7 @@ TO FILE ( FILEPATH ='${audit_filepath}'
 
       sqlserver_tsql{ "v79087_create_audit_for_keys_${instance}_${database}":
         instance => $instance,
+        database => $database,
         command  => $sql_create_audit,
         require  => Sqlserver::Config[$instance],
       }
@@ -150,6 +151,7 @@ TO FILE ( FILEPATH ='${audit_filepath}'
 
       sqlserver_tsql{ "v79087_create_db_audit_spec_for_keys_${instance}_${database}":
         instance => $instance,
+        database => $database,
         command  => $sql_create_spec,
         require  => Sqlserver::Config[$instance],
       }
@@ -158,6 +160,7 @@ TO FILE ( FILEPATH ='${audit_filepath}'
 
       sqlserver_tsql{ "v79087_enable_audit_for_keys_${instance}_${database}":
         instance => $instance,
+        database => $database,
         command  => $sql_enable_audit,
         require  => Sqlserver::Config[$instance],
       }

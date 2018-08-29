@@ -34,6 +34,7 @@ define secure_sqlserver::stig::v79071 (
 
       sqlserver_tsql{ "v79071_alter_db_disable_trustworthy_${database}":
         instance => $instance,
+        database => $database,
         command  => $sql,
         require  => Sqlserver::Config[$instance],
       }

@@ -30,6 +30,7 @@ define secure_sqlserver::stig::v79085 (
         ::secure_sqlserver::log { "V-79085: ${instance}\\${database}: sql = \n${sql}": }
         sqlserver_tsql{ "v79085_database_master_key_password_${instance}_${database}":
           instance => $instance,
+          database => $database,
           command  => $sql,
           require  => Sqlserver::Config[$instance],
         }
