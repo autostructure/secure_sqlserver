@@ -13,30 +13,30 @@ define secure_sqlserver::stig::v79071 (
 
   if $enforced {
 
-    $is_trustworthy_disabled = false
+    $is_trustworthy_enabled = false
 
     $db_array = $facts['sqlserver_databases_trustworthy_property']
     $db_array.each |$db_hash| {
       if downcase($db_hash['database_name']) == downcase($database) {
-        $is_trustworthy_disabled = $db_hash['is_trustworthy_on']
+        $is_trustworthy_enabled = $db_hash['is_trustworthy_on']
       }
     }
 
-    ::secure_sqlserver::log { "v79071: ${database}: is_trustworthy_disabled = ${is_trustworthy_disabled}":
+    ::secure_sqlserver::log { "v79071: ${database}: is_trustworthy_disabled = ${is_trustworthy_enabled}":
       loglevel => warning,
     }
 
     # If the database is MSDB, trustworthy is required to be enabled...
-    unless downcase($database) == 'msdb' or $is_trustworthy_disabled {
-      $sql_dcl = "ALTER DATABASE ${database} SET TRUSTWORTHY OFF"
+    if downcase($database) != 'msdb' and $is_trustworthy_enabled {
+      $sql = "ALTER DATABASE ${database} SET TRUSTWORTHY OFF"
 
-      ::secure_sqlserver::log { "v79071_sql_dcl = \n${sql_dcl}": }
+      ::secure_sqlserver::log { "v79071: ${database}: sql = \n${sql}": }
 
-      # sqlserver_tsql{ "v79071_alter_db_disable_trustworthy_${database}":
-      #   instance => $instance,
-      #   command  => $sql_dcl,
-      #   require  => Sqlserver::Config[$instance],
-      # }
+      sqlserver_tsql{ "v79071_alter_db_disable_trustworthy_${database}":
+        instance => $instance,
+        command  => $sql,
+        require  => Sqlserver::Config[$instance],
+      }
     }
 
   }
