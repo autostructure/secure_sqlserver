@@ -46,8 +46,8 @@ define secure_sqlserver::stig::v79073 (
     unless empty($audit_user) {
 
       $sql_new_user = "CREATE USER ${audit_user} WITHOUT LOGIN"
-      #$sql_check = "SELECT NULL WHERE NOT EXISTS (SELECT name FROM sys.database_principals WHERE name=${audit_user})"
-      $sql_check = "IF NOT EXISTS (SELECT name FROM sys.database_principals WHERE name=${audit_user}) THROW 50002, 'Missing auditing user.',10"
+      # You need the single quotes around the username or t-sql thinks it a column...
+      $sql_check = "IF NOT EXISTS (SELECT name FROM sys.database_principals WHERE name='${audit_user}') THROW 50002, 'Missing auditing user.',10"
 
       ::secure_sqlserver::log { "V-79073: create audit maintainer user '${audit_user}' on ${instance}\\${database}: sql = \n${sql_new_user}": }
 
@@ -56,7 +56,7 @@ define secure_sqlserver::stig::v79073 (
         database => $database,
         command  => $sql_new_user,
         require  => Sqlserver::Config[$instance],
-        onlyif   => "IF NOT EXISTS (SELECT name FROM sys.database_principals WHERE name=${audit_user}) THROW 50002, 'Missing auditing user.',10",
+        onlyif   => "IF NOT EXISTS (SELECT name FROM sys.database_principals WHERE name='${audit_user}') THROW 50002, 'Missing auditing user.',10",
       }
 
       $sql_add = "ALTER ROLE DATABASE_AUDIT_MAINTAINERS ADD MEMBER ${audit_user};"
