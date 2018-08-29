@@ -27,7 +27,7 @@ class secure_sqlserver::controller (
   #$instances = $facts['sqlserver_instances']['SQL_2016'].keys
   $instances = $facts['sqlserver_instances']['SQL_2017'].keys
 
-  notify { 'secure_sqlserver:_controller_msg0_debug':
+  notify { 'secure_sqlserver:_controller_msg1_warning':
     message  => "***DEVELOPER NOTE*** Using SQL_2017 reference instead of SQL_2016 (FIX REQ'D)!!!",
     loglevel => warning,
   }
