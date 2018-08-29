@@ -97,9 +97,9 @@ define secure_sqlserver::stig::v79073 (
           # }
         }
         # REVOKE CONTROL DATABASE SQL...
-        $permission_left = $permission[1,7]
-        ::secure_sqlserver::log { "V-79073: permission[1,7]=${permission_left} on ${instance}\\${database}\\${principal}": }
-        if !empty($principal) and downcase($principal)!='dbo' and !empty($permission) and ($permission[1,7]=='CONTROL' or $permission=='ALTER ANY DATABASE AUDIT') {
+        $permission_left = $permission[0,3]
+        ::secure_sqlserver::log { "V-79073: permission[0,3]=${permission_left} on ${instance}\\${database}\\${principal}": }
+        if !empty($principal) and downcase($principal)!='dbo' and !empty($permission) and ($permission[0,6]=='CONTROL' or $permission=='ALTER ANY DATABASE AUDIT') {
           $user = $principal
           $sql = "REVOKE ${permission} FROM ${user};"
           ::secure_sqlserver::log { "V-79073: revoke control database permission for ${user} on ${instance}\\${database}: sql = \n${sql}": }
