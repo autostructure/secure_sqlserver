@@ -74,9 +74,9 @@ define secure_sqlserver::stig::v79073 (
           }
         }
         # REVOKE CONTROL DATABASE SQL...
-        if !empty($principal) and !empty($permission) and $permission=='CONTROL DATABASE' {
+        if !empty($principal) and !empty($permission) and ($permission=='CONTROL' or $permission=='ALTER ANY DATABASE AUDIT') {
           $user = $principal
-          $sql = "REVOKE CONTROL DATABASE FROM ${user};"
+          $sql = "REVOKE ${permission} FROM ${user};"
           ::secure_sqlserver::log { "V-79073: revoke control database permission for ${user} on ${instance}\\${database}: sql = \n${sql}": }
           sqlserver_tsql{ "v79073_database_audit_maintainers_revoke_permission_for_${user}_on_${instance}_${database}":
             instance => $instance,

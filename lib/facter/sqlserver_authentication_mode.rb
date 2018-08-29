@@ -11,7 +11,7 @@ Facter.add('sqlserver_authentication_mode') do
   confine operatingsystem: :windows
   setcode do
 
-    sql = "SELECT CASE serverproperty('IsIntegratedSecurityOnly') WHEN 1 THEN 'Windows Authentication' WHEN 0 THEN 'Windows and SQL Server Authentication' END"
+    sql = "SELECT CASE serverproperty('IsIntegratedSecurityOnly') WHEN 1 THEN 'Windows Authentication' WHEN 0 THEN 'SQL Server and Windows Authentication' END"
 
     Puppet.debug "sqlserver_authentication_mode.rb sql...\n#{sql}"
 
