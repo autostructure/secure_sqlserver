@@ -32,7 +32,7 @@ define secure_sqlserver::stig::v79071 (
 
       ::secure_sqlserver::log { "v79071: ${database}: sql = \n${sql}": }
 
-      sqlserver_tsql{ "v79071_alter_db_disable_trustworthy_${database}":
+      sqlserver_tsql{ "v79071_alter_db_disable_trustworthy_${instance}_${database}":
         instance => $instance,
         database => $database,
         command  => $sql,

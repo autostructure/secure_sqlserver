@@ -26,7 +26,7 @@ define secure_sqlserver::stig::v79067 (
         unless $drop_user in $approved_users {
           $sql = "DROP USER IF EXISTS ${drop_user}"
           ::secure_sqlserver::log { "v79067 sql = \n${sql}": }
-          sqlserver_tsql{ "v79067_drop_shared_user_${database}_${username}":
+          sqlserver_tsql{ "v79067_drop_shared_user_${instance}_${database}_${drop_user}":
             instance => $instance,
             database => $database,
             command  => $sql,

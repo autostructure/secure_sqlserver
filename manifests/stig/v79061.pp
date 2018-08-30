@@ -48,7 +48,7 @@ define secure_sqlserver::stig::v79061 (
 
       ::secure_sqlserver::log { "${instance}\\${database}: v79061 sql = \n${sql}": }
 
-      sqlserver_tsql { "v79061_regwrite_${instance}_${database}_${username}":
+      sqlserver_tsql { "v79061_regwrite_${instance}_${database}":
         instance => $instance,
         database => $database,
         command  => $sql,

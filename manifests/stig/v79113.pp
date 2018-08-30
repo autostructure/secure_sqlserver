@@ -47,33 +47,33 @@ define secure_sqlserver::stig::v79113 (
       $tde_cert_name = $tde_hash[$database]['certname']
       $tde_password = $tde_hash[$database]['password']
 
+      # master table sql...
+
       $sql_master = "USE master;
       CREATE CERTIFICATE ${tde_cert_name}
       ENCRYPTION BY PASSWORD = '${tde_password}'
       WITH
-      SUBJECT='TDE_DB_Encryption_${database}';"
+      SUBJECT='TDE_Encryption_for_DB_${database}';"
       # , EXPIRY_DATE = 'expiration date: yyyymmdd';S
 
-      ::secure_sqlserver::log { "V-79113: ${instance}\\${database}: sql = \n${sql_master}": }
+      ::secure_sqlserver::log { "V-79113: create tde certificate ${instance}\\${database}: sql = \n${sql_master}": }
 
-      sqlserver_tsql{ "v79113_enable_tde_${instance}_${database}":
+      sqlserver_tsql{ "v79113_create_cert_on_master_${instance}_${database}":
         instance => $instance,
-        database => $database,
         command  => $sql_master,
         require  => Sqlserver::Config[$instance],
       }
 
-      $sql = "USE ${database};
+      # database-specific sql...
 
-      CREATE DATABASE ENCRYPTION KEY
-      WITH ALGORITHM = AES_256
-      ENCRYPTION BY SERVER CERTIFICATE ${tde_cert_name};
+      # omitted 'USE ${database}' becuse sqlserver_tsql parameter 'database' will switch context.
+      # included two commands in one call to sqlserver_tsql so puppet don't re-order key creation and enabling auditing.
+      $sql = "CREATE DATABASE ENCRYPTION KEY WITH ALGORITHM = AES_256 ENCRYPTION BY SERVER CERTIFICATE ${tde_cert_name};
+  ALTER DATABASE ${database} SET ENCRYPTION ON;"
 
-      ALTER DATABASE ${database} SET ENCRYPTION ON;"
+      ::secure_sqlserver::log { "V-79113: create tde key and enable tde: ${instance}\\${database}: sql = \n${sql}": }
 
-      ::secure_sqlserver::log { "V-79113: ${instance}\\${database}: sql = \n${sql}": }
-
-      sqlserver_tsql{ "v79113_enable_tde_on_${instance}_${database}":
+      sqlserver_tsql{ "v79113_create_tde_key_and_enable_tde_on_${instance}_${database}":
         instance => $instance,
         database => $database,
         command  => $sql,
