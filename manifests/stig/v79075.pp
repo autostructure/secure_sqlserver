@@ -1,24 +1,9 @@
-# v79073.pp
+# v79075.pp
 #
-# This class manages DISA STIG vulnerability: V-79073
-# SQL Server must allow only the ISSM (or individuals or roles appointed by the ISSM)
-# to select which auditable events are to be audited.
-#
-# Fix Text:
-# Create a database role specifically for audit maintainers, and give it permission to maintain audits,
-# without granting it unnecessary permissions (The role name used here is an example; other names may be used.):
-#
-
-
-# QUESTION:
-#
-# How to I query the "database_principals" in a fact and get all databases info?
-# - Add a database column and iterate through all databases and append output from sys.database_principals
-# - Is there a view that combines all databases?
-
-# How to I query the "database_principals" in a fact and get all databases info? 1) Add a database column and iterate through all databases and append output from sys.database_principals, or 2) Is there a view that combines all databases?
-
-define secure_sqlserver::stig::v79073 (
+# This class manages DISA STIG vulnerability: V-79075
+# SQL Server must limit privileges to change software modules, to include stored procedures, functions, and triggers.
+# 
+define secure_sqlserver::stig::v79075 (
   Boolean       $enforced = false,
   String[1,16]  $instance = 'MSSQLSERVER',
   String        $database,

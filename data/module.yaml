@@ -45,6 +45,7 @@ secure_sqlserver::stig::v79065::enforced: true
 secure_sqlserver::stig::v79067::enforced: true
 secure_sqlserver::stig::v79071::enforced: true
 secure_sqlserver::stig::v79073::enforced: true
+secure_sqlserver::stig::v79075::enforced: true
 secure_sqlserver::stig::v79085::enforced: true
 secure_sqlserver::stig::v79087::enforced: true
 secure_sqlserver::stig::v79113::enforced: true
@@ -57,5 +58,4 @@ secure_sqlserver::stig::v79129::enforced: true
 secure_sqlserver::stig::v79131::enforced: true
 secure_sqlserver::stig::v79133::enforced: false
 secure_sqlserver::stig::v79135::enforced: false
-secure_sqlserver::stig::v79137::enforced: true
 secure_sqlserver::stig::v79137::enforced: false
