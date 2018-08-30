@@ -28,7 +28,8 @@ define secure_sqlserver::stig::v79073 (
 
     # Step 1: Create new audit role...
 
-    $sql_create = "USE ${database}; CREATE ROLE DATABASE_AUDIT_MAINTAINERS; GRANT ALTER ANY DATABASE AUDIT TO DATABASE_AUDIT_MAINTAINERS;"
+    # NOTE: omitting 'USE ${database};', the sqlserver_tsql's database parameter handles it.
+    $sql_create = "CREATE ROLE DATABASE_AUDIT_MAINTAINERS; GRANT ALTER ANY DATABASE AUDIT TO DATABASE_AUDIT_MAINTAINERS;"
 
     ::secure_sqlserver::log { "V-79073: create database_audit_maintainers audit role on ${instance}\\${database}: sql = \n${sql_create}": }
     sqlserver_tsql{ "v79073_create_database_audit_maintainers_${instance}_${database}":
@@ -63,7 +64,7 @@ define secure_sqlserver::stig::v79073 (
 
       ::secure_sqlserver::log { "V-79073: add member to role on ${instance}\\${database}: sql = \n${sql_add}": }
 
-      sqlserver_tsql{ "v79073_database_audit_maintainers_add_member_${instance}_${database}${audit_user}":
+      sqlserver_tsql{ "v79073_database_audit_maintainers_add_member_${instance}_${database}_${audit_user}":
         instance => $instance,
         database => $database,
         command  => $sql_add,
