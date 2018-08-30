@@ -82,7 +82,7 @@ THROW 50002, 'user not in database_audit_maintainers role.', 10"
         onlyif   => "IF NOT EXISTS (SELECT dp2.name [user] FROM sys.database_role_members drm
 FULL OUTER JOIN sys.database_principals dp1 ON drm.role_principal_id = dp1.principal_id
 LEFT OUTER JOIN sys.database_principals dp2 ON drm.member_principal_id = dp2.principal_id
-WHERE dp1.name = 'DATABASE_AUDIT_MAINTAINERS AND dp1.type = 'R' AND dp2.name = '${audit_user}' )
+WHERE dp1.name = 'DATABASE_AUDIT_MAINTAINERS' AND dp1.type = 'R' AND dp2.name = '${audit_user}' )
 THROW 50002, 'user not in database_audit_maintainers role.', 10",
       }
     }
