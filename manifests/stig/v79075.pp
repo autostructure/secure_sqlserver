@@ -2,7 +2,7 @@
 #
 # This class manages DISA STIG vulnerability: V-79075
 # SQL Server must limit privileges to change software modules, to include stored procedures, functions, and triggers.
-# 
+#
 define secure_sqlserver::stig::v79075 (
   Boolean       $enforced = false,
   String[1,16]  $instance = 'MSSQLSERVER',
