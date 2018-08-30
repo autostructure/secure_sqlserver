@@ -64,16 +64,6 @@ define secure_sqlserver::stig::v79073 (
 
       ::secure_sqlserver::log { "V-79073: add member to role on ${instance}\\${database}: sql = \n${sql_add}": }
 
-      $sql_onlyif = "IF NOT EXISTS (SELECT dp2.name [user] FROM sys.database_role_members drm
-FULL OUTER JOIN sys.database_principals dp1 ON drm.role_principal_id = dp1.principal_id
-LEFT OUTER JOIN sys.database_principals dp2 ON drm.member_principal_id = dp2.principal_id
-WHERE dp1.name = 'DATABASE_AUDIT_MAINTAINERS AND dp1.type = 'R' AND dp2.name = '${audit_user}' )
-THROW 50002, 'user not in database_audit_maintainers role.', 10"
-
-      ::secure_sqlserver::log { "V-79073: onlyif ${instance}\\${database}: sql_onlyif = \n${sql_onlyif}":
-        loglevel => notice,
-      }
-
       sqlserver_tsql{ "v79073_database_audit_maintainers_add_member_${instance}_${database}_${audit_user}":
         instance => $instance,
         database => $database,
