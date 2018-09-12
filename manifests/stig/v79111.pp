@@ -3,6 +3,23 @@
 # This class manages DISA STIG vulnerability: V-79111
 # SQL Server must enforce access restrictions associated with changes to the configuration of the database(s).
 #
+# Fact SQL:
+#
+# sql = "SELECT p.name AS Principal,
+# p.type_desc AS Type,
+# r.name AS Role
+# FROM sys.database_principals p
+# INNER JOIN sys.database_role_members rm ON p.principal_id = rm.member_principal_id
+# INNER JOIN sys.database_principals r ON rm.role_principal_id = r.principal_id
+# WHERE r.name = 'db_owner'
+# UNION ALL
+# SELECT l.name AS Principal,
+# l.type_desc AS Type,
+# 'dbo' AS Role
+# FROM sys.databases d
+# INNER JOIN sys.server_principals l ON d.owner_sid = l.sid
+# WHERE d.name = DB_NAME()"
+#
 define secure_sqlserver::stig::v79111 (
   Boolean       $enforced = false,
   String[1,16]  $instance = 'MSSQLSERVER',
@@ -11,47 +28,27 @@ define secure_sqlserver::stig::v79111 (
 
   if $enforced {
 
-    # Supporting fact sql (display to console only)
-
-    $sql_fact = "SELECT p.name AS Principal,
-p.type_desc AS Type,
-r.name AS Role
-FROM sys.database_principals p
-INNER JOIN sys.database_role_members rm ON p.principal_id = rm.member_principal_id
-INNER JOIN sys.database_principals r ON rm.role_principal_id = r.principal_id
-WHERE r.name = 'db_owner'
-UNION ALL
-SELECT l.name AS Principal,
-l.type_desc AS Type,
-'dbo' AS Role
-FROM sys.databases d
-INNER JOIN sys.server_principals l ON d.owner_sid = l.sid
-WHERE d.name = DB_NAME()"
-
-    ::secure_sqlserver::log { "V-79111: ${instance}\\${database}: sql_fact=${sql_fact}":
-      loglevel => notice,
-    }
-
-    # STIG coding...
-
     $fact_array = $facts['sqlserver_database_roles_and_users']
 
-    $fact_array.each |$fact_hash| {
-      unless empty($fact_hash['Principal']) or empty($fact_hash['Role']) {
-        $user = $fact_hash['Principal']
-        $role = $fact_hash['Role']
-        $sql = "ALTER ROLE ${role} DROP MEMBER ${user};"
+    unless empty($fact_array) {
+      $fact_array.each |$fact_hash| {
+        unless empty($fact_hash['Principal']) or empty($fact_hash['Role']) {
 
-        ::secure_sqlserver::log { "V-79111: drop user, ${user}, from role, ${role}, on ${instance}\\${database}: sql = \n${sql}": }
-        sqlserver_tsql{ "v79111_database_audit_maintainers_drop_member_${user}_from_role_${role}_on_${instance}_${database}":
-          instance => $instance,
-          database => $database,
-          command  => $sql,
-          require  => Sqlserver::Config[$instance],
+          $user = $fact_hash['Principal']
+          $role = $fact_hash['Role']
+          $sql = "ALTER ROLE ${role} DROP MEMBER ${user};"
+
+          ::secure_sqlserver::log { "V-79111: drop user, ${user}, from role, ${role}, on ${instance}\\${database}: sql = \n${sql}": }
+          sqlserver_tsql{ "v79111_database_audit_maintainers_drop_member_${user}_from_role_${role}_on_${instance}_${database}":
+            instance => $instance,
+            database => $database,
+            command  => $sql,
+            require  => Sqlserver::Config[$instance],
+          }
+
         }
       }
     }
-
     # Set the owner of the database to an authorized login:
     # https://msdn.microsoft.com/en-us/library/ms187359.aspx
 
