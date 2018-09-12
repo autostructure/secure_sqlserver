@@ -29,7 +29,7 @@ FROM sys.databases d
 INNER JOIN sys.server_principals l ON d.owner_sid = l.sid
 WHERE d.name = DB_NAME()"
 
-    Puppet.debug "sqlserver_audit_maintainer_roles_and_users.rb sql...\n#{sql}"
+    Puppet.debug "sqlserver_database_roles_and_users.rb sql...\n#{sql}"
 
     client = SqlServerClient.new
     client.open
