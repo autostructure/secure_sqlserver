@@ -40,7 +40,7 @@ define secure_sqlserver::stig::v79111 (
 
           ::secure_sqlserver::log { "V-79111: drop user, ${user}, from role, ${role}, on ${instance}\\${database}: sql = \n${sql}": }
 
-          sqlserver_tsql{ "v79111_database_audit_maintainers_drop_member_${user}_from_role_${role}_on_${instance}_${database}":
+          sqlserver_tsql{ "v79111_database_owners_drop_member_${user}_from_role_${role}_on_${instance}_${database}":
             instance => $instance,
             database => $database,
             command  => $sql,
@@ -70,7 +70,7 @@ define secure_sqlserver::stig::v79111 (
         onlyif   => $sql_check,
       }
 
-      $sql = "ALTER AUTHORIZATION ON database:${database} TO ${new_db_owner};"
+      $sql = "ALTER AUTHORIZATION ON database::${database} TO ${new_db_owner};"
 
       ::secure_sqlserver::log { "V-79111: alter authorization set db_owner to ${new_db_owner} on ${instance}\\${database}: sql = \n${sql}": }
 
