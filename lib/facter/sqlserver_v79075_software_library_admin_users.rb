@@ -6,7 +6,7 @@ require 'sqlserver_client'
 
 Facter.add('sqlserver_v79075_software_library_admin_users') do
   confine operatingsystem: :windows
-  setcode d o
+  setcode do
 
     # sql = "SELECT P.type_desc AS principal_type, P.name AS principal_name, O.type_desc,
     # CASE class
