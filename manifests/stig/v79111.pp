@@ -39,6 +39,7 @@ define secure_sqlserver::stig::v79111 (
           $sql = "ALTER ROLE ${role} DROP MEMBER ${user};"
 
           ::secure_sqlserver::log { "V-79111: drop user, ${user}, from role, ${role}, on ${instance}\\${database}: sql = \n${sql}": }
+
           sqlserver_tsql{ "v79111_database_audit_maintainers_drop_member_${user}_from_role_${role}_on_${instance}_${database}":
             instance => $instance,
             database => $database,
@@ -52,7 +53,7 @@ define secure_sqlserver::stig::v79111 (
     # Set the owner of the database to an authorized login:
     # https://msdn.microsoft.com/en-us/library/ms187359.aspx
 
-    $new_db_owner =lookup('sqlserver_database_roles_and_users')[$database]
+    $new_db_owner =lookup('secure_sqlserver::new_database_owner')[$database]
 
     unless empty($new_db_owner) {
 
