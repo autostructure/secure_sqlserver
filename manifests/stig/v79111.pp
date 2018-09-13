@@ -32,7 +32,9 @@ define secure_sqlserver::stig::v79111 (
 
     unless empty($fact_array) {
       $fact_array.each |$fact_hash| {
-        unless empty($fact_hash['Principal']) or empty($fact_hash['Role']) {
+        # TODO: write logic for msdb owner...dropping dbo from db_owners causes error (in msdb only?)...cover all dbo for now.
+        # received sql error trying to drop 'sa' from 'dbo' role...
+        unless empty($fact_hash['Principal']) or empty($fact_hash['Role']) or downcase($fact_hash['Principal'])=='sa' or downcase($fact_hash['Principal'])=='dbo' {
 
           $user = $fact_hash['Principal']
           $role = $fact_hash['Role']
@@ -55,7 +57,9 @@ define secure_sqlserver::stig::v79111 (
 
     $new_db_owner =lookup('secure_sqlserver::new_database_owner')[$database]
 
-    unless empty($new_db_owner) {
+    # TODO: write logic for msdb owner?!?!
+
+    unless empty($new_db_owner) or $database=='msdb' {
 
       $sql_check = "IF NOT EXISTS (SELECT name FROM master.sys.syslogins WHERE name = '${new_db_owner}') THROW 50002, 'Missing login for alter authorization.',10"
       $sql_login = "CREATE LOGIN [${new_db_owner}] FROM WINDOWS WITH DEFAULT_DATABASE = '${database}'"
