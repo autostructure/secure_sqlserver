@@ -59,7 +59,7 @@ define secure_sqlserver::stig::v79111 (
 
     # TODO: write logic for msdb owner?!?!
 
-    unless empty($new_db_owner) or $database=='msdb' {
+    unless empty($new_db_owner) or $database in ['master','model','msdb','tempdb'] {
 
       $sql_check = "IF NOT EXISTS (SELECT name FROM master.sys.syslogins WHERE name = '${new_db_owner}') THROW 50002, 'Missing login for alter authorization.',10"
       $sql_login = "CREATE LOGIN [${new_db_owner}] FROM WINDOWS WITH DEFAULT_DATABASE = '${database}'"
