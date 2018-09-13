@@ -30,10 +30,6 @@ define secure_sqlserver::stig::v79075 (
 
   if $enforced {
 
-    ::secure_sqlserver::log { "V-79075: ${instance}\\${database}: sql=${sql}":
-      loglevel => notice,
-    }
-
     $role_array = $facts['sqlserver_v79075_software_library_admin_roles']
     $user_array = $facts['sqlserver_v79075_software_library_admin_users']
 
