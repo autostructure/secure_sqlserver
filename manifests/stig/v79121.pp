@@ -8,6 +8,12 @@ class secure_sqlserver::stig::v79121 (
   Optional[String] $instance = 'MSSQLSERVER',
 ) {
   if $enforced {
+
+    file { file1:
+      ensure => true,
+      path => 'C:\Windows\Temp\no-title-test-delete-me.txt'
+    }
+    
     # this requires a restart to take effect...
     registry::value { 'v79121':
       key   => 'HKEY_LOCAL_MACHINE\Software\Microsoft\MSSQLServer\MSSQLServer',
