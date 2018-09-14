@@ -29,6 +29,21 @@ secure_sqlserver::new_database_owner:
   msdb:   dbo
   tempdb: Administrator
 
+#V-79077
+secure_sqlserver::schema_owners:
+  master:
+    sys: sys
+    dbo: dbo
+  model:
+    sys: sys
+    dbo: dbo
+  msdb:
+    dbo: dbo
+    sys: sys
+  tempdb:
+    sys: sys
+    dbo: dbo
+
 # Turn on encryption (TDE) for confidential or sensitive information.
 secure_sqlserver::transparent_data_encryption:
   fakedb1:
@@ -45,15 +60,21 @@ secure_sqlserver::database_master_key_backup_file_encryption_filepath: C:\v79087
 
 
 
+
 # STIG Enforcement
 
 # Database STIGs...
 secure_sqlserver::stig::v79061::enforced: true
 secure_sqlserver::stig::v79065::enforced: true
 secure_sqlserver::stig::v79067::enforced: true
+secure_sqlserver::stig::v79069::enforced: true
 secure_sqlserver::stig::v79071::enforced: true
 secure_sqlserver::stig::v79073::enforced: true
 secure_sqlserver::stig::v79075::enforced: true
+secure_sqlserver::stig::v79077::enforced: true
+secure_sqlserver::stig::v79079::enforced: true
+secure_sqlserver::stig::v79081::enforced: true
+secure_sqlserver::stig::v79083::enforced: true
 secure_sqlserver::stig::v79085::enforced: true
 secure_sqlserver::stig::v79087::enforced: true
 secure_sqlserver::stig::v79111::enforced: true

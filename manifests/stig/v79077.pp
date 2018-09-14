@@ -24,41 +24,41 @@
 #
 # ALTER AUTHORIZATION ON SCHEMA::[<Schema Name>] TO [<Principal Name>]
 
-define secure_sqlserver::stig::v79071 (
+define secure_sqlserver::stig::v79077 (
   Boolean       $enforced = false,
   String[1,16]  $instance = 'MSSQLSERVER',
   String        $database,
 ) {
-
   if $enforced {
 
-    $is_trustworthy_enabled = false
+    $skip_schemas = lookup('secure_sqlserver::schema_owners')
+    $schema_owners = $facts['sqlserver_database_schema_owners']
 
-    $db_array = $facts['sqlserver_databases_trustworthy_property']
-    $db_array.each |$db_hash| {
-      if downcase($db_hash['database_name']) == downcase($database) {
-        $is_trustworthy_enabled = $db_hash['is_trustworthy_on']
+    $schema_owners.each |$schema_hash| {
+
+      $schema = schema_hash['schema_name']
+      $principal = schema_hash['owning_principal']
+
+      ::secure_sqlserver::log { "v79077: altering schema: ${schema} for owner = ${principal} on ${instance}\\${database}":
+        loglevel => debug,
       }
-    }
 
-    ::secure_sqlserver::log { "v79071: ${database}: is_trustworthy_enabled = ${is_trustworthy_enabled}":
-      loglevel => debug,
-    }
+      $schema_owner = $skip_schemas[$database][$schema]
 
-    # If the database is MSDB, trustworthy is required to be enabled...
-    if downcase($database) != 'msdb' and $is_trustworthy_enabled {
-      $sql = "ALTER DATABASE ${database} SET TRUSTWORTHY OFF"
+      # If the database is MSDB, trustworthy is required to be enabled...
+      unless $schema_owner == $principal or downcase($database) == 'msdb' or empty($schema) or empty($principal)  {
+        $sql = "ALTER AUTHORIZATION ON SCHEMA::${schema} TO ${principal}"
 
-      ::secure_sqlserver::log { "v79071: ${database}: sql = \n${sql}": }
+        ::secure_sqlserver::log { "v79077: calling tsql module for, ${instance}\\${database}\\${schema}\\${principal}, using sql = \n${sql}": }
 
-      sqlserver_tsql{ "v79071_alter_db_disable_trustworthy_${instance}_${database}":
-        instance => $instance,
-        database => $database,
-        command  => $sql,
-        require  => Sqlserver::Config[$instance],
+        sqlserver_tsql{ "v79077_alter_auth_on_schema_${instance}_${database}_${schema}_${principal}":
+          instance => $instance,
+          database => $database,
+          command  => $sql,
+          require  => Sqlserver::Config[$instance],
+        }
       }
     }
 
   }
-
 }
