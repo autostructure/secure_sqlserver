@@ -12,8 +12,114 @@ define secure_sqlserver::stig::v79065 (
   if $enforced {
 
 $sql_database_permissions ="
---  CREATE SCHEMA STIG;
---  GO
+BEGIN TRY DROP VIEW STIG.database_role_members END TRY BEGIN CATCH END CATCH;
+GO
+
+CREATE VIEW STIG.database_role_members
+--  Based on the system view sys.database_role_members, this presents the list of
+--  database role memberships using roles' and users' names rather than their id numbers.
+--  Although membership in database roles is hierarchical, this view lists only the direct memberships.
+AS SELECT
+    R.name  AS [Role],
+    M.name  AS [Member]
+FROM
+    sys.database_role_members X
+    INNER JOIN sys.database_principals R ON R.principal_id = X.role_principal_id
+    INNER JOIN sys.database_principals M ON M.principal_id = X.member_principal_id
+;
+GO
+
+
+BEGIN TRY DROP FUNCTION STIG.database_roles_of END TRY BEGIN CATCH END CATCH;
+GO
+
+CREATE FUNCTION STIG.database_roles_of(@database_principal sysname)
+--  Membership in database roles is hierarchical.
+--  Given the name of a database principal (user or role), this table-valued function returns
+--  a list of all the roles it belongs to, both directly and indirectly.
+    RETURNS @T TABLE
+        (
+        [Member]            sysname,
+        [Role]              sysname,
+        [via Member]        sysname,
+        [Membership Chain]  nvarchar(max)
+        )
+AS BEGIN;
+    WITH Membership AS
+    (
+    SELECT
+        [Member] AS [Member],
+        [Role],
+        [Member] AS [via Member],
+        CAST([Member] AS varchar(max)) + ' < ' + CAST([Role] AS varchar(max)) AS [Membership Chain]
+    FROM
+        STIG.database_role_members
+    WHERE
+        [Member] = @database_principal
+
+    UNION ALL
+
+    SELECT
+        X.[Member],
+        R.[Role],
+        R.[Member] AS [via Member],
+        X.[Membership Chain] + ' < ' + CAST(R.[Role] AS varchar(max)) AS [Membership Chain]
+    FROM
+        Membership X
+        INNER JOIN STIG.database_role_members R ON X.[Role] = R.[Member]
+    )
+    INSERT INTO @T SELECT * FROM Membership;
+ExitFunction:
+    RETURN;
+END;
+GO
+
+
+BEGIN TRY DROP FUNCTION STIG.members_of_db_role END TRY BEGIN CATCH END CATCH;
+GO
+
+CREATE FUNCTION STIG.members_of_db_role(@database_role sysname)
+--  Membership in database roles is hierarchical.
+--  Given the name of a database role, this table-valued function returns
+--  a list of all the roles and users that belong to it, both directly and indirectly.
+    RETURNS @T TABLE
+        (
+        [Role]              sysname,
+        [Member]            sysname,
+        [via Role]          sysname,
+        [Membership Chain]  nvarchar(max)
+        )
+AS BEGIN;
+    WITH Membership AS
+    (
+    SELECT
+        [Role] AS [Role],
+        [Member],
+        [Role] AS [via Role],
+        CAST([Role] AS varchar(max)) + ' > ' + CAST([Member] AS varchar(max)) AS [Membership Chain]
+    FROM
+        STIG.database_role_members
+    WHERE
+        [Role] = @database_role
+
+    UNION ALL
+
+    SELECT
+        X.[Role] AS [Role],
+        R.[Member],
+        R.[Role] AS [via Role],
+        X.[Membership Chain] + ' > ' + CAST(R.[Member] AS varchar(max)) AS [Membership Chain]
+    FROM
+        Membership X
+        INNER JOIN STIG.database_role_members R ON X.[Member] = R.[Role]
+    )
+    INSERT INTO @T SELECT * FROM Membership;
+ExitFunction:
+    RETURN;
+END;
+GO
+
+
 
 
 BEGIN TRY DROP VIEW STIG.database_permissions END TRY BEGIN CATCH END CATCH;
@@ -269,9 +375,6 @@ GO
 
 
 
-
-
-
 BEGIN TRY DROP FUNCTION STIG.database_effective_permissions END TRY BEGIN CATCH END CATCH;
 GO
 
@@ -388,7 +491,269 @@ AS BEGIN;
 ExitFunction:
     RETURN;
 END;
-GO"
+GO
+
+
+
+BEGIN TRY DROP VIEW STIG.server_role_members END TRY BEGIN CATCH END CATCH;
+GO
+
+CREATE VIEW STIG.server_role_members
+--  Based on the system view sys.server_role_members, this presents the list of
+--  server role memberships using roles' and logins' names rather than their id numbers.
+--  Although membership in server roles is hierarchical, this view lists only the direct memberships.
+AS SELECT
+    R.name    AS [Role],
+    M.name    AS [Member]
+FROM
+    sys.server_role_members X
+    INNER JOIN sys.server_principals R ON R.principal_id = X.role_principal_id
+    INNER JOIN sys.server_principals M ON M.principal_id = X.member_principal_id
+;
+GO
+
+
+BEGIN TRY DROP FUNCTION STIG.server_roles_of END TRY BEGIN CATCH END CATCH;
+GO
+
+CREATE FUNCTION STIG.server_roles_of(@server_principal sysname)
+--  Membership in server roles is hierarchical.
+--  Given the name of a server principal (login or role), this table-valued function returns
+--  a list of all the roles it belongs to, both directly and indirectly.
+    RETURNS @T TABLE
+        (
+        [Member]            sysname,
+        [Role]              sysname,
+        [via Member]        sysname,
+        [Membership Chain]  nvarchar(max)
+        )
+AS BEGIN;
+    WITH Membership AS
+    (
+    SELECT
+        [Member] AS [Member],
+        [Role],
+        [Member] AS [via Member],
+        CAST([Member] AS varchar(max)) + ' < ' + CAST([Role] AS varchar(max)) AS [Membership Chain]
+    FROM
+        STIG.server_role_members
+    WHERE
+        [Member] = @server_principal
+
+    UNION ALL
+
+    SELECT
+        X.[Member],
+        R.[Role],
+        R.[Member] AS [via Member],
+        X.[Membership Chain] + ' < ' + CAST(R.[Role] AS varchar(max)) AS [Membership Chain]
+    FROM
+        Membership X
+        INNER JOIN STIG.server_role_members R ON X.[Role] = R.[Member]
+    )
+    INSERT INTO @T SELECT * FROM Membership;
+ExitFunction:
+    RETURN;
+END;
+GO
+
+
+BEGIN TRY DROP FUNCTION STIG.members_of_server_role END TRY BEGIN CATCH END CATCH;
+GO
+
+CREATE FUNCTION STIG.members_of_server_role(@server_role sysname)
+--  Membership in server roles is hierarchical.
+--  Given the name of a server role, this table-valued function returns
+--  a list of all the roles and logins that belong to it, both directly and indirectly.
+    RETURNS @T TABLE
+        (
+        [Role]              sysname,
+        [Member]            sysname,
+        [via Role]          sysname,
+        [Membership Chain]  nvarchar(max)
+        )
+AS BEGIN;
+    WITH Membership AS
+    (
+    SELECT
+        [Role] AS [Role],
+        [Member],
+        [Role] AS [via Role],
+        CAST([Role] AS varchar(max)) + ' > ' + CAST([Member] AS varchar(max)) AS [Membership Chain]
+    FROM
+        STIG.server_role_members
+    WHERE
+        [Role] = @server_role
+
+    UNION ALL
+
+    SELECT
+        X.[Role] AS [Role],
+        R.[Member],
+        R.[Role] AS [via Role],
+        X.[Membership Chain] + ' > ' + CAST(R.[Member] AS varchar(max)) AS [Membership Chain]
+    FROM
+        Membership X
+        INNER JOIN STIG.server_role_members R ON X.[Member] = R.[Role]
+    )
+    INSERT INTO @T SELECT * FROM Membership;
+ExitFunction:
+    RETURN;
+END;
+GO
+
+
+
+BEGIN TRY DROP VIEW STIG.server_permissions END TRY BEGIN CATCH END CATCH;
+GO
+
+CREATE VIEW STIG.server_permissions
+--  Based on the system view sys.server_permissions, this provides additional, descriptive material.
+--  The list includes only those permissions explicitly granted (or denied) to a server login or role;
+--  it does not include permissions that are implicit or inherited from a higher-level role.
+--  Securable items that exist but have no explicit permissions assigned are included in the
+--  list, with columns describing the grantor and grantee left null.
+AS SELECT DISTINCT
+    @@SERVERNAME          AS [Current Server],
+    @@SERVICENAME         AS [Current Instance],
+    DB_NAME()             AS [Current DB],
+    SYSTEM_USER           AS [Current Login],
+    USER                  AS [Current User],
+    CASE
+        WHEN SP.class_desc IS NOT NULL THEN
+            CASE
+                WHEN SP.class_desc = 'SERVER' AND S.is_linked = 0 THEN 'SERVER'
+                WHEN SP.class_desc = 'SERVER' AND S.is_linked = 1 THEN 'SERVER (linked)'
+                ELSE SP.class_desc
+            END
+        WHEN E.name IS NOT NULL THEN 'ENDPOINT'
+        WHEN S.name IS NOT NULL AND S.is_linked = 0 THEN 'SERVER'
+        WHEN S.name IS NOT NULL AND S.is_linked = 1 THEN 'SERVER (linked)'
+        WHEN P.name IS NOT NULL THEN 'SERVER_PRINCIPAL'
+        ELSE '???'
+    END                    AS [Securable Class],
+    CASE
+        WHEN E.name IS NOT NULL THEN E.name
+        WHEN S.name IS NOT NULL THEN S.name
+        WHEN P.name IS NOT NULL THEN P.name
+        ELSE '???'
+    END                    AS [Securable],
+    P1.name                AS [Grantee],
+    P1.type_desc           AS [Grantee Type],
+    sp.permission_name     AS [Permission],
+    sp.state_desc          AS [State],
+    P2.name                AS [Grantor],
+    P2.type_desc           AS [Grantor Type],
+    CASE
+        WHEN SP.class_desc = 'SERVER'                       THEN 'sys.servers'
+        WHEN SP.class_desc = 'ENDPOINT'                     THEN 'sys.endpoints'
+        WHEN SP.class_desc = 'SERVER_PRINCIPAL'             THEN 'sys.server_principals'
+        WHEN SP.class_desc IS NULL AND S.name IS NOT NULL   THEN 'sys.servers'
+        WHEN SP.class_desc IS NULL AND E.name IS NOT NULL   THEN 'sys.endpoints'
+        WHEN SP.class_desc IS NULL AND P.name IS NOT NULL   THEN 'sys.server_principals'
+        ELSE 'sys.server_permissions'
+    END                 AS [Source View]
+FROM
+    sys.server_permissions SP
+    INNER JOIN sys.server_principals P1
+        ON P1.principal_id = SP.grantee_principal_id
+    INNER JOIN sys.server_principals P2
+        ON P2.principal_id = SP.grantor_principal_id
+
+    FULL OUTER JOIN sys.servers S
+        ON  SP.class_desc = 'SERVER'
+        AND S.server_id = SP.major_id
+
+    FULL OUTER JOIN sys.endpoints E
+        ON  SP.class_desc = 'ENDPOINT'
+        AND E.endpoint_id = SP.major_id
+
+    FULL OUTER JOIN sys.server_principals P
+        ON  SP.class_desc = 'SERVER_PRINCIPAL'
+        AND P.principal_id = SP.major_id
+;
+GO
+
+
+BEGIN TRY DROP FUNCTION STIG.server_effective_permissions END TRY BEGIN CATCH END CATCH;
+GO
+
+CREATE FUNCTION STIG.server_effective_permissions(@Grantee sysname)
+--  Given the name of a server principal (login or server role), this table-valued function
+--  returns information about permissions granted (or denied) to that login or role,
+--  either directly or inherited from a higher-level role.
+    RETURNS @T TABLE
+        (
+        [Current Server]            sysname         null,
+        [Current Instance]          sysname         null,
+        [Current DB]                sysname         null,
+        [Current Login]             sysname         null,
+        [Current User]              sysname         null,
+        [Securable Class]           nvarchar(60)    null,
+        [Securable]                 sql_variant     null,
+        [Effective Grantee]         sysname         null,
+        [Membership Chain]          nvarchar(max)   null,
+        [Direct Grantee]            sysname         null,
+        [Direct Grantee Type]       nvarchar(60)    null,
+        [Permission]                sysname         null,
+        [State]                     nvarchar(60)    null,
+        [Grantor]                   sysname         null,
+        [Grantor Type]              nvarchar(60)    null,
+        [source view]               sysname         null
+        )
+AS BEGIN;
+    WITH Targets AS
+    (
+    SELECT [Role] AS [Principal], [Membership Chain], len([Membership Chain]) AS [Membership Chain Length] FROM STIG.server_roles_of(@Grantee)
+    UNION ALL
+    SELECT @Grantee AS [Principal], @Grantee AS [Membership Chain], len(@Grantee) AS [Membership Chain Length]
+    )
+    INSERT INTO @T
+        SELECT TOP 100000000
+            P.[Current Server],
+            P.[Current Instance],
+            P.[Current DB],
+            P.[Current Login],
+            P.[Current User],
+            P.[Securable Class],
+            P.[Securable],
+            @Grantee                AS [Effective Grantee],
+            T.[Membership Chain]    AS [Membership Chain],
+            P.[Grantee]             AS [Direct Grantee],
+            P.[Grantee Type]        AS [Direct Grantee Type],
+            P.[Permission],
+            P.[State],
+            P.[Grantor],
+            P.[Grantor Type],
+            P.[source view]
+        FROM
+            STIG.server_permissions P
+            INNER JOIN Targets T ON T.[Principal] = P.[Grantee]
+        ORDER BY
+            P.[Securable Class],
+            P.[Securable],
+            T.[Membership Chain Length]
+        ;
+        UPDATE T
+        SET [State] = [State] + ' (denied)'
+        FROM @T T
+        WHERE
+            T.[State] <> 'DENY'
+        AND 0 <
+            (
+            SELECT count(*) FROM @T X
+            WHERE
+                X.[Securable Class] = T.[Securable Class]
+            AND X.[Securable]       = T.[Securable]
+            AND X.[Permission]      = T.[Permission]
+            AND X.[State]           = 'DENY'
+            )
+        ;
+ExitFunction:
+    RETURN;
+END;
+GO
+"
 
     notify { "v79065_show_sql_${instance}_${database}" :
       message  => $sql_database_permissions,
