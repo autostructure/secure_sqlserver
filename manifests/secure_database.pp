@@ -12,7 +12,7 @@ define secure_sqlserver::secure_database (
 
   notify { "${prefix}_secure_database_output" :
     message  => "instance\\database=${prefix}",
-    loglevel => warning,
+    loglevel => info,
   }
 
   ::secure_sqlserver::stig::v79061 { "${prefix}-v79061":

@@ -20,7 +20,7 @@ class secure_sqlserver::controller (
 
   notify { 'secure_sqlserver:_controller_msg0_debug':
     message  => "users: service_account=${service_account}; netbios_user=${netbios_user}; fqdn_user=${fqdn_user}",
-    loglevel => debug,
+    loglevel => info,
   }
 
   ## TODO: Convert code to 2016
@@ -29,7 +29,7 @@ class secure_sqlserver::controller (
 
   notify { 'secure_sqlserver:_controller_msg1_warning':
     message  => "***DEVELOPER NOTE*** Using SQL_2017 reference instead of SQL_2016 (FIX REQ'D)!!!",
-    loglevel => warning,
+    loglevel => alert,
   }
 
   if empty($instances) {
@@ -40,7 +40,7 @@ class secure_sqlserver::controller (
 
   notify { 'secure_sqlserver:_controller_msg1':
     message  => "secure_sqlserver::controller: Running in SINGLE_INSTANCE mode: instance=${single_instance}",
-    loglevel => warning,
+    loglevel => info,
   }
 
   # need sqlserver_config for sqlserver_tsql commands to enable windows authentication (no passwords required)
@@ -59,7 +59,7 @@ class secure_sqlserver::controller (
   if empty($databases) {
     # fail('secure_sqlserver failure: No SQL Server 2016 databases were discovered.')
     ::secure_sqlserver::log { 'No SQL Server 2016 databases were discovered.':
-      loglevel => warning,
+      loglevel => info,
     }
 
   }
@@ -67,7 +67,7 @@ class secure_sqlserver::controller (
   $databases.each |String $database| {
 
     ::secure_sqlserver::log { "Securing the '${database}' database...":
-      loglevel => notice,
+      loglevel => info,
     }
 
     # using a define type over class, since we make multiple calls...
