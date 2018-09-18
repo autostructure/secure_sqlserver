@@ -33,7 +33,8 @@
 # If any users or role permissions returned are not authorized to modify the specified object or type, this is a finding.
 #
 # Fix Text:
-# Document and obtain approval for any non-administrative users who require the ability to modify database structure and logic modules.
+# Document and obtain approval for any non-administrative users who require the ability to
+# modify database structure and logic modules.
 #
 # REVOKE ALTER ON [<Object Name>] TO [<Principal Name>]
 
@@ -44,35 +45,34 @@ define secure_sqlserver::stig::v79077 (
 ) {
   if $enforced {
 
-    $skip_schemas = lookup('secure_sqlserver::schema_owners')
-    $schema_owners = $facts['sqlserver_database_schema_owners']
-
-    $schema_owners.each |$schema_hash| {
-
-      $schema = schema_hash['schema_name']
-      $principal = schema_hash['owning_principal']
-
-      ::secure_sqlserver::log { "v79077: altering schema: ${schema} for owner = ${principal} on ${instance}\\${database}":
-        loglevel => debug,
-      }
-
-      $schema_owner = $skip_schemas[$database][$schema]
-
-      # skip the four pre-installed databases
-      # skip if the db owner already matches the yaml file setting
-      unless $schema_owner == $principal or downcase($database) == 'msdb' or empty($schema) or empty($principal)  {
-        $sql = "ALTER AUTHORIZATION ON SCHEMA::${schema} TO ${principal}"
-
-        ::secure_sqlserver::log { "v79077: calling tsql module for, ${instance}\\${database}\\${schema}\\${principal}, using sql = \n${sql}": }
-
-        sqlserver_tsql{ "v79077_alter_auth_on_schema_${instance}_${database}_${schema}_${principal}":
-          instance => $instance,
-          database => $database,
-          command  => $sql,
-          require  => Sqlserver::Config[$instance],
-        }
-      }
-    }
+    $roles_and_users = $facts['sqlserver_database_roles_and_users_with_modify']
+    #
+    # $schema_owners.each |$schema_hash| {
+    #
+    #   $schema = schema_hash['schema_name']
+    #   $principal = schema_hash['owning_principal']
+    # 
+    #   ::secure_sqlserver::log { "v79081 altering schema: ${schema} for owner = ${principal} on ${instance}\\${database}":
+    #     loglevel => debug,
+    #   }
+    #
+    #   $schema_owner = $skip_schemas[$database][$schema]
+    #
+    #   # skip the four pre-installed databases
+    #   # skip if the db owner already matches the yaml file setting
+    #   unless $schema_owner == $principal or downcase($database) == 'msdb' or empty($schema) or empty($principal)  {
+    #     $sql = "ALTER AUTHORIZATION ON SCHEMA::${schema} TO ${principal}"
+    #
+    #     ::secure_sqlserver::log { "v79077: calling tsql module for, ${instance}\\${database}\\${schema}\\${principal}, using sql = \n${sql}": }
+    #
+    #     sqlserver_tsql{ "v79077_alter_auth_on_schema_${instance}_${database}_${schema}_${principal}":
+    #       instance => $instance,
+    #       database => $database,
+    #       command  => $sql,
+    #       require  => Sqlserver::Config[$instance],
+    #     }
+    #   }
+    # }
 
   }
 }
