@@ -9,7 +9,8 @@ define secure_sqlserver::log (
   if $enabled {
 
     # puppetserver.log
-    case $loglevel {
+    case downcase($loglevel) {
+      #'fail':   { fail("${facts['fqdn']}: ${title}") }     # not using 'fail' as an option because it halts execution
       'alert':   { alert("${facts['fqdn']}: ${title}") }    # always visible
       'crit':    { crit("${facts['fqdn']}: ${title}") }     # always visible
       'debug':   { debug("${facts['fqdn']}: ${title}") }    # visible only with -d or --debug
