@@ -39,10 +39,6 @@ define secure_sqlserver::stig::v79077 (
       $schema = schema_hash['schema_name']
       $principal = schema_hash['owning_principal']
 
-      ::secure_sqlserver::log { "v79077: altering schema: ${schema} for owner = ${principal} on ${instance}\\${database}":
-        loglevel => debug,
-      }
-
       $schema_owner = $skip_schemas[$database][$schema]
 
       # skip the four pre-installed databases

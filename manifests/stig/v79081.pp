@@ -38,7 +38,7 @@
 #
 # REVOKE ALTER ON [<Object Name>] TO [<Principal Name>]
 
-define secure_sqlserver::stig::v79077 (
+define secure_sqlserver::stig::v79081 (
   Boolean       $enforced = false,
   String[1,16]  $instance = 'MSSQLSERVER',
   String        $database,
@@ -46,33 +46,32 @@ define secure_sqlserver::stig::v79077 (
   if $enforced {
 
     $roles_and_users = $facts['sqlserver_database_roles_and_users_with_modify']
-    #
-    # $schema_owners.each |$schema_hash| {
-    #
-    #   $schema = schema_hash['schema_name']
-    #   $principal = schema_hash['owning_principal']
-    # 
-    #   ::secure_sqlserver::log { "v79081 altering schema: ${schema} for owner = ${principal} on ${instance}\\${database}":
-    #     loglevel => debug,
-    #   }
-    #
-    #   $schema_owner = $skip_schemas[$database][$schema]
-    #
-    #   # skip the four pre-installed databases
-    #   # skip if the db owner already matches the yaml file setting
-    #   unless $schema_owner == $principal or downcase($database) == 'msdb' or empty($schema) or empty($principal)  {
-    #     $sql = "ALTER AUTHORIZATION ON SCHEMA::${schema} TO ${principal}"
-    #
-    #     ::secure_sqlserver::log { "v79077: calling tsql module for, ${instance}\\${database}\\${schema}\\${principal}, using sql = \n${sql}": }
-    #
-    #     sqlserver_tsql{ "v79077_alter_auth_on_schema_${instance}_${database}_${schema}_${principal}":
-    #       instance => $instance,
-    #       database => $database,
-    #       command  => $sql,
-    #       require  => Sqlserver::Config[$instance],
-    #     }
-    #   }
-    # }
+
+    unless empty($roles_and_users) {
+
+      $roles_and_users.each |$column_hash| {
+
+        $principal = $column_hash['principal_name']
+        $object_name = $column_hash['class']
+
+        ::secure_sqlserver::log { "v79081 revoking object permissions from ${principal} on object ${object_name} on ${instance}\\${database}":
+          loglevel => debug,
+        }
+
+        unless empty($object_name) or empty($principal)  {
+          $sql = "REVOKE ALTER ON ${object_name} TO ${principal}"
+
+          ::secure_sqlserver::log { "v79081: calling tsql module for, ${instance}\\${database}\\${object}\\${principal}, using sql = \n${sql}": }
+
+          sqlserver_tsql{ "v79077_revoke_object_permissions_from_${principal}_on_${object}_for_${instance}_${database}":
+            instance => $instance,
+            database => $database,
+            command  => $sql,
+            require  => Sqlserver::Config[$instance],
+          }
+        }
+      }
+    }
 
   }
 }
