@@ -47,16 +47,16 @@ define secure_sqlserver::stig::v79081 (
 
     $roles_and_users = $facts['sqlserver_database_roles_and_users_with_modify']
 
+    ::secure_sqlserver::log { "v79081 revoking object permissions from ${roles_and_users} on ${instance}\\${database}":
+      loglevel => crit,
+    }
+
     unless empty($roles_and_users) {
 
       $roles_and_users.each |$column_hash| {
 
         $principal = $column_hash['principal_name']
         $object_name = $column_hash['class']
-
-        ::secure_sqlserver::log { "v79081 revoking object permissions from ${principal} on object ${object_name} on ${instance}\\${database}":
-          loglevel => debug,
-        }
 
         unless empty($object_name) or empty($principal)  {
           $sql = "REVOKE ALTER ON ${object_name} TO ${principal}"
