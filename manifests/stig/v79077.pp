@@ -45,9 +45,11 @@ define secure_sqlserver::stig::v79077 (
 
       $schema_owner = $skip_schemas[$database][$schema]
 
-      # If the database is MSDB, trustworthy is required to be enabled...
-      unless $schema_owner == $principal or downcase($database) == 'msdb' or empty($schema) or empty($principal)  {
-        $sql = "ALTER AUTHORIZATION ON SCHEMA::${schema} TO ${principal}"
+      # skip the four pre-installed databases
+      # skip if the db owner already matches the yaml file setting
+      #unless $schema_owner == $principal or downcase($database) == 'msdb' or empty($schema) or empty($principal)  {
+      unless $schema_owner == $principal or downcase($database) in ['master','msdb','model','tempdb') or empty($schema) or empty($principal)  {
+      $sql = "ALTER AUTHORIZATION ON SCHEMA::${schema} TO ${principal}"
 
         ::secure_sqlserver::log { "v79077: calling tsql module for, ${instance}\\${database}\\${schema}\\${principal}, using sql = \n${sql}": }
 
