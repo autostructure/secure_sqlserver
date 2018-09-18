@@ -45,10 +45,6 @@ define secure_sqlserver::stig::v79081 (
 ) {
   if $enforced {
 
-    ::secure_sqlserver::log { "v79081 revoking object permissions from ${roles_and_users} on ${instance}\\${database}":
-      loglevel => crit,
-    }
-
     $roles_and_users = $facts['sqlserver_database_roles_and_users_with_modify']
 
     unless empty($roles_and_users) {
