@@ -1,3 +1,5 @@
+# v79077.pp
+#
 # This class manages DISA STIG vulnerability: V-79071
 # SQL Server must protect against a user falsely repudiating by ensuring databases
 # are not in a trust relationship.
@@ -44,7 +46,7 @@ define secure_sqlserver::stig::v79077 (
       # skip the four pre-installed databases
       # skip if the db owner already matches the yaml file setting
       #unless $schema_owner == $principal or downcase($database) == 'msdb' or empty($schema) or empty($principal)  {
-      unless $schema_owner == $principal or downcase($database) in ['master','msdb','model','tempdb') or empty($schema) or empty($principal)  {
+      unless $schema_owner == $principal or empty($schema) or empty($principal) or downcase($database) in ['master','msdb','model','tempdb'] {
       $sql = "ALTER AUTHORIZATION ON SCHEMA::${schema} TO ${principal}"
 
         ::secure_sqlserver::log { "v79077: calling tsql module for, ${instance}\\${database}\\${schema}\\${principal}, using sql = \n${sql}": }
