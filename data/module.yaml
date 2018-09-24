@@ -21,6 +21,13 @@ secure_sqlserver::audit_maintainer_username:
 # you should choose a audit log location separate from the o/s partition
 secure_sqlserver::audit_filepath: C:\SQLAudit\keys\
 
+# V-79083
+secure_sqlserver::backup_recovery_model_settings:
+  master: SIMPLE
+  model:  FULL
+  msdb:   SIMPLE
+  #tempdb: SIMPLE
+
 # V-79111
 # logins based on Active Directory users are limited to names of less than 21 characters.
 secure_sqlserver::new_database_owner:

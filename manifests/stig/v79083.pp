@@ -3,37 +3,22 @@
 # In the event of a system failure, hardware loss or disk failure,
 # SQL Server must be able to restore necessary databases with least disruption to mission processes.
 #
-###################################################################################
-# STIG Info...
-###################################################################################
-# Run the following to determine Recovery Model:
+# Recovery Types
+# --------------
+# SIMPLE        Can recover only to the end of a backup. No log backups.
+# FULL          Can recover to a specific point in time.* Requires log backups.
+# BULK_LOGGED   Can recover to the end of any backup. Point-in-time recovery is not supported. Requires log backups.
 #
-# USE [master]
-# GO
+# * assuming that your backups are complete up to that point in time.
 #
-# SELECT name, recovery_model_desc
-# FROM sys.databases
-# ORDER BY name
-#
-# Check the history of the backups by running the following query.
-# It checks the last 30 days of backups by database.
-#
-# USE [msdb]
-# GO
-#
-# SELECT database_name,
-# CASE type
-# WHEN 'D' THEN 'Full'
-# WHEN 'I' THEN 'Differential'
-# WHEN 'L' THEN 'Log'
-# ELSE type
-# END AS backup_type,
-# is_copy_only,
-# backup_start_date, backup_finish_date
-# FROM dbo.backupset
-# WHERE backup_start_date >= dateadd(day, - 30, getdate())
-# ORDER BY database_name, backup_start_date DESC
-###################################################################################
+# Backup Types
+# ------------
+# 1. Full backup
+# 2. Differential backup
+# 3. Transaction log backup
+# 4. Copy-Only backup
+# 5. File and/or file-group backup
+# 6. Partial backup
 #
 define secure_sqlserver::stig::v79083 (
   Boolean       $enforced = false,
@@ -42,29 +27,60 @@ define secure_sqlserver::stig::v79083 (
 ) {
   if $enforced {
 
+    $backup_recovery_model_settings = lookup('secure_sqlserver::backup_recovery_model_settings')
+    $target_recovery_model = upcase($backup_recovery_model_settings[$database])
+
     $recovery_models = $facts['sqlserver_database_backup_recovery_models']
 
     unless empty($recovery_models) {
 
       $recovery_models.each |$model_hash| {
 
-        $model = $model_hash['recovery_model']
         $db = $model_hash['database_name']
 
         if downcase($db) == downcase($database) {
-          unless empty($model) {
-            notify { "v79083: ${instance}\\${database}: recovery_model = ${model}":
+          unless empty($model_hash['recovery_model']) {
+            ##TODO:
+            # is this block used to set the model from hiera setting?
+            # is that wise to do so?
+            $model = upcase($model_hash['recovery_model'])
+            notify { "v79083: ${instance}\\${database}: recovery_model = ${model}, target = ${target_recovery_model}":
               loglevel => notice,
             }
+            if $model != $target_recovery_model {
+              $sql = "ALTER DATABASE ${database} SET RECOVERY ${target_recovery_model}"
+              ::secure_sqlserver::log { "v79083: ${instance}\\${database}: recovery_model = ${model}, changing to ${target_recovery_model}":
+                loglevel => notice,
+              }
+              ::secure_sqlserver::log { "v79083: calling tsql module for, ${instance}\\${database}, using sql = \n${sql}": }
+              sqlserver_tsql{ "v79083_set_recovery_model_for_${instance}_${database}":
+                instance => $instance,
+                database => $database,
+                command  => $sql,
+                require  => Sqlserver::Config[$instance],
+              }
+            }
           } else {
+            ##TODO:
+            # if model empty, set backup to what?  Something from hiera?
             notify { "v79083: ${instance}\\${database}: recovery_models empty.":
               loglevel => notice,
+            }
+            $sql = "ALTER DATABASE ${database} SET RECOVERY ${target_recovery_model}"
+            ::secure_sqlserver::log { "v79083: calling tsql module for, ${instance}\\${database}, using sql = \n${sql}": }
+            sqlserver_tsql{ "v79083_set_missing_recovery_model_for_${instance}_${database}":
+              instance => $instance,
+              database => $database,
+              command  => $sql,
+              require  => Sqlserver::Config[$instance],
             }
           }
         }
 
       }
+
     }
+
 
     # $recovery_models.each |$model_hash| {
     #
