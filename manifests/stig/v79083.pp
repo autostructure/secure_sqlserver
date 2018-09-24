@@ -13,12 +13,14 @@
 #
 # Backup Types
 # ------------
-# 1. Full backup
-# 2. Differential backup
-# 3. Transaction log backup
-# 4. Copy-Only backup
-# 5. File and/or file-group backup
-# 6. Partial backup
+# 1. Full backups
+# 2. Differential backups
+# 3. File backups
+# 4. Filegroup backups
+# 5. Partial backups
+# 6. Copy-Only backups
+# 7. Mirror backups
+# 8. Transaction log backups
 #
 define secure_sqlserver::stig::v79083 (
   Boolean       $enforced = false,
@@ -80,6 +82,9 @@ define secure_sqlserver::stig::v79083 (
       }
 
     }
+
+    # Create Backup Schedule...
+
 
 
     # $recovery_models.each |$model_hash| {

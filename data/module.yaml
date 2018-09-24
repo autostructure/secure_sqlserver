@@ -22,6 +22,7 @@ secure_sqlserver::audit_maintainer_username:
 secure_sqlserver::audit_filepath: C:\SQLAudit\keys\
 
 # V-79083
+# Valid Recovery Types: SIMPLE, FULL, BULK_LOGGED
 secure_sqlserver::backup_recovery_model_settings:
   master: SIMPLE
   model:  FULL
