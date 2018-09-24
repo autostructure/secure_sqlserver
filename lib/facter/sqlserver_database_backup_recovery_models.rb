@@ -42,7 +42,7 @@ Facter.add('sqlserver_database_backup_recovery_models') do
   confine operatingsystem: :windows
   setcode do
 
-    sql = "SELECT name as database, recovery_model_desc as recovery_model FROM master.sys.databases ORDER BY name"
+    sql = "SELECT name as database_name, recovery_model_desc as recovery_model FROM master.sys.databases ORDER BY name"
 
     Puppet.debug "sqlserver_database_backup_recovery_models.rb sql...\n#{sql}"
 
