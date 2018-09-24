@@ -9,7 +9,9 @@ define secure_sqlserver::stig::v79069 (
 ) {
 
   if $enforced {
-    
+    notify { "v79069: ${instance}\\${database}: v79069 called.":
+      loglevel => notice,
+    }
   }
 
 }
