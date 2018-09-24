@@ -44,11 +44,37 @@ define secure_sqlserver::stig::v79083 (
 
     $recovery_models = $facts['sqlserver_database_backup_recovery_models']
 
-    notify { "v79083: ${instance}\\${database}: recovery_models['${database}'] = ${recovery_models['${database}']}": }
+    unless empty($recovery_models) {
+      notify { "v79083: ${instance}\\${database}: recovery_models['${database}'] = ${recovery_models['${database}']}": }
+    } else {
+      notify { "v79083: ${instance}\\${database}: recovery_models empty.": }
+    }
 
-    # $sql = ""
-    # notify { "v79083: calling tsql module for, ${instance}\\${database}, using sql = \n${sql}": }
-
+    # $recovery_models.each |$model_hash| {
+    #
+    #   $model = $model_hash['${database}']
+    #
+    #   unless empty($model) {
+    #
+    #     $sql = ""
+    #     ::secure_sqlserver::log { "v79083: calling tsql module for, ${instance}\\${database}, using sql = \n${sql}": }
+    #     sqlserver_tsql{ "v79083_set_recovery_model_for_${instance}_${database}":
+    #       instance => $instance,
+    #       database => $database,
+    #       command  => $sql,
+    #       require  => Sqlserver::Config[$instance],
+    #     }
+    #
+    #     $sql = ""
+    #     ::secure_sqlserver::log { "v79083: calling tsql module for, ${instance}\\${database}, using sql = \n${sql}": }
+    #     sqlserver_tsql{ "v79083_create_backup_schedule_for_${instance}_${database}":
+    #       instance => $instance,
+    #       database => $database,
+    #       command  => $sql,
+    #       require  => Sqlserver::Config[$instance],
+    #     }
+    #
+    # }
 
   }
 }
