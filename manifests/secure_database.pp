@@ -10,6 +10,20 @@ define secure_sqlserver::secure_database (
   # Database STIGs...
   # Using a define types over classes, since we invoke it more than once...
 
+  # Skipping STIG/Vulnerability Numbers:
+  # V-79093
+  # V-79095
+  # V-79097
+  # V-79099
+  # V-79101
+  # V-79103
+
+  # Might Skip (Need security review/approval)...
+  # V-79065
+  # V-79091
+  # V-79115
+  # V-79117
+
   notify { "${prefix}_secure_database_output" :
     message  => "instance\\database=${prefix}",
     loglevel => info,
@@ -29,6 +43,12 @@ define secure_sqlserver::secure_database (
 
   ::secure_sqlserver::stig::v79067 { "${prefix}-v79067":
     enforced => lookup('secure_sqlserver::stig::v79067::enforced'),
+    instance => $instance,
+    database => $database,
+  }
+
+  ::secure_sqlserver::stig::v79069 { "${prefix}-v79069":
+    enforced => lookup('secure_sqlserver::stig::v79069::enforced'),
     instance => $instance,
     database => $database,
   }
@@ -57,14 +77,20 @@ define secure_sqlserver::secure_database (
     database => $database,
   }
 
+  ::secure_sqlserver::stig::v79079 { "${prefix}-v79079":
+    enforced => lookup('secure_sqlserver::stig::v79079::enforced'),
+    instance => $instance,
+    database => $database,
+  }
+
   ::secure_sqlserver::stig::v79081 { "${prefix}-v79081":
     enforced => lookup('secure_sqlserver::stig::v79081::enforced'),
     instance => $instance,
     database => $database,
   }
 
-  ::secure_sqlserver::stig::v79081 { "${prefix}-v79083":
-    enforced => lookup('secure_sqlserver::stig::v79081::enforced'),
+  ::secure_sqlserver::stig::v79083 { "${prefix}-v79083":
+    enforced => lookup('secure_sqlserver::stig::v79083::enforced'),
     instance => $instance,
     database => $database,
   }
@@ -77,6 +103,30 @@ define secure_sqlserver::secure_database (
 
   ::secure_sqlserver::stig::v79087 { "${prefix}-v79087":
     enforced => lookup('secure_sqlserver::stig::v79087::enforced'),
+    instance => $instance,
+    database => $database,
+  }
+
+  ::secure_sqlserver::stig::v79089 { "${prefix}-v79089":
+    enforced => lookup('secure_sqlserver::stig::v79089::enforced'),
+    instance => $instance,
+    database => $database,
+  }
+
+  ::secure_sqlserver::stig::v79105 { "${prefix}-v79105":
+    enforced => lookup('secure_sqlserver::stig::v79105::enforced'),
+    instance => $instance,
+    database => $database,
+  }
+
+  ::secure_sqlserver::stig::v79107 { "${prefix}-v79107":
+    enforced => lookup('secure_sqlserver::stig::v79107::enforced'),
+    instance => $instance,
+    database => $database,
+  }
+
+  ::secure_sqlserver::stig::v79109 { "${prefix}-v79109":
+    enforced => lookup('secure_sqlserver::stig::v79109::enforced'),
     instance => $instance,
     database => $database,
   }
