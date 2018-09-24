@@ -47,7 +47,7 @@ define secure_sqlserver::stig::v79083 (
             notify { "v79083: ${instance}\\${database}: recovery_model = ${model}, target = ${target_recovery_model}":
               loglevel => notice,
             }
-            if $model != $target_recovery_model {
+            if $model != $target_recovery_model and !empty($target_recovery_model) {
               $sql = "ALTER DATABASE ${database} SET RECOVERY ${target_recovery_model}"
               ::secure_sqlserver::log { "v79083: ${instance}\\${database}: recovery_model = ${model}, changing to ${target_recovery_model}":
                 loglevel => notice,
