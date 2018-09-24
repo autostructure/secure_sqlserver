@@ -85,33 +85,70 @@ define secure_sqlserver::stig::v79083 (
 
     # Create Backup Schedule...
 
+    # create backup command
+    # create job
+    # create schedule
+    # attach job to schedule
 
+    # Object names...
+    $db_name = upcase($database)
+    $job_name = "STIG_JOB_V79083_BACKUP_${db_name}"
+    $schedule_name = "STIG_JOB_V79083_SCHED_${db_name}"
 
-    # $recovery_models.each |$model_hash| {
-    #
-    #   $model = $model_hash['recovery_model']
-    #
-    #   unless empty($model) {
-    #
-    #     $sql = ""
-    #     ::secure_sqlserver::log { "v79083: calling tsql module for, ${instance}\\${database}, using sql = \n${sql}": }
-    #     sqlserver_tsql{ "v79083_set_recovery_model_for_${instance}_${database}":
-    #       instance => $instance,
-    #       database => $database,
-    #       command  => $sql,
-    #       require  => Sqlserver::Config[$instance],
-    #     }
-    #
-    #     $sql = ""
-    #     ::secure_sqlserver::log { "v79083: calling tsql module for, ${instance}\\${database}, using sql = \n${sql}": }
-    #     sqlserver_tsql{ "v79083_create_backup_schedule_for_${instance}_${database}":
-    #       instance => $instance,
-    #       database => $database,
-    #       command  => $sql,
-    #       require  => Sqlserver::Config[$instance],
-    #     }
-    #
-    # }
+    # Hiera lookups...
+    $backup_plans = lookup('secure_sqlserver::backup_plan')
+    $backup_plan_desc = $backup_plans[$database]['description']
+    $backup_plan_disk = $backup_plans[$database]['disk']
+    $backup_plan_logs = $backup_plans[$database]['logs']
+    $backup_plan_pass = $backup_plans[$database]['password']
+
+    # backup command...
+    $backup_plan_sql = "BACKUP DATABASE ${database} TO DISK = '${backup_plan_disk}' WITH CHECKSUM, PASSWORD = '${backup_plan_pass}', DESCRIPTION = '${backup_plan_desc}';
+      BACKUP DATABASE ${database} TO DISK = '${backup_plan_disk}.dif' WITH DIFFERENTIAL, CHECKSUM, PASSWORD = '${backup_plan_pass}', DESCRIPTION = '${backup_plan_desc}';
+      BACKUP LOG ${database} TO DISK = '${backup_plan_logs}' WITH CHECKSUM, PASSWORD = '${backup_plan_pass}', DESCRIPTION = '${backup_plan_desc}';"
+
+    # creates a job step that that uses Transact-SQL...
+    $backup_plan_add_job_sql = "EXEC sp_add_jobstep
+        @job_name = N'${job_name}',
+        @step_name = N'Backup the database',
+        @subsystem = N'TSQL',
+        @command = N'${backup_plan_sql}',
+        @retry_attempts = 5,
+        @retry_interval = 5 ;"
+
+    $backup_plan_add_sched_sql = "EXEC sp_add_schedule
+        @schedule_name = N'${schedule_name}' ,
+        @freq_type = 4,
+        @freq_interval = 1,
+        @active_start_time = 010000 ;"
+
+    $backup_plan_attach_sched_sql = "EXEC sp_attach_schedule
+        @job_name = N'${job_name}',
+        @schedule_name = N'${schedule_name}' ;"
+
+    ::secure_sqlserver::log { "v79083: calling tsql module for, ${instance}\\${database}, using sql = \n${backup_plan_add_job_sql}": }
+    sqlserver_tsql{ "v79083_create_job_for_${instance}_${database}":
+      instance => $instance,
+      database => $database,
+      command  => $backup_plan_add_job_sql,
+      require  => Sqlserver::Config[$instance],
+    }
+
+    ::secure_sqlserver::log { "v79083: calling tsql module for, ${instance}\\${database}, using sql = \n${backup_plan_add_sched_sql}": }
+    sqlserver_tsql{ "v79083_create_schedule_for_${instance}_${database}":
+      instance => $instance,
+      database => $database,
+      command  => $backup_plan_add_sched_sql,
+      require  => Sqlserver::Config[$instance],
+    }
+
+    ::secure_sqlserver::log { "v79083: calling tsql module for, ${instance}\\${database}, using sql = \n${backup_plan_attach_sched_sql}": }
+    sqlserver_tsql{ "v79083_attach_job_to_schedule_for_${instance}_${database}":
+      instance => $instance,
+      database => $database,
+      command  => $backup_plan_attach_sched_sql,
+      require  => Sqlserver::Config[$instance],
+    }
 
   }
 }
