@@ -59,7 +59,7 @@ define secure_sqlserver::stig::v79081 (
 
           ::secure_sqlserver::log { "v79081: calling tsql module for, ${instance}\\${database}\\${object}\\${principal}, using sql = \n${sql}": }
 
-          sqlserver_tsql{ "v79077_revoke_object_permissions_from_${principal}_on_${object}_for_${instance}_${database}":
+          sqlserver_tsql{ "v79081_revoke_object_permissions_from_${principal}_on_${object}_for_${instance}_${database}":
             instance => $instance,
             database => $database,
             command  => $sql,
