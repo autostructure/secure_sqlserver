@@ -53,7 +53,7 @@ define secure_sqlserver::stig::v79083 (
 
         if downcase($db) == downcase($database) {
           unless empty($model) {
-            notify { "v79083: ${instance}\\${database}: recovery_models['recovery_model'] = ${recovery_models['recovery_model']}":
+            notify { "v79083: ${instance}\\${database}: recovery_model = ${model}":
               loglevel => notice,
             }
           } else {
