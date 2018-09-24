@@ -44,8 +44,8 @@ define secure_sqlserver::stig::v79083 (
 
     $recovery_models = $facts['sqlserver_database_backup_recovery_models']
 
-    unless empty($recovery_models) or empty($recovery_models["${database}"]) {
-      notify { "v79083: ${instance}\\${database}: recovery_models['${database}'] = ${recovery_models['${database}']}":
+    unless empty($recovery_models) or empty($recovery_models['recovery_model']) {
+      notify { "v79083: ${instance}\\${database}: recovery_models['recovery_model'] = ${recovery_models['recovery_model']}":
         loglevel => notice,
       }
     } else {
