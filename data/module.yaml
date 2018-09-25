@@ -30,25 +30,23 @@ secure_sqlserver::backup_recovery_model_settings:
   # tempdb: SIMPLE
 
 # V-79083
-# The yaml escape character for colon is:
-# {{':'}}
 secure_sqlserver::backup_plan:
   master:
     description:  Test backup description for master database.
-    disk:         C:\sqlserver-backup-file-master.bak
-    logs:         C:\sqlserver-backup-file-master.log
+    disk:         C:\Windows\Temp\sqlserver-backup-file-master.bak
+    logs:         C:\Windows\Temp\sqlserver-backup-file-master.log
   model:
     description:  Test backup description for model database.
-    disk:         "C:\\sqlserver-backup-file-model.bak"
-    logs:         "C:\\sqlserver-backup-file-model.log"
+    disk:         "C:\\Windows\\Temp\\sqlserver-backup-file-model.bak"
+    logs:         "C:\\Windows\\Temp\\sqlserver-backup-file-model.log"
   msdb:
     description:  Test backup description for msdb database.
-    disk:         C{{':'}}\sqlserver-backup-file-msdb.bak
-    logs:         C{{':'}}\sqlserver-backup-file-msdb.log
+    disk:         C:\sqlserver-backup-file-msdb.bak
+    logs:         C:\Windows\Temp\sqlserver-backup-file-msdb.log
   # tempdb:
     # description:  Test backup description for tempdb database.
-    # disk:         C:\sqlserver-backup-file-tempdb.bak
-    # logs:         C:\sqlserver-backup-file-tempdb.log
+    # disk:         C:\Windows\Temp\sqlserver-backup-file-tempdb.bak
+    # logs:         C:\Windows\Temp\sqlserver-backup-file-tempdb.log
     # key:
 
 
