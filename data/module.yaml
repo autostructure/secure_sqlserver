@@ -27,7 +27,7 @@ secure_sqlserver::backup_recovery_model_settings:
   master: SIMPLE
   model:  FULL
   msdb:   SIMPLE
-  #tempdb: SIMPLE
+  # tempdb: SIMPLE
 
 # V-79083
 # The yaml escape character for colon is:
@@ -37,22 +37,20 @@ secure_sqlserver::backup_plan:
     description:  Test backup description for master database.
     disk:         C:\sqlserver-backup-file-master.bak
     logs:         C:\sqlserver-backup-file-master.log
-    password:     password
   model:
     description:  Test backup description for model database.
     disk:         "C:\\sqlserver-backup-file-model.bak"
     logs:         "C:\\sqlserver-backup-file-model.log"
-    password:     password
   msdb:
     description:  Test backup description for msdb database.
     disk:         C{{':'}}\sqlserver-backup-file-msdb.bak
     logs:         C{{':'}}\sqlserver-backup-file-msdb.log
-    password:     password
   # tempdb:
     # description:  Test backup description for tempdb database.
     # disk:         C:\sqlserver-backup-file-tempdb.bak
     # logs:         C:\sqlserver-backup-file-tempdb.log
-    # password:     password
+    # key:
+
 
 # V-79111
 # logins based on Active Directory users are limited to names of less than 21 characters.

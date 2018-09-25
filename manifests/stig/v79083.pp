@@ -102,12 +102,11 @@ define secure_sqlserver::stig::v79083 (
       $backup_plan_desc = $backup_plans[$database]['description']
       $backup_plan_disk = $backup_plans[$database]['disk']
       $backup_plan_logs = $backup_plans[$database]['logs']
-      $backup_plan_pass = $backup_plans[$database]['password']
 
       # backup command...
-      $backup_plan_sql = "BACKUP DATABASE ${database} TO DISK = '${backup_plan_disk}' WITH CHECKSUM, PASSWORD = '${backup_plan_pass}', DESCRIPTION = '${backup_plan_desc}';
-        BACKUP DATABASE ${database} TO DISK = '${backup_plan_disk}.dif' WITH DIFFERENTIAL, CHECKSUM, PASSWORD = '${backup_plan_pass}', DESCRIPTION = '${backup_plan_desc}';
-        BACKUP LOG ${database} TO DISK = '${backup_plan_logs}' WITH CHECKSUM, PASSWORD = '${backup_plan_pass}', DESCRIPTION = '${backup_plan_desc}';"
+      $backup_plan_sql = "BACKUP DATABASE ${database} TO DISK = '${backup_plan_disk}' WITH CHECKSUM, DESCRIPTION = '${backup_plan_desc}';
+        BACKUP DATABASE ${database} TO DISK = '${backup_plan_disk}.dif' WITH DIFFERENTIAL, CHECKSUM, DESCRIPTION = '${backup_plan_desc}';
+        BACKUP LOG ${database} TO DISK = '${backup_plan_logs}' WITH CHECKSUM, DESCRIPTION = '${backup_plan_desc}';"
 
       ::secure_sqlserver::log { "v79083: CHECK #1 -- calling tsql module for, ${instance}\\${database}, using sql = \n${backup_plan_sql}":
         loglevel => notice,
@@ -118,7 +117,7 @@ define secure_sqlserver::stig::v79083 (
         @job_name = N'${job_name}',
         @step_name = 'Backup the database',
         @subsystem = 'TSQL',
-        @command = N'${backup_plan_sql}',
+        @command = N\"${backup_plan_sql}\",
         @retry_attempts = 5,
         @retry_interval = 5 ;"
 
