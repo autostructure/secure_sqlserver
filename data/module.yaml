@@ -1,6 +1,10 @@
 ---
 # Configuration Parameters
 
+# Controller
+# V-79123
+secure_sqlserver::service_account: sa
+
 # V-79061
 secure_sqlserver::approved_sql_login_users:
   - charlie

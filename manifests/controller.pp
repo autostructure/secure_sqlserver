@@ -8,15 +8,13 @@
 # TODO: Convert to 2016 after done w/2017 dev environment...
 #       $instances = $facts['sqlserver_instances']['SQL_2016'].keys
 #
-class secure_sqlserver::controller (
-  String $svc_acct,
-) {
+class secure_sqlserver::controller {
 
   # NOTE: using 'Down-Level Logon Name' format for usernames.
   $port = 1433
-  $service_account = $svc_acct
   $netbios_user = $facts['identity']['user']
   $fqdn_user = $facts['id']
+  $service_account = lookup('secure_sqlserver::service_account')
 
   notify { 'secure_sqlserver:_controller_msg0_debug':
     message  => "users: service_account=${service_account}; netbios_user=${netbios_user}; fqdn_user=${fqdn_user}",
