@@ -109,7 +109,7 @@ define secure_sqlserver::stig::v79083 (
         BACKUP DATABASE ${database} TO DISK = '${backup_plan_disk}.dif' WITH DIFFERENTIAL, CHECKSUM, PASSWORD = '${backup_plan_pass}', DESCRIPTION = '${backup_plan_desc}';
         BACKUP LOG ${database} TO DISK = '${backup_plan_logs}' WITH CHECKSUM, PASSWORD = '${backup_plan_pass}', DESCRIPTION = '${backup_plan_desc}';"
 
-      ::secure_sqlserver::log { "v79083: calling tsql module for, ${instance}\\${database}, using sql = \n${backup_plan_sql}":
+      ::secure_sqlserver::log { "v79083: CHECK #1 -- calling tsql module for, ${instance}\\${database}, using sql = \n${backup_plan_sql}":
         loglevel => notice,
       }
 
@@ -132,7 +132,7 @@ define secure_sqlserver::stig::v79083 (
         @job_name = N'${job_name}',
         @schedule_name = N'${schedule_name}' ;"
 
-      ::secure_sqlserver::log { "v79083: calling tsql module for, ${instance}\\${database}, using sql = \n${backup_plan_add_job_sql}":
+      ::secure_sqlserver::log { "v79083: CHECK #2 -- calling tsql module for, ${instance}\\${database}, using sql = \n${backup_plan_add_job_sql}":
         loglevel => notice,
       }
 
