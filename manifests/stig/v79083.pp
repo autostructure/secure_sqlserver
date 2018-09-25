@@ -111,11 +111,7 @@ define secure_sqlserver::stig::v79083 (
       # BACKUP LOG ${database} TO DISK = '${backup_plan_logs}' WITH CHECKSUM, DESCRIPTION = '${backup_plan_desc}';
       # 12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678
 
-      # $backup_plan_sql = "BACKUP DATABASE ${database} TO DISK = '${backup_plan_disk}' WITH CHECKSUM, DESCRIPTION = '${backup_plan_desc}';
-      #   BACKUP DATABASE ${database} TO DISK = '${backup_plan_disk}.dif' WITH DIFFERENTIAL, CHECKSUM, DESCRIPTION = '${backup_plan_desc}';
-      #   BACKUP LOG ${database} TO DISK = '${backup_plan_logs}' WITH CHECKSUM, DESCRIPTION = '${backup_plan_desc}';"
-
-      $backup_plan_sql = 'BACKUP DATABASE ${database} TO DISK = ''${backup_plan_disk}'' WITH CHECKSUM'
+      $backup_plan_sql = "BACKUP DATABASE ${database} TO DISK = ''${backup_plan_disk}'' WITH CHECKSUM"
 
       ::secure_sqlserver::log { "v79083: CHECK #1 -- calling tsql module for, ${instance}\\${database}, using sql = \n${backup_plan_sql}":
         loglevel => notice,
