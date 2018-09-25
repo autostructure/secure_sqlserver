@@ -109,24 +109,32 @@ define secure_sqlserver::stig::v79083 (
         BACKUP DATABASE ${database} TO DISK = '${backup_plan_disk}.dif' WITH DIFFERENTIAL, CHECKSUM, PASSWORD = '${backup_plan_pass}', DESCRIPTION = '${backup_plan_desc}';
         BACKUP LOG ${database} TO DISK = '${backup_plan_logs}' WITH CHECKSUM, PASSWORD = '${backup_plan_pass}', DESCRIPTION = '${backup_plan_desc}';"
 
+      ::secure_sqlserver::log { "v79083: calling tsql module for, ${instance}\\${database}, using sql = \n${backup_plan_sql}":
+        loglevel => notice,
+      }
+
       # creates a job step that that uses Transact-SQL...
       $backup_plan_add_job_sql = "EXEC sp_add_jobstep
-          @job_name = N'${job_name}',
-          @step_name = N'Backup the database',
-          @subsystem = N'TSQL',
-          @command = N'${backup_plan_sql}',
-          @retry_attempts = 5,
-          @retry_interval = 5 ;"
+        @job_name = N'${job_name}',
+        @step_name = 'Backup the database',
+        @subsystem = 'TSQL',
+        @command = N'${backup_plan_sql}',
+        @retry_attempts = 5,
+        @retry_interval = 5 ;"
 
       $backup_plan_add_sched_sql = "EXEC sp_add_schedule
-          @schedule_name = N'${schedule_name}' ,
-          @freq_type = 4,
-          @freq_interval = 1,
-          @active_start_time = 010000 ;"
+        @schedule_name = N'${schedule_name}' ,
+        @freq_type = 4,
+        @freq_interval = 1,
+        @active_start_time = 010000 ;"
 
       $backup_plan_attach_sched_sql = "EXEC sp_attach_schedule
-          @job_name = N'${job_name}',
-          @schedule_name = N'${schedule_name}' ;"
+        @job_name = N'${job_name}',
+        @schedule_name = N'${schedule_name}' ;"
+
+      ::secure_sqlserver::log { "v79083: calling tsql module for, ${instance}\\${database}, using sql = \n${backup_plan_add_job_sql}":
+        loglevel => notice,
+      }
 
       ::secure_sqlserver::log { "v79083: calling tsql module for, ${instance}\\${database}, using sql = \n${backup_plan_add_job_sql}": }
       sqlserver_tsql{ "v79083_create_job_for_${instance}_${database}":

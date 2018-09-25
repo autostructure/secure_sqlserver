@@ -35,8 +35,8 @@ secure_sqlserver::backup_recovery_model_settings:
 secure_sqlserver::backup_plan:
   master:
     description:  Test backup description for master database.
-    disk:         C{{':'}}\sqlserver-backup-file-master.bak
-    logs:         C{{':'}}\sqlserver-backup-file-master.log
+    disk:         C:\sqlserver-backup-file-master.bak
+    logs:         C:\sqlserver-backup-file-master.log
     password:     password
   model:
     description:  Test backup description for model database.
@@ -45,8 +45,8 @@ secure_sqlserver::backup_plan:
     password:     password
   msdb:
     description:  Test backup description for msdb database.
-    disk:         C:\sqlserver-backup-file-msdb.bak
-    logs:         C:\sqlserver-backup-file-msdb.log
+    disk:         C{{':'}}\sqlserver-backup-file-msdb.bak
+    logs:         C{{':'}}\sqlserver-backup-file-msdb.log
     password:     password
   # tempdb:
     # description:  Test backup description for tempdb database.
