@@ -118,7 +118,7 @@ define secure_sqlserver::stig::v79083 (
       }
 
       # creates a job step that that uses Transact-SQL...
-      $backup_plan_add_job_sql = "EXEC sp_add_jobstep
+      $backup_plan_add_job_sql = "EXEC sys.sp_add_jobstep
         @job_name = N'${job_name}',
         @step_name = 'Backup the database',
         @subsystem = 'TSQL',
@@ -126,13 +126,13 @@ define secure_sqlserver::stig::v79083 (
         @retry_attempts = 5,
         @retry_interval = 5 ;"
 
-      $backup_plan_add_sched_sql = "EXEC sp_add_schedule
+      $backup_plan_add_sched_sql = "EXEC sys.sp_add_schedule
         @schedule_name = N'${schedule_name}' ,
         @freq_type = 4,
         @freq_interval = 1,
         @active_start_time = 010000 ;"
 
-      $backup_plan_attach_sched_sql = "EXEC sp_attach_schedule
+      $backup_plan_attach_sched_sql = "EXEC sys.sp_attach_schedule
         @job_name = N'${job_name}',
         @schedule_name = N'${schedule_name}' ;"
 
