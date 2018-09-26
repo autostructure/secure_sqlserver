@@ -92,7 +92,10 @@ define secure_sqlserver::stig::v79083 (
 
     # Object names...
     $db_name = upcase($database)
-    $job_name = "STIG_JOB_V79083_BACKUP_${db_name}"
+    $job_prefix = "STIG_JOB_V79083_${db_name}"
+    $job_name_full = "${job_prefix}_FULL_BACKUP"
+    $job_name_diff = "${job_prefix}_DIFF_BACKUP"
+    $job_name_logs = "${job_prefix}_LOG_BACKUP"
     $schedule_name = "STIG_JOB_V79083_SCHED_${db_name}"
 
     # Hiera lookups...
@@ -101,7 +104,8 @@ define secure_sqlserver::stig::v79083 (
     unless empty($backup_plans[$database]) {
       $backup_plan_desc = $backup_plans[$database]['description']
       $backup_plan_disk = $backup_plans[$database]['disk']
-      $backup_plan_logs = $backup_plans[$database]['logs']
+      $backup_plan_diff = $backup_plans[$database]['diff']
+      $backup_plan_logs = $backup_plans[$database]['log']
 
       # backup command...
       # T-SQL complained that the command should be 128 characters.
@@ -111,56 +115,98 @@ define secure_sqlserver::stig::v79083 (
       # BACKUP LOG ${database} TO DISK = '${backup_plan_logs}' WITH CHECKSUM, DESCRIPTION = '${backup_plan_desc}';
       # 12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678
 
-      $backup_plan_sql = "BACKUP DATABASE ${database} TO DISK = ''${backup_plan_disk}'' WITH CHECKSUM"
+      $sql_full_backup = "BACKUP DATABASE ${database} TO DISK = ''${backup_plan_disk}'' WITH CHECKSUM"
+      $sql_diff_backup = "BACKUP DATABASE ${database} TO DISK = ''${backup_plan_diff}'' WITH DIFFERENTIAL, CHECKSUM"
+      $sql_log_backups = "BACKUP LOG ${database} TO DISK = ''${backup_plan_logs}'' WITH CHECKSUM"
 
-      ::secure_sqlserver::log { "v79083: CHECK #1 -- calling tsql module for, ${instance}\\${database}, using sql = \n${backup_plan_sql}":
+      ::secure_sqlserver::log { "v79083: CHECK #1 -- calling tsql module for, ${instance}\\${database}, using sql = \n${sql_full_backup}":
         loglevel => notice,
       }
 
       # creates a job step that that uses Transact-SQL...
-      $backup_plan_add_job_sql = "EXEC sys.sp_add_jobstep
-        @job_name = N'${job_name}',
-        @step_name = 'Backup the database',
+      $sql_add_job_full = "EXEC msdb.sys.sp_add_jobstep
+        @job_name = N'${job_name_full}',
+        @step_name = 'Full database backup.',
         @subsystem = 'TSQL',
-        @command = '${backup_plan_sql}',
+        @command = '${sql_backup_full}',
         @retry_attempts = 5,
         @retry_interval = 5 ;"
 
-      $backup_plan_add_sched_sql = "EXEC sys.sp_add_schedule
+      ::secure_sqlserver::log { "v79083: CHECK #2 -- calling tsql module for, ${instance}\\${database}, using sql = \n${sql_add_job}":
+        loglevel => notice,
+      }
+
+      $sql_add_job_diff = "EXEC msdb.sys.sp_add_jobstep
+        @job_name = N'${job_name_diff}',
+        @step_name = 'Full database backup.',
+        @subsystem = 'TSQL',
+        @command = '${$sql_backup_diff}',
+        @retry_attempts = 5,
+        @retry_interval = 5 ;"
+
+      $sql_add_job_logs = "EXEC msdb.sys.sp_add_jobstep
+        @job_name = N'${job_name_logs}',
+        @step_name = 'Full database backup.',
+        @subsystem = 'TSQL',
+        @command = '${sql_backup_logs}',
+        @retry_attempts = 5,
+        @retry_interval = 5 ;"
+
+      $sql_add_sched = "EXEC sys.sp_add_schedule
         @schedule_name = N'${schedule_name}' ,
         @freq_type = 4,
         @freq_interval = 1,
         @active_start_time = 010000 ;"
 
-      $backup_plan_attach_sched_sql = "EXEC sys.sp_attach_schedule
-        @job_name = N'${job_name}',
+      $sql_attach_sched_full = "EXEC sys.sp_attach_schedule
+        @job_name = N'${job_name_full}',
         @schedule_name = N'${schedule_name}' ;"
 
-      ::secure_sqlserver::log { "v79083: CHECK #2 -- calling tsql module for, ${instance}\\${database}, using sql = \n${backup_plan_add_job_sql}":
-        loglevel => notice,
-      }
+      $sql_attach_sched_diff = "EXEC sys.sp_attach_schedule
+        @job_name = N'${job_name_diff}',
+        @schedule_name = N'${schedule_name}' ;"
 
-      ::secure_sqlserver::log { "v79083: calling tsql module for, ${instance}\\${database}, using sql = \n${backup_plan_add_job_sql}": }
-      sqlserver_tsql{ "v79083_create_job_for_${instance}_${database}":
+      $sql_attach_sched_logs = "EXEC sys.sp_attach_schedule
+        @job_name = N'${job_name_logs}',
+        @schedule_name = N'${schedule_name}' ;"
+
+      ::secure_sqlserver::log { "v79083: calling tsql module for, ${instance}\\${database}, using sql = \n${sql_add_job_full}": }
+      sqlserver_tsql{ "v79083_create_job_for_full_backup_of_${instance}_${database}":
         instance => $instance,
         database => $database,
-        command  => $backup_plan_add_job_sql,
+        command  => $sql_add_job_full,
         require  => Sqlserver::Config[$instance],
       }
 
-      ::secure_sqlserver::log { "v79083: calling tsql module for, ${instance}\\${database}, using sql = \n${backup_plan_add_sched_sql}": }
+      ::secure_sqlserver::log { "v79083: calling tsql module for, ${instance}\\${database}, using sql = \n${sql_add_job_diff}": }
+      sqlserver_tsql{ "v79083_create_job_for_diff_backup_of_${instance}_${database}":
+        instance => $instance,
+        database => $database,
+        command  => $sql_add_job_diff,
+        require  => Sqlserver::Config[$instance],
+      }
+
+      ::secure_sqlserver::log { "v79083: calling tsql module for, ${instance}\\${database}, using sql = \n${sql_add_job_logs}": }
+      sqlserver_tsql{ "v79083_create_job_for_log_backup_of_${instance}_${database}":
+        instance => $instance,
+        database => $database,
+        command  => $sql_add_job_logs,
+        require  => Sqlserver::Config[$instance],
+      }
+
+      ::secure_sqlserver::log { "v79083: calling tsql module for, ${instance}\\${database}, using sql = \n${sql_add_sched}": }
       sqlserver_tsql{ "v79083_create_schedule_for_${instance}_${database}":
         instance => $instance,
         database => $database,
-        command  => $backup_plan_add_sched_sql,
+        command  => $sql_add_sched,
         require  => Sqlserver::Config[$instance],
       }
 
-      ::secure_sqlserver::log { "v79083: calling tsql module for, ${instance}\\${database}, using sql = \n${backup_plan_attach_sched_sql}": }
+      ::secure_sqlserver::log { "v79083: calling tsql module for, ${instance}\\${database}, using sql = \n${sql_attach_sched}": }
       sqlserver_tsql{ "v79083_attach_job_to_schedule_for_${instance}_${database}":
         instance => $instance,
         database => $database,
-        command  => $backup_plan_attach_sched_sql,
+        command  => $sql_attach_sched,
         require  => Sqlserver::Config[$instance],
       }
     }
