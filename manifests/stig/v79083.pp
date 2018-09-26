@@ -112,6 +112,7 @@ define secure_sqlserver::stig::v79083 (
       # , DESCRIPTION = '${backup_plan_desc}'
 
       $sql_add_job = "EXEC msdb.dbo.sp_add_job @job_name = N'${job_name}' ;"
+      $sql_add_job_check = "IF (SELECT count(*) FROM msdb.dbo.sysjobs_view WHERE name = '${job_name}') = 0 THROW 50000, 'Missing Backup Job for V-79083.', 10"# lint:ignore:140chars
 
       $sql_add_job_full = "EXEC msdb.dbo.sp_add_jobstep
         @job_name = N'${job_name}',
@@ -152,6 +153,7 @@ define secure_sqlserver::stig::v79083 (
         instance => $instance,
         database => $database,
         command  => $sql_add_job,
+        onlyif   => $sql_add_job_check,
         require  => Sqlserver::Config[$instance],
       }
 
