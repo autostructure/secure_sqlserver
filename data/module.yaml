@@ -34,6 +34,7 @@ secure_sqlserver::backup_recovery_model_settings:
   # tempdb: SIMPLE
 
 # V-79083
+
 secure_sqlserver::backup_plan:
   master:
     description:  Test backup description for master database.
