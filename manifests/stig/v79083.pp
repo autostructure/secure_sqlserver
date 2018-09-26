@@ -88,6 +88,9 @@ define secure_sqlserver::stig::v79083 (
     $db = upcase($database)
     $job_name = "STIG_JOB_V79083_BACKUP_${db}"
     $schedule_name = "STIG_JOB_V79083_SCHED_${db}"
+    $step_name_full = "Full database backup for ${database}."
+    $step_name_diff = "Differential database backup for ${database}."
+    $step_name_logs = "Backup database logs for ${database}."
 
     # Hiera lookups...
     $backup_plans = lookup('secure_sqlserver::backup_plan')
@@ -111,40 +114,45 @@ define secure_sqlserver::stig::v79083 (
       $sql_logs_backup = "BACKUP LOG ${database} TO DISK = ''${backup_plan_logs}'' WITH CHECKSUM"
       # , DESCRIPTION = '${backup_plan_desc}'
 
-      $sql_add_job = "EXEC msdb.dbo.sp_add_job @job_name = N'${job_name}' ;"
       $sql_add_job_check = "IF (SELECT count(*) FROM msdb.dbo.sysjobs_view WHERE name = '${job_name}') = 0 THROW 50000, 'Missing Backup Job for V-79083.', 10"# lint:ignore:140chars
+      $sql_add_job = "EXEC msdb.dbo.sp_add_job @job_name = N'${job_name}' ;"
 
+      $sql_add_job_full_check = "IF (SELECT count(*) FROM msdb.dbo.sysjobs j, msdb.dbo.sysjobsteps js WHERE j.name = '${job_name}' AND js.step_name = '${step_name_full}') = 0 THROW 50000, 'Missing Job Step for V-79083.', 10"# lint:ignore:140chars
       $sql_add_job_full = "EXEC msdb.dbo.sp_add_jobstep
         @job_name = N'${job_name}',
-        @step_name = 'Full database backup for ${database}.',
+        @step_name = N'${step_name_full}',
         @subsystem = 'TSQL',
-        @command = '${sql_full_backup}',
+        @command = N'${sql_full_backup}',
         @retry_attempts = 5,
         @retry_interval = 5 ;"
 
+      $sql_add_job_diff_check = "IF (SELECT count(*) FROM msdb.dbo.sysjobs j, msdb.dbo.sysjobsteps js WHERE j.name = '${job_name}' AND js.step_name = '${step_name_diff}') = 0 THROW 50000, 'Missing Job Step for V-79083.', 10"#lint:ignore:140chars
       $sql_add_job_diff = "EXEC msdb.dbo.sp_add_jobstep
         @job_name = N'${job_name}',
-        @step_name = 'Differential database backup for ${database}.',
+        @step_name = N'${step_name_diff}',
         @subsystem = 'TSQL',
-        @command = '${$sql_diff_backup}',
+        @command = N'${$sql_diff_backup}',
         @retry_attempts = 5,
         @retry_interval = 5 ;"
 
+      $sql_add_job_logs_check = "IF (SELECT count(*) FROM msdb.dbo.sysjobs j, msdb.dbo.sysjobsteps js WHERE j.name = '${job_name}' AND js.step_name = '${step_name_logs}') = 0 THROW 50000, 'Missing Job Step for V-79083.', 10"#lint:ignore:140chars
       $sql_add_job_logs = "EXEC msdb.dbo.sp_add_jobstep
         @job_name = N'${job_name}',
-        @step_name = 'Backup database logs for ${database}.',
+        @step_name = N'${step_name_logs}',
         @subsystem = 'TSQL',
-        @command = '${sql_logs_backup}',
+        @command = N'${sql_logs_backup}',
         @retry_attempts = 5,
         @retry_interval = 5 ;"
 
+      $sql_add_sched_check = "IF (SELECT count(*) FROM msdb.dbo.sysschedules s WHERE s.name = '${schedule_name}') = 0 THROW 50000, 'Missing Schedule for V-79083.', 10"#lint:ignore:140chars
       $sql_add_sched = "EXEC msdb.dbo.sp_add_schedule
         @schedule_name = N'${schedule_name}' ,
         @freq_type = 4,
         @freq_interval = 1,
         @active_start_time = 010000 ;"
 
-      $sql_attach_sched = "EXEC msdb.dbo.sp_attach_schedule
+        $sql_attach_sched_check = "IF (SELECT count(*) FROM msdb.dbo.sysschedules s, msdb.dbo.sysjobs j, msdb.dbo.sysjobschedules js WHERE j.job_id = js.job_id AND s.schedule_id = js.schedule_id AND j.name = '${job_name}' AND s.name = '${schedule_name}') = 0 THROW 50000, 'Missing Schedule for V-79083.', 10"#lint:ignore:140chars
+        $sql_attach_sched = "EXEC msdb.dbo.sp_attach_schedule
         @job_name = N'${job_name}',
         @schedule_name = N'${schedule_name}' ;"
 
@@ -162,6 +170,7 @@ define secure_sqlserver::stig::v79083 (
         instance => $instance,
         database => $database,
         command  => $sql_add_job_full,
+        onlyif   => $sql_add_job_full_check,
         require  => Sqlserver::Config[$instance],
       }
 
@@ -170,6 +179,7 @@ define secure_sqlserver::stig::v79083 (
         instance => $instance,
         database => $database,
         command  => $sql_add_job_diff,
+        onlyif   => $sql_add_job_diff_check,
         require  => Sqlserver::Config[$instance],
       }
 
@@ -178,6 +188,7 @@ define secure_sqlserver::stig::v79083 (
         instance => $instance,
         database => $database,
         command  => $sql_add_job_logs,
+        onlyif   => $sql_add_job_logs_check,
         require  => Sqlserver::Config[$instance],
       }
 
@@ -186,6 +197,7 @@ define secure_sqlserver::stig::v79083 (
         instance => $instance,
         database => $database,
         command  => $sql_add_sched,
+        onlyif   => $sql_add_sched_check,
         require  => Sqlserver::Config[$instance],
       }
 
@@ -194,6 +206,7 @@ define secure_sqlserver::stig::v79083 (
         instance => $instance,
         database => $database,
         command  => $sql_attach_sched,
+        onlyif   => $sql_attach_sched_check,
         require  => Sqlserver::Config[$instance],
       }
     }
