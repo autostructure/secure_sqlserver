@@ -46,14 +46,9 @@ define secure_sqlserver::stig::v79083 (
             # is this block used to set the model from hiera setting?
             # is that wise to do so?
             $model = upcase($model_hash['recovery_model'])
-            notify { "v79083: ${instance}\\${database}: recovery_model = ${model}, target = ${target_recovery_model}":
-              loglevel => notice,
-            }
             if $model != $target_recovery_model and !empty($target_recovery_model) {
               $sql = "ALTER DATABASE ${database} SET RECOVERY ${target_recovery_model}"
-              ::secure_sqlserver::log { "v79083: ${instance}\\${database}: recovery_model = ${model}, changing to ${target_recovery_model}":
-                loglevel => notice,
-              }
+              ::secure_sqlserver::log { "v79083: ${instance}\\${database}: recovery_model = ${model}, changing to ${target_recovery_model}": }
               ::secure_sqlserver::log { "v79083: calling tsql module for, ${instance}\\${database}, using sql = \n${sql}": }
               sqlserver_tsql{ "v79083_set_recovery_model_for_${instance}_${database}":
                 instance => $instance,
@@ -117,10 +112,6 @@ define secure_sqlserver::stig::v79083 (
       $sql_logs_backup = "BACKUP LOG ${database} TO DISK = ''${backup_plan_logs}'' WITH CHECKSUM"
       # , DESCRIPTION = '${backup_plan_desc}'
 
-      ::secure_sqlserver::log { "v79083: CHECK #1 -- calling tsql module for, ${instance}\\${database}, using sql = \n${sql_full_backup}":
-        loglevel => notice,
-      }
-
       $sql_add_job = "EXEC msdb.dbo.sp_add_job @job_name = N'${job_name}' ;"
 
       $sql_add_job_full = "EXEC msdb.dbo.sp_add_jobstep
@@ -130,10 +121,6 @@ define secure_sqlserver::stig::v79083 (
         @command = '${sql_full_backup}',
         @retry_attempts = 5,
         @retry_interval = 5 ;"
-
-      ::secure_sqlserver::log { "v79083: CHECK #2 -- calling tsql module for, ${instance}\\${database}, using sql = \n${sql_add_job_full}":
-        loglevel => notice,
-      }
 
       $sql_add_job_diff = "EXEC msdb.dbo.sp_add_jobstep
         @job_name = N'${job_name}',
