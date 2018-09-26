@@ -117,7 +117,8 @@ define secure_sqlserver::stig::v79083 (
 
       $sql_full_backup = "BACKUP DATABASE ${database} TO DISK = ''${backup_plan_disk}'' WITH CHECKSUM"
       $sql_diff_backup = "BACKUP DATABASE ${database} TO DISK = ''${backup_plan_diff}'' WITH DIFFERENTIAL, CHECKSUM"
-      $sql_log_backups = "BACKUP LOG ${database} TO DISK = ''${backup_plan_logs}'' WITH CHECKSUM"
+      $sql_logs_backup = "BACKUP LOG ${database} TO DISK = ''${backup_plan_logs}'' WITH CHECKSUM"
+      # , DESCRIPTION = '${backup_plan_desc}'
 
       ::secure_sqlserver::log { "v79083: CHECK #1 -- calling tsql module for, ${instance}\\${database}, using sql = \n${sql_full_backup}":
         loglevel => notice,
@@ -128,11 +129,11 @@ define secure_sqlserver::stig::v79083 (
         @job_name = N'${job_name_full}',
         @step_name = 'Full database backup.',
         @subsystem = 'TSQL',
-        @command = '${sql_backup_full}',
+        @command = '${sql_full_backup}',
         @retry_attempts = 5,
         @retry_interval = 5 ;"
 
-      ::secure_sqlserver::log { "v79083: CHECK #2 -- calling tsql module for, ${instance}\\${database}, using sql = \n${sql_add_job}":
+      ::secure_sqlserver::log { "v79083: CHECK #2 -- calling tsql module for, ${instance}\\${database}, using sql = \n${sql_add_job_full}":
         loglevel => notice,
       }
 
@@ -140,7 +141,7 @@ define secure_sqlserver::stig::v79083 (
         @job_name = N'${job_name_diff}',
         @step_name = 'Full database backup.',
         @subsystem = 'TSQL',
-        @command = '${$sql_backup_diff}',
+        @command = '${$sql_diff_backup}',
         @retry_attempts = 5,
         @retry_interval = 5 ;"
 
@@ -148,7 +149,7 @@ define secure_sqlserver::stig::v79083 (
         @job_name = N'${job_name_logs}',
         @step_name = 'Full database backup.',
         @subsystem = 'TSQL',
-        @command = '${sql_backup_logs}',
+        @command = '${sql_logs_backup_log}',
         @retry_attempts = 5,
         @retry_interval = 5 ;"
 
