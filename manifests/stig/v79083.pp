@@ -121,7 +121,7 @@ define secure_sqlserver::stig::v79083 (
         loglevel => notice,
       }
 
-      $sql_add_job = "EXEC dbo.sp_add_job @job_name = N'${job_name}' ;"
+      $sql_add_job = "EXEC msdb.dbo.sp_add_job @job_name = N'${job_name}' ;"
 
       $sql_add_job_full = "EXEC msdb.dbo.sp_add_jobstep
         @job_name = N'${job_name}',
