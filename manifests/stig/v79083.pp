@@ -92,10 +92,7 @@ define secure_sqlserver::stig::v79083 (
 
     # Object names...
     $db_name = upcase($database)
-    $job_prefix = "STIG_JOB_V79083_${db_name}"
-    $job_name_full = "${job_prefix}_FULL_BACKUP"
-    $job_name_diff = "${job_prefix}_DIFF_BACKUP"
-    $job_name_logs = "${job_prefix}_LOG_BACKUP"
+    $job_name = "STIG_JOB_V79083_BACKUP_${db_name}"
     $schedule_name = "STIG_JOB_V79083_SCHED_${db_name}"
 
     # Hiera lookups...
@@ -124,9 +121,10 @@ define secure_sqlserver::stig::v79083 (
         loglevel => notice,
       }
 
-      # creates a job step that that uses Transact-SQL...
-      $sql_add_job_full = "EXEC msdb.sys.sp_add_jobstep
-        @job_name = N'${job_name_full}',
+      $sql_add_job = "EXEC dbo.sp_add_job @job_name = N'${job_name}' ;"
+
+      $sql_add_job_full = "EXEC dbo.sp_add_jobstep
+        @job_name = N'${job_name}',
         @step_name = 'Full database backup.',
         @subsystem = 'TSQL',
         @command = '${sql_full_backup}',
@@ -137,39 +135,39 @@ define secure_sqlserver::stig::v79083 (
         loglevel => notice,
       }
 
-      $sql_add_job_diff = "EXEC msdb.sys.sp_add_jobstep
-        @job_name = N'${job_name_diff}',
-        @step_name = 'Full database backup.',
+      $sql_add_job_diff = "EXEC dbo.sp_add_jobstep
+        @job_name = N'${job_name}',
+        @step_name = 'Differential database backup.',
         @subsystem = 'TSQL',
         @command = '${$sql_diff_backup}',
         @retry_attempts = 5,
         @retry_interval = 5 ;"
 
-      $sql_add_job_logs = "EXEC msdb.sys.sp_add_jobstep
-        @job_name = N'${job_name_logs}',
-        @step_name = 'Full database backup.',
+      $sql_add_job_logs = "EXEC dbo.sp_add_jobstep
+        @job_name = N'${job_name}',
+        @step_name = 'Backup database logs.',
         @subsystem = 'TSQL',
         @command = '${sql_logs_backup_log}',
         @retry_attempts = 5,
         @retry_interval = 5 ;"
 
-      $sql_add_sched = "EXEC sys.sp_add_schedule
+      $sql_add_sched = "EXEC dbo.sp_add_schedule
         @schedule_name = N'${schedule_name}' ,
         @freq_type = 4,
         @freq_interval = 1,
         @active_start_time = 010000 ;"
 
-      $sql_attach_sched_full = "EXEC sys.sp_attach_schedule
-        @job_name = N'${job_name_full}',
+      $sql_attach_sched = "EXEC dbo.sp_attach_schedule
+        @job_name = N'${job_name}',
         @schedule_name = N'${schedule_name}' ;"
 
-      $sql_attach_sched_diff = "EXEC sys.sp_attach_schedule
-        @job_name = N'${job_name_diff}',
-        @schedule_name = N'${schedule_name}' ;"
-
-      $sql_attach_sched_logs = "EXEC sys.sp_attach_schedule
-        @job_name = N'${job_name_logs}',
-        @schedule_name = N'${schedule_name}' ;"
+      ::secure_sqlserver::log { "v79083: calling tsql module for, ${instance}\\${database}, using sql = \n${sql_add_job}": }
+      sqlserver_tsql{ "v79083_create_job_for_backup_of_${instance}_${database}":
+        instance => $instance,
+        database => $database,
+        command  => $sql_add_job,
+        require  => Sqlserver::Config[$instance],
+      }
 
       ::secure_sqlserver::log { "v79083: calling tsql module for, ${instance}\\${database}, using sql = \n${sql_add_job_full}": }
       sqlserver_tsql{ "v79083_create_job_for_full_backup_of_${instance}_${database}":
