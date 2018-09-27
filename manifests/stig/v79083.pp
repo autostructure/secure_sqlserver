@@ -151,8 +151,8 @@ define secure_sqlserver::stig::v79083 (
         @freq_interval = 1,
         @active_start_time = 010000 ;"
 
-        $sql_attach_sched_check = "IF (SELECT count(*) FROM msdb.dbo.sysschedules s, msdb.dbo.sysjobs j, msdb.dbo.sysjobschedules js WHERE j.job_id = js.job_id AND s.schedule_id = js.schedule_id AND j.name = '${job_name}' AND s.name = '${schedule_name}') = 0 THROW 50000, 'Unattached Schedule for V-79083.', 10"#lint:ignore:140chars
-        $sql_attach_sched = "EXEC msdb.dbo.sp_attach_schedule
+      $sql_attach_sched_check = "IF (SELECT count(*) FROM msdb.dbo.sysschedules s, msdb.dbo.sysjobs j, msdb.dbo.sysjobschedules js WHERE j.job_id = js.job_id AND s.schedule_id = js.schedule_id AND j.name = '${job_name}' AND s.name = '${schedule_name}') = 0 THROW 50000, 'Unattached Schedule for V-79083.', 10"#lint:ignore:140chars
+      $sql_attach_sched = "EXEC msdb.dbo.sp_attach_schedule
         @job_name = N'${job_name}',
         @schedule_name = N'${schedule_name}' ;"
 
