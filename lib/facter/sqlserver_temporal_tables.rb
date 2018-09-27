@@ -1,9 +1,9 @@
 #!/usr/bin/env ruby -wKU
 # sqlserver_temporal_tables.rb
 #
-# @return array of strings representing a SQL Server temporal table formatted as: SCHEMA_NAME.
-# NOTE: should this be a hash by database.  This fact is used by database level hardening.
-#       maybe it should group tables by database (using a hash instead of an array)
+# @return hash of arrays: keys=databases, values=array of strings representing a SQL Server temporal table formatted as: SCHEMA_NAME.
+# NOTE: This fact is used by database level hardening.
+#       So must provide fact BY DATABASE.
 #
 # SQL from STIG
 # -------------
@@ -20,19 +20,28 @@ Facter.add('sqlserver_temporal_tables') do
   confine operatingsystem: :windows
   setcode do
 
-    sql = "SELECT SCHEMA_NAME(H.schema_id) + '.' + H.name AS history_table
-FROM sys.tables T
-JOIN sys.tables H ON T.history_table_id = H.object_id
-WHERE T.temporal_type != 0
-ORDER BY 1"
+    ret = []
+    databases = Facter.value(:sqlserver_databases)
+    databases.each do |db|
 
-    Puppet.debug "sqlserver_temporal_tables.rb sql...\n#{sql}"
+      sql = "USE #{db}; SELECT SCHEMA_NAME(H.schema_id) + '.' + H.name AS history_table
+  FROM sys.tables T
+  JOIN sys.tables H ON T.history_table_id = H.object_id
+  WHERE T.temporal_type != 0
+  ORDER BY 1;"
 
-    client = SqlServerClient.new
-    client.open
-    client.column(sql)
-    resultset = client.data
-    client.close unless client.nil? || client.closed?
-    resultset
+      Puppet.debug "sqlserver_temporal_tables.rb sql...\n#{sql}"
+
+      client = SqlServerClient.new
+      client.open
+      client.column(sql)
+      resultset = client.data
+      client.close unless client.nil? || client.closed?
+      ret[db] = resultset
+
+    end
+
+    ret
+
   end
 end
