@@ -22,6 +22,45 @@
 # 7. Mirror backups
 # 8. Transaction log backups
 #
+#
+# sp_add_schedule @freq_type
+# ==========================
+#     1	  Once
+#     4	  Daily
+#     8	  Weekly
+#     16	Monthly
+#     32	Monthly, relative to freq_interval
+#     64	Run when SQLServerAgent service starts
+#     128	Run when the computer is idle
+#
+# sp_add_schedule @freq_type
+# ==========================
+# freq_type / Effect on freq_interval
+#     1   (once) freq_interval is unused.
+#     4   (daily) Every freq_interval days.
+#     8   (weekly) freq_interval is one or more of the following (combined with an OR logical operator):
+#         1 = Sunday
+#         2 = Monday
+#         4 = Tuesday
+#         8 = Wednesday
+#         16 = Thursday
+#         32 = Friday
+#         64 = Saturday
+#     16  (monthly)	On the freq_interval day of the month.
+#     32  (monthly relative)	freq_interval is one of the following:
+#         1 = Sunday
+#         2 = Monday
+#         3 = Tuesday
+#         4 = Wednesday
+#         5 = Thursday
+#         6 = Friday
+#         7 = Saturday
+#         8 = Day
+#         9 = Weekday
+#         10 = Weekend day
+#     64  (when SQLServerAgent service starts)	freq_interval is unused.
+#     128 freq_interval is unused.
+#
 define secure_sqlserver::stig::v79083 (
   Boolean       $enforced = false,
   String[1,16]  $instance = 'MSSQLSERVER',
@@ -155,14 +194,6 @@ define secure_sqlserver::stig::v79083 (
       $sql_attach_sched = "EXEC msdb.dbo.sp_attach_schedule
         @job_name = N'${job_name}',
         @schedule_name = N'${schedule_name}' ;"
-
-      ::secure_sqlserver::log { "v79083: sql_attach_sched_check = \n\n${sql_attach_sched_check}\n":
-        loglevel => warning,
-      }
-
-      ::secure_sqlserver::log { "v79083: sql_attach_sched = \n\n${sql_attach_sched}\n":
-        loglevel => warning,
-      }
 
       ::secure_sqlserver::log { "v79083: calling tsql module for, ${instance}\\${database}, using sql = \n${sql_add_job}": }
       sqlserver_tsql{ "v79083_spawn_job_for_backup_of_${instance}_${database}":
