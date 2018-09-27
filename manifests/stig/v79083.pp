@@ -84,6 +84,14 @@ define secure_sqlserver::stig::v79083 (
     # create schedule
     # attach job to schedule
 
+    # backup command...
+    # T-SQL complained that the command should be 128 characters.
+
+    # BACKUP DATABASE ${database} TO DISK = '${backup_plan_disk}' WITH CHECKSUM, DESCRIPTION = '${backup_plan_desc}';
+    # BACKUP DATABASE ${database} TO DISK = '${backup_plan_disk}.dif' WITH DIFFERENTIAL, CHECKSUM, DESCRIPTION = '${backup_plan_desc}';
+    # BACKUP LOG ${database} TO DISK = '${backup_plan_logs}' WITH CHECKSUM, DESCRIPTION = '${backup_plan_desc}';
+    # 12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678
+
     # Object names...
     $db = upcase($database)
     $job_name = "STIG_JOB_V79083_BACKUP_${db}"
@@ -100,14 +108,6 @@ define secure_sqlserver::stig::v79083 (
       $backup_plan_disk = $backup_plans[$database]['disk']
       $backup_plan_diff = $backup_plans[$database]['diff']
       $backup_plan_logs = $backup_plans[$database]['log']
-
-      # backup command...
-      # T-SQL complained that the command should be 128 characters.
-
-      # BACKUP DATABASE ${database} TO DISK = '${backup_plan_disk}' WITH CHECKSUM, DESCRIPTION = '${backup_plan_desc}';
-      # BACKUP DATABASE ${database} TO DISK = '${backup_plan_disk}.dif' WITH DIFFERENTIAL, CHECKSUM, DESCRIPTION = '${backup_plan_desc}';
-      # BACKUP LOG ${database} TO DISK = '${backup_plan_logs}' WITH CHECKSUM, DESCRIPTION = '${backup_plan_desc}';
-      # 12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678
 
       $sql_full_backup = "BACKUP DATABASE ${database} TO DISK = ''${backup_plan_disk}'' WITH CHECKSUM"
       $sql_diff_backup = "BACKUP DATABASE ${database} TO DISK = ''${backup_plan_diff}'' WITH DIFFERENTIAL, CHECKSUM"
@@ -151,13 +151,13 @@ define secure_sqlserver::stig::v79083 (
         @freq_interval = 1,
         @active_start_time = 010000 ;"
 
-        $sql_attach_sched_check = "IF (SELECT count(*) FROM msdb.dbo.sysschedules s, msdb.dbo.sysjobs j, msdb.dbo.sysjobschedules js WHERE j.job_id = js.job_id AND s.schedule_id = js.schedule_id AND j.name = '${job_name}' AND s.name = '${schedule_name}') = 0 THROW 50000, 'Missing Schedule for V-79083.', 10"#lint:ignore:140chars
+        $sql_attach_sched_check = "IF (SELECT count(*) FROM msdb.dbo.sysschedules s, msdb.dbo.sysjobs j, msdb.dbo.sysjobschedules js WHERE j.job_id = js.job_id AND s.schedule_id = js.schedule_id AND j.name = '${job_name}' AND s.name = '${schedule_name}') = 0 THROW 50000, 'Unattached Schedule for V-79083.', 10"#lint:ignore:140chars
         $sql_attach_sched = "EXEC msdb.dbo.sp_attach_schedule
         @job_name = N'${job_name}',
         @schedule_name = N'${schedule_name}' ;"
 
       ::secure_sqlserver::log { "v79083: calling tsql module for, ${instance}\\${database}, using sql = \n${sql_add_job}": }
-      sqlserver_tsql{ "v79083_create_job_for_backup_of_${instance}_${database}":
+      sqlserver_tsql{ "v79083_spawn_job_for_backup_of_${instance}_${database}":
         instance => $instance,
         database => $database,
         command  => $sql_add_job,
@@ -166,7 +166,7 @@ define secure_sqlserver::stig::v79083 (
       }
 
       ::secure_sqlserver::log { "v79083: calling tsql module for, ${instance}\\${database}, using sql = \n${sql_add_job_full}": }
-      sqlserver_tsql{ "v79083_create_job_for_full_backup_of_${instance}_${database}":
+      sqlserver_tsql{ "v79083_spawn_job_for_full_backup_of_${instance}_${database}":
         instance => $instance,
         database => $database,
         command  => $sql_add_job_full,
@@ -175,7 +175,7 @@ define secure_sqlserver::stig::v79083 (
       }
 
       ::secure_sqlserver::log { "v79083: calling tsql module for, ${instance}\\${database}, using sql = \n${sql_add_job_diff}": }
-      sqlserver_tsql{ "v79083_create_job_for_diff_backup_of_${instance}_${database}":
+      sqlserver_tsql{ "v79083_spawn_job_for_diff_backup_of_${instance}_${database}":
         instance => $instance,
         database => $database,
         command  => $sql_add_job_diff,
@@ -184,7 +184,7 @@ define secure_sqlserver::stig::v79083 (
       }
 
       ::secure_sqlserver::log { "v79083: calling tsql module for, ${instance}\\${database}, using sql = \n${sql_add_job_logs}": }
-      sqlserver_tsql{ "v79083_create_job_for_log_backup_of_${instance}_${database}":
+      sqlserver_tsql{ "v79083_spawn_job_for_log_backup_of_${instance}_${database}":
         instance => $instance,
         database => $database,
         command  => $sql_add_job_logs,
