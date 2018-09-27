@@ -9,7 +9,8 @@ define secure_sqlserver::stig::v79069 (
 ) {
   if $enforced {
 
-    
+    $temporal_tables = lookup('secure_sqlserver::temporal_tables')
+    $existing_temporals = facts$['sqlserver_temporal_tables']
 
   }
 }
