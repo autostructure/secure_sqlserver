@@ -156,6 +156,10 @@ define secure_sqlserver::stig::v79083 (
         @job_name = N'${job_name}',
         @schedule_name = N'${schedule_name}' ;"
 
+      ::secure_sqlserver::log { "v79083: sql_attach_sched_check = \n\n${sql_attach_sched_check}\n":
+        loglevel => warning,
+      }
+
       ::secure_sqlserver::log { "v79083: calling tsql module for, ${instance}\\${database}, using sql = \n${sql_add_job}": }
       sqlserver_tsql{ "v79083_spawn_job_for_backup_of_${instance}_${database}":
         instance => $instance,
