@@ -109,9 +109,9 @@ define secure_sqlserver::stig::v79083 (
       $backup_plan_diff = $backup_plans[$database]['diff']
       $backup_plan_logs = $backup_plans[$database]['log']
 
-      $sql_full_backup = "BACKUP DATABASE ${database} TO DISK = ''${backup_plan_disk}'' WITH CHECKSUM"
-      $sql_diff_backup = "BACKUP DATABASE ${database} TO DISK = ''${backup_plan_diff}'' WITH DIFFERENTIAL, CHECKSUM"
-      $sql_logs_backup = "BACKUP LOG ${database} TO DISK = ''${backup_plan_logs}'' WITH CHECKSUM"
+      $sql_full_backup = "BACKUP DATABASE ${database} TO DISK = ''${backup_plan_disk}'' WITH CHECKSUM, DESCRIPTION = '${backup_plan_desc}'"
+      $sql_diff_backup = "BACKUP DATABASE ${database} TO DISK = ''${backup_plan_diff}'' WITH DIFFERENTIAL, CHECKSUM, DESCRIPTION = '${backup_plan_desc}'"
+      $sql_logs_backup = "BACKUP LOG ${database} TO DISK = ''${backup_plan_logs}'' WITH CHECKSUM, DESCRIPTION = '${backup_plan_desc}'"
       # , DESCRIPTION = '${backup_plan_desc}'
 
       $sql_add_job_check = "IF (SELECT count(*) FROM msdb.dbo.sysjobs_view WHERE name = '${job_name}') = 0 THROW 50000, 'Missing Backup Job for V-79083.', 10"# lint:ignore:140chars
