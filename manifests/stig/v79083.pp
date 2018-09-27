@@ -160,6 +160,10 @@ define secure_sqlserver::stig::v79083 (
         loglevel => warning,
       }
 
+      ::secure_sqlserver::log { "v79083: sql_attach_sched = \n\n${sql_attach_sched}\n":
+        loglevel => warning,
+      }
+
       ::secure_sqlserver::log { "v79083: calling tsql module for, ${instance}\\${database}, using sql = \n${sql_add_job}": }
       sqlserver_tsql{ "v79083_spawn_job_for_backup_of_${instance}_${database}":
         instance => $instance,
