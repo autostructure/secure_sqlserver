@@ -10,8 +10,8 @@ define secure_sqlserver::stig::v79079 (
 ) {
 
   if $enforced {
-    notify { "v79079: ${instance}\\${database}: v79079 called.":
-      loglevel => notice,
+    notify { "v79079: ${instance}\\${database}: Skipping vulnerability 79079.":
+      loglevel => warning,
     }
   }
 

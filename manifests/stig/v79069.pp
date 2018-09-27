@@ -7,11 +7,9 @@ define secure_sqlserver::stig::v79069 (
   String[1,16]  $instance = 'MSSQLSERVER',
   String        $database,
 ) {
-
   if $enforced {
-    notify { "v79069: ${instance}\\${database}: v79069 called.":
-      loglevel => notice,
-    }
-  }
 
+    
+
+  }
 }
