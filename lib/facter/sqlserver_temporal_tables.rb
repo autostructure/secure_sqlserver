@@ -20,7 +20,7 @@ Facter.add('sqlserver_temporal_tables') do
   confine operatingsystem: :windows
   setcode do
 
-    ret = []
+    ret = {}
     databases = Facter.value(:sqlserver_databases)
     databases.each do |db|
 
