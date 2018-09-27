@@ -5,7 +5,7 @@
 # System databases have a database_id < 5.
 #
 # @return   An array of strings representing a list of all an instance's databases.
-# @example  ['master', 'tempdb', 'model', 'msdb']
+# @example  ['master', 'model', 'msdb', 'tempdb']
 #
 Facter.add('sqlserver_databases') do
   confine operatingsystem: :windows
