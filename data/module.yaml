@@ -82,6 +82,15 @@ secure_sqlserver::schema_owners:
     sys: sys
     dbo: dbo
 
+#V-79069
+secure_sqlserver::temporal_tables:
+  fakedb1:
+    - table1
+    - table2
+    - table3
+  fakedb2:
+    - table5
+
 # Turn on encryption (TDE) for confidential or sensitive information.
 secure_sqlserver::transparent_data_encryption:
   fakedb1:
