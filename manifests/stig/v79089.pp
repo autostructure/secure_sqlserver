@@ -10,26 +10,31 @@ define secure_sqlserver::stig::v79089 (
 
   if $enforced {
 
-    notify { "v79089: ${instance}\\${database}: v79089 called.":
-      loglevel => notice,
-    }
-
     # 3dH85Hhk003GHk2597gheij4
-    $database_certificates           = $facts['sqlserver_remote_database_accounts']
-    $certificate_name                = lookup('secure_sqlserver::certificate_name')
-    $certificate_encryption_password = lookup('secure_sqlserver::certificate_password')
-    $certificate_backup_directory    = lookup('secure_sqlserver::certificate_backup_directory')
-    $certificate_backup_filename     = lookup('secure_sqlserver::certificate_backup_directory')
-    $certificate_backup_path         = "${certificate_backup_directory}\\${certificate_backup_filename}"
+    $database_certificates          = $facts['sqlserver_remote_database_accounts']
+    $certificate_name               = lookup('secure_sqlserver::certificate_backup')[$database]['certificate_name']
+    $certificate_password           = lookup('secure_sqlserver::certificate_backup')[$database]['certificate_password')
+    $certificate_backup_private_key = lookup('secure_sqlserver::certificate_backup')[$database]['certificate_backup_private_key')
+    $certificate_backup_directory   = lookup('secure_sqlserver::certificate_backup')[$database]['certificate_backup_directory')
+    $certificate_backup_filename    = lookup('secure_sqlserver::certificate_backup')[$database]['certificate_backup_filename')
+    $delim = $certificate_backup_directory[-1,1] ? {
+      '\\'    => '',
+      default => '\\',
+    }
+    $certificate_backup_filepath    = "${certificate_backup_directory}${delim}${certificate_backup_filename}"
 
-    file { 'Create directory for temporary key backup file.':
-      ensure => directory,
-      path   => $key_temp_backup_dir,
-      before => Sqlserver_tsql['Export master service key to temp file for backup'],
+    notify { "v79089: ${instance}\\${database}: v79089 called: certificate_backup_filepath = ${certificate_backup_filepath}":
+      loglevel => warning,
     }
 
-    # refactor and iterate through all instances...
-    $db_instance = 'MSSQLSERVER'
+    file { "Create directory for encryption certificate backup file for ${database}.":
+      ensure => directory,
+      path   => $certificate_backup_directory,
+      before => Sqlserver_tsql["Backup database encryption certificate for ${database}"],
+    }
+
+    $sql_backup_certificate = "USE ${database}; BACKUP CERTIFICATE '${certificate_name}' TO FILE = '${certificate_backup_filepath}'
+WITH PRIVATE KEY (FILE = '${certificate_backup_private_key}', ENCRYPTION BY PASSWORD = '${certificate_password}')"
 
     # Do we have to open the master key w/a password first?
     # SQL if you need to decrypt the key first.
@@ -39,18 +44,11 @@ define secure_sqlserver::stig::v79089 (
     #      ENCRYPTION BY PASSWORD = 'sd092735kjn$&adsg';
     #  GO"
 
-    $key_export_sql = "BACKUP SERVICE MASTER KEY TO FILE = '${key_temp_backup_file}'
-      ENCRYPTION BY PASSWORD = '${key_encryption_password}'"
-
-    # $key_export_sql = "USE ${db_instance};
-    #   GO
-    #   BACKUP SERVICE MASTER KEY TO FILE = '${key_temp_backup_filepath}'
-    #   ENCRYPTION BY PASSWORD = '${key_encryption_password}';
-    #   GO"
-
-    sqlserver_tsql{ 'Export master service key to temp file for backup':
-      instance => $db_instance,
-      command  => $key_export_sql,
+    sqlserver_tsql{ "Backup database encryption certificate for ${database}":
+      instance => $instance,
+      database => $database,
+      command  => $sql_backup_certificate,
+      require  => Sqlserver::Config[$instance],
       # onlyif   => '',
       # notify   => Exec[copy to backup medium],
     }
@@ -61,22 +59,20 @@ define secure_sqlserver::stig::v79089 (
 
     # Remove temp key backup file.
 
-    file { 'Remove temporary key backup file.':
-      ensure =>  absent,
-      path   => $key_temp_backup_file,
+    file { "Remove local backup file for ${database}":
+      ensure => absent,
+      path   => $certificate_backup_filepath,
       # wrong...
       #require => Sqlserver_tsql['Export master service key to temp file for backup'],
       # instead use...
       #require => After copied to backup service.
     }
 
-    file { 'Remove directory for temporary key backup file.':
+    file { "Remove local backup directory for ${database}":
       ensure  =>  absent,
-      path    => $key_temp_backup_dir,
-      require => File['Remove temporary key backup file.'],
+      path    => $certificate_backup_directory,
+      require => File["Remove local backup file for ${database}"],
     }
-
-
 
   }
 }

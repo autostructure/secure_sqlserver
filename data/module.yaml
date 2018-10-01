@@ -1,9 +1,6 @@
 ---
 # Configuration Parameters
-
-# Controller
-# V-79123
-secure_sqlserver::service_account: sa
+# Database-specific configurations...
 
 # V-79061
 secure_sqlserver::approved_sql_login_users:
@@ -62,15 +59,17 @@ secure_sqlserver::backup_plan:
 # avoid enrypting model or tempdb, doing so may cause performance issues.
 secure_sqlserver::certificate_backup:
   master:
-    certificate_name:             DOD_STIG_CERTIFICATE_MASTER
-    certificate_password:         1234567890abcDEF
-    certificate_backup_directory: c:\Windows\Temp
-    certificate_backup_filename:  certificate_backup_master.bak
+    certificate_name:               DOD_STIG_CERTIFICATE_MASTER
+    certificate_password:           1234567890abcDEF
+    certificate_backup_private_key: c:\Windows\Temp\master-private.key
+    certificate_backup_directory:   c:\Windows\Temp
+    certificate_backup_filename:    master-certificate.bak
   msdb:
-    certificate_name:              DOD_STIG_CERTIFICATE_MSDB
-    certificate_password:          1234567890abcDEF
-    certificate_backup_directory:  c:\Windows\Temp
-    certificate_backup_filename:   certificate_backup_msdb.bak
+    certificate_name:               DOD_STIG_CERTIFICATE_MSDB
+    certificate_password:           1234567890abcDEF
+    certificate_backup_private_key: c:\Windows\Temp\msdb-private.key
+    certificate_backup_directory:   c:\Windows\Temp
+    certificate_backup_filename:    msdb-certificate.bak
 #secure_sqlserver::certificate_name:
 #secure_sqlserver::certificate_password:
 #secure_sqlserver::certificate_backup_directory:
@@ -124,10 +123,18 @@ secure_sqlserver::database_master_key_backup_file_encryption_filepath: C:\v79087
 
 
 
+# Configuration Parameters
+# Instance-specific Configurations...
+
+# Controller
+# V-79123
+secure_sqlserver::service_account: sa
+
+
 
 # STIG Enforcement
-
 # Database STIGs...
+
 secure_sqlserver::stig::v79061::enforced: true
 #secure_sqlserver::stig::v79065::enforced: false
 secure_sqlserver::stig::v79067::enforced: true
@@ -157,7 +164,10 @@ secure_sqlserver::stig::v79113::enforced: true
 #secure_sqlserver::stig::v79115::enforced: false
 #secure_sqlserver::stig::v79117::enforced: false
 
+
+# STIG Enforcement
 # Instance STIGs...
+
 secure_sqlserver::stig::v79119::enforced: false
 secure_sqlserver::stig::v79121::enforced: false
 secure_sqlserver::stig::v79123::enforced: false
