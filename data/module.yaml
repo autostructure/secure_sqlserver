@@ -58,6 +58,23 @@ secure_sqlserver::backup_plan:
     # log:         C:\Windows\Temp\sqlserver-backup-file-tempdb.log
     # key:
 
+# V-79089
+# avoid enrypting model or tempdb, doing so may cause performance issues.
+secure_sqlserver::certificate_backup:
+  master:
+    certificate_name:             DOD_STIG_CERTIFICATE_MASTER
+    certificate_password:         1234567890abcDEF
+    certificate_backup_directory: c:\Windows\Temp
+    certificate_backup_filename:  certificate_backup_master.bak
+  msdb:
+    certificate_name:              DOD_STIG_CERTIFICATE_MSDB
+    certificate_password:          1234567890abcDEF
+    certificate_backup_directory:  c:\Windows\Temp
+    certificate_backup_filename:   certificate_backup_msdb.bak
+#secure_sqlserver::certificate_name:
+#secure_sqlserver::certificate_password:
+#secure_sqlserver::certificate_backup_directory:
+#secure_sqlserver::certificate_backup_filename:
 
 # V-79111
 # logins based on Active Directory users are limited to names of less than 21 characters.
@@ -112,24 +129,33 @@ secure_sqlserver::database_master_key_backup_file_encryption_filepath: C:\v79087
 
 # Database STIGs...
 secure_sqlserver::stig::v79061::enforced: true
-secure_sqlserver::stig::v79065::enforced: true
+#secure_sqlserver::stig::v79065::enforced: false
 secure_sqlserver::stig::v79067::enforced: true
 secure_sqlserver::stig::v79069::enforced: true
 secure_sqlserver::stig::v79071::enforced: true
 secure_sqlserver::stig::v79073::enforced: true
 secure_sqlserver::stig::v79075::enforced: true
 secure_sqlserver::stig::v79077::enforced: true
-secure_sqlserver::stig::v79079::enforced: true
+#secure_sqlserver::stig::v79079::enforced: false
 secure_sqlserver::stig::v79081::enforced: true
 secure_sqlserver::stig::v79083::enforced: true
 secure_sqlserver::stig::v79085::enforced: true
 secure_sqlserver::stig::v79087::enforced: true
 secure_sqlserver::stig::v79089::enforced: false
-secure_sqlserver::stig::v79105::enforced: false
-secure_sqlserver::stig::v79107::enforced: false
-secure_sqlserver::stig::v79109::enforced: false
+#secure_sqlserver::stig::v79091::enforced: false
+#secure_sqlserver::stig::v79093::enforced: false
+#secure_sqlserver::stig::v79095::enforced: false
+#secure_sqlserver::stig::v79097::enforced: false
+#secure_sqlserver::stig::v79099::enforced: false
+#secure_sqlserver::stig::v79101::enforced: false
+#secure_sqlserver::stig::v79103::enforced: false
+#secure_sqlserver::stig::v79105::enforced: false
+#secure_sqlserver::stig::v79107::enforced: false
+#secure_sqlserver::stig::v79109::enforced: false
 secure_sqlserver::stig::v79111::enforced: true
 secure_sqlserver::stig::v79113::enforced: true
+#secure_sqlserver::stig::v79115::enforced: false
+#secure_sqlserver::stig::v79117::enforced: false
 
 # Instance STIGs...
 secure_sqlserver::stig::v79119::enforced: false
