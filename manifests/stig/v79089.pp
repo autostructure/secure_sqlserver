@@ -2,6 +2,14 @@
 #
 # The Certificate used for encryption must be backed up, stored offline and off-site.
 #
+# ADD TO control-repo hiera.yaml...
+# - name: "Data includes passwords (encrypted)"
+#   lookup_key: eyaml_lookup_key
+#   path: "node/%{trusted.certname}.eyaml"
+#   options:
+#     pkcs7_private_key: /etc/puppetlabs/puppet/keys/private_key.pkcs7.pem
+#     pkcs7_public_key:  /etc/puppetlabs/puppet/keys/public_key.pkcs7.pem
+#
 define secure_sqlserver::stig::v79089 (
   Boolean       $enforced = false,
   String[1,16]  $instance = 'MSSQLSERVER',
