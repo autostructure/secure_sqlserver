@@ -71,12 +71,6 @@ define secure_sqlserver::secure_database (
     database => $database,
   }
 
-  ::secure_sqlserver::stig::v79079 { "${prefix}-v79079":
-    enforced => lookup('secure_sqlserver::stig::v79079::enforced'),
-    instance => $instance,
-    database => $database,
-  }
-
   ::secure_sqlserver::stig::v79081 { "${prefix}-v79081":
     enforced => lookup('secure_sqlserver::stig::v79081::enforced'),
     instance => $instance,
@@ -103,24 +97,6 @@ define secure_sqlserver::secure_database (
 
   ::secure_sqlserver::stig::v79089 { "${prefix}-v79089":
     enforced => lookup('secure_sqlserver::stig::v79089::enforced'),
-    instance => $instance,
-    database => $database,
-  }
-
-  ::secure_sqlserver::stig::v79105 { "${prefix}-v79105":
-    enforced => lookup('secure_sqlserver::stig::v79105::enforced'),
-    instance => $instance,
-    database => $database,
-  }
-
-  ::secure_sqlserver::stig::v79107 { "${prefix}-v79107":
-    enforced => lookup('secure_sqlserver::stig::v79107::enforced'),
-    instance => $instance,
-    database => $database,
-  }
-
-  ::secure_sqlserver::stig::v79109 { "${prefix}-v79109":
-    enforced => lookup('secure_sqlserver::stig::v79109::enforced'),
     instance => $instance,
     database => $database,
   }
