@@ -6,6 +6,12 @@
 #
 # NOTE: Similar to v79121
 #
+# NOTE:
+# Consider skipping reboot here.
+# Because,
+# 1) the tsql may make it seem like you need a reboot every agent run.
+# 2) the instance level stigs use a registry module to apply the change too (reboot @ that level)
+#
 # *** REBOOT REQ'D ***
 #
 define secure_sqlserver::stig::v79061 (
