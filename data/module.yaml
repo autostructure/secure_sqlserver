@@ -63,7 +63,8 @@ secure_sqlserver::certificate_backup:
     certificate_password:           1234567890abcDEF
     certificate_backup_private_key: c:\Windows\Temp\master-private.key
     certificate_backup_directory:   c:\Windows\Temp
-    certificate_backup_filename:    master-certificate.bak
+    certificate_backup_filename:    master-certificate.bak#
+    #certificate_backup_directory:   g:\
   msdb:
     certificate_name:               DOD_STIG_CERTIFICATE_MSDB
     certificate_password:           1234567890abcDEF
@@ -129,7 +130,7 @@ secure_sqlserver::database_master_key_backup_file_encryption_filepath: C:\v79087
 # Controller
 # V-79123
 secure_sqlserver::service_account: sa
-
+#secure_sqlserver::port: 1433
 
 
 # STIG Enforcement

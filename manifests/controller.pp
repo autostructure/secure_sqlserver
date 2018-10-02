@@ -11,24 +11,26 @@
 class secure_sqlserver::controller {
 
   # NOTE: using 'Down-Level Logon Name' format for usernames.
-  $port = 1433
   $netbios_user = $facts['identity']['user']
   $fqdn_user = $facts['id']
   $service_account = lookup('secure_sqlserver::service_account')
-
-  notify { 'secure_sqlserver:_controller_msg0_debug':
-    message  => "users: service_account=${service_account}; netbios_user=${netbios_user}; fqdn_user=${fqdn_user}",
-    loglevel => info,
+  $port = empty(lookup('secure_sqlserver::port')) ? {
+    false   => lookup('secure_sqlserver::port'),
+    default => 1433,
   }
 
-  ## TODO: Convert code to 2016
-  #$instances = $facts['sqlserver_instances']['SQL_2016'].keys
-  $instances = $facts['sqlserver_instances']['SQL_2017'].keys
+  notify { 'secure_sqlserver:_controller_msg0_debug':
+    message  => "port=${port}; service_account=${service_account}; netbios_user=${netbios_user}; fqdn_user=${fqdn_user}",
+    loglevel => info,
+  }
 
   notify { 'secure_sqlserver:_controller_msg1_warning':
     message  => "***DEVELOPER NOTE*** Using SQL_2017 reference instead of SQL_2016 (FIX REQ'D)!!!",
     loglevel => alert,
   }
+  ## TODO: Convert code to 2016
+  #$instances = $facts['sqlserver_instances']['SQL_2016'].keys
+  $instances = $facts['sqlserver_instances']['SQL_2017'].keys
 
   if empty($instances) {
     fail('secure_sqlserver failure: No instances of SQL Server 2016 were discovered in the sqlserver_instances puppet fact (part of the puppetlabs-sqlserver module).')

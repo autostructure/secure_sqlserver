@@ -10,6 +10,11 @@
 #     pkcs7_private_key: /etc/puppetlabs/puppet/keys/private_key.pkcs7.pem
 #     pkcs7_public_key:  /etc/puppetlabs/puppet/keys/public_key.pkcs7.pem
 #
+# Backup Process:
+# Write file locally (encrypted)
+# Use File resource to limit access to share dir. (request dedicated share)
+# Afterwards, the vm team does backup to NAS (which get off-site tape backups)
+#
 define secure_sqlserver::stig::v79089 (
   Boolean       $enforced = false,
   String[1,16]  $instance = 'MSSQLSERVER',

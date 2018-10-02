@@ -31,7 +31,6 @@ secure_sqlserver::backup_recovery_model_settings:
   # tempdb: SIMPLE
 
 # V-79083
-
 secure_sqlserver::backup_plan:
   master:
     description:  Test backup description for master database.
@@ -129,6 +128,7 @@ secure_sqlserver::database_master_key_backup_file_encryption_filepath: C:\v79087
 # Controller
 # V-79123
 secure_sqlserver::service_account: sa
+secure_sqlserver::port: 1433
 
 
 
