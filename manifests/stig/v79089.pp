@@ -26,10 +26,10 @@ define secure_sqlserver::stig::v79089 (
     # 3dH85Hhk003GHk2597gheij4
     $database_certificates          = $facts['sqlserver_remote_database_accounts']
     $certificate_name               = lookup('secure_sqlserver::certificate_backup')[$database]['certificate_name']
-    $certificate_password           = lookup('secure_sqlserver::certificate_backup')[$database]['certificate_password')
-    $certificate_backup_private_key = lookup('secure_sqlserver::certificate_backup')[$database]['certificate_backup_private_key')
-    $certificate_backup_directory   = lookup('secure_sqlserver::certificate_backup')[$database]['certificate_backup_directory')
-    $certificate_backup_filename    = lookup('secure_sqlserver::certificate_backup')[$database]['certificate_backup_filename')
+    $certificate_password           = lookup('secure_sqlserver::certificate_backup')[$database]['certificate_password']
+    $certificate_backup_private_key = lookup('secure_sqlserver::certificate_backup')[$database]['certificate_backup_private_key']
+    $certificate_backup_directory   = lookup('secure_sqlserver::certificate_backup')[$database]['certificate_backup_directory']
+    $certificate_backup_filename    = lookup('secure_sqlserver::certificate_backup')[$database]['certificate_backup_filename']
     $delim = $certificate_backup_directory[-1,1] ? {
       '\\'    => '',
       default => '\\',
