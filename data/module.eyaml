@@ -60,11 +60,11 @@ secure_sqlserver::certificate_backup:
   master:
     certificate_name:               "##MS_AgentSigningCertificate##"
     certificate_password:           abc123
-    certificate_backup_private_key: c:\Windows\Temp\master-private.key
+    certificate_backup_private_key: c:\Windows\Temp\master-private.
     certificate_backup_directory:   c:\Windows\Temp
-    certificate_backup_filename:    master-certificate.bak
+    certificate_backup_filename:    certificate-backup-master-db.key
   msdb:
-    certificate_name:               DOD_STIG_CERTIFICATE_MSDB
+    certificate_name:               DOD_STIG_CERTIFICATE_MSDB_FAKE
     certificate_password:           abc123
     certificate_backup_private_key: c:\Windows\Temp\msdb-private.key
     certificate_backup_directory:   c:\Windows\Temp

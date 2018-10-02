@@ -24,8 +24,12 @@ define secure_sqlserver::stig::v79089 (
   if $enforced {
 
     # 3dH85Hhk003GHk2597gheij4
-    $database_certificates          = $facts['sqlserver_remote_database_accounts']
-    $certificate_backup             = lookup('secure_sqlserver::certificate_backup')
+    $database_certificates  = $facts['sqlserver_certificates']
+    $certificate_backup = lookup('secure_sqlserver::certificate_backup')
+
+    unless $database_certificates[$database] == undef {
+      $certificates = database_certificates[$database]
+    }
 
     unless $certificate_backup[$database] == undef {
       $certificate_name               = $certificate_backup[$database]['certificate_name']
@@ -54,7 +58,14 @@ define secure_sqlserver::stig::v79089 (
     # $sql_backup_certificate = "USE ${database}; BACKUP CERTIFICATE '${certificate_name}' TO FILE = '${certificate_backup_filepath}'
     # WITH PRIVATE KEY (FILE = '${certificate_backup_private_key}', ENCRYPTION BY PASSWORD = '${certificate_password}')"
 
-    $sql_backup_certificate = "USE ${database}; BACKUP CERTIFICATE '${certificate_name}' TO FILE = '${certificate_backup_filepath}' ENCRYPTION BY PASSWORD = '${certificate_password}'"
+
+    $certificate_backup_filepath = "C:\\Windows\\Temp\\${certificate}.bak"
+    $certificate_password        = 'test' 
+
+    $certificates.each |$certificate| {
+      # $sql_backup_certificate = "USE ${database}; BACKUP CERTIFICATE '${certificate_name}' TO FILE = '${certificate_backup_filepath}' ENCRYPTION BY PASSWORD = '${certificate_password}'"
+
+    $sql_backup_certificate = "USE ${database}; BACKUP CERTIFICATE '${certificate}' TO FILE = '${certificate_backup_filepath}' ENCRYPTION BY PASSWORD = '${certificate_password}'"
 
     # Do we have to open the master key w/a password first?
     # SQL if you need to decrypt the key first.
