@@ -46,8 +46,10 @@ define secure_sqlserver::stig::v79089 (
       before => Sqlserver_tsql["Backup database encryption certificate for ${database}"],
     }
 
-    $sql_backup_certificate = "USE ${database}; BACKUP CERTIFICATE '${certificate_name}' TO FILE = '${certificate_backup_filepath}'
-WITH PRIVATE KEY (FILE = '${certificate_backup_private_key}', ENCRYPTION BY PASSWORD = '${certificate_password}')"
+    # $sql_backup_certificate = "USE ${database}; BACKUP CERTIFICATE '${certificate_name}' TO FILE = '${certificate_backup_filepath}'
+    # WITH PRIVATE KEY (FILE = '${certificate_backup_private_key}', ENCRYPTION BY PASSWORD = '${certificate_password}')"
+
+    $sql_backup_certificate = "USE ${database}; BACKUP CERTIFICATE '${certificate_name}' TO FILE = '${certificate_backup_filepath}' ENCRYPTION BY PASSWORD = '${certificate_password}'"
 
     # Do we have to open the master key w/a password first?
     # SQL if you need to decrypt the key first.
@@ -70,22 +72,22 @@ WITH PRIVATE KEY (FILE = '${certificate_backup_private_key}', ENCRYPTION BY PASS
     # Store the backup in a secure, off-site location.
     # (kicked off by notify above?)
 
-    # Remove temp key backup file.
+    # Remove temp key backup file and directory.
 
-    file { "Remove local backup file for ${database}":
-      ensure => absent,
-      path   => $certificate_backup_filepath,
-      # wrong...
-      #require => Sqlserver_tsql['Export master service key to temp file for backup'],
-      # instead use...
-      #require => After copied to backup service.
-    }
-
-    file { "Remove local backup directory for ${database}":
-      ensure  =>  absent,
-      path    => $certificate_backup_directory,
-      require => File["Remove local backup file for ${database}"],
-    }
+    # file { "Remove local backup file for ${database}":
+    #   ensure => absent,
+    #   path   => $certificate_backup_filepath,
+    #   # wrong...
+    #   #require => Sqlserver_tsql['Export master service key to temp file for backup'],
+    #   # instead use...
+    #   #require => After copied to backup service.
+    # }
+    #
+    # file { "Remove local backup directory for ${database}":
+    #   ensure  =>  absent,
+    #   path    => $certificate_backup_directory,
+    #   require => File["Remove local backup file for ${database}"],
+    # }
 
   }
 }
