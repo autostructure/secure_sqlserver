@@ -27,7 +27,7 @@ define secure_sqlserver::stig::v79089 (
     $database_certificates          = $facts['sqlserver_remote_database_accounts']
     $certificate_backup             = lookup('secure_sqlserver::certificate_backup')
 
-    unless empty($certificate_backup[$database]) {
+    unless $certificate_backup[$database] == undef {
       $certificate_name               = $certificate_backup[$database]['certificate_name']
       $certificate_password           = $certificate_backup[$database]['certificate_password']
       $certificate_backup_private_key = $certificate_backup[$database]['certificate_backup_private_key']
