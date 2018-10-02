@@ -58,14 +58,14 @@ secure_sqlserver::backup_plan:
 # avoid enrypting model or tempdb, doing so may cause performance issues.
 secure_sqlserver::certificate_backup:
   master:
-    certificate_name:               DOD_STIG_CERTIFICATE_MASTER
-    certificate_password:           1234567890abcDEF
+    certificate_name:               "##MS_AgentSigningCertificate##"
+    certificate_password:           abc123
     certificate_backup_private_key: c:\Windows\Temp\master-private.key
     certificate_backup_directory:   c:\Windows\Temp
     certificate_backup_filename:    master-certificate.bak
   msdb:
     certificate_name:               DOD_STIG_CERTIFICATE_MSDB
-    certificate_password:           1234567890abcDEF
+    certificate_password:           abc123
     certificate_backup_private_key: c:\Windows\Temp\msdb-private.key
     certificate_backup_directory:   c:\Windows\Temp
     certificate_backup_filename:    msdb-certificate.bak

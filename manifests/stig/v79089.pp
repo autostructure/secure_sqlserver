@@ -44,11 +44,12 @@ define secure_sqlserver::stig::v79089 (
       loglevel => warning,
     }
 
-    file { "Create directory for encryption certificate backup file for ${database}.":
-      ensure => directory,
-      path   => $certificate_backup_directory,
-      before => Sqlserver_tsql["Backup database encryption certificate for ${database}"],
-    }
+    # path is the namevar so a duplicate resource error arises (title isn't namevar)
+    # file { "Create directory for encryption certificate backup file for ${database}.":
+    #   ensure => directory,
+    #   path   => $certificate_backup_directory,
+    #   before => Sqlserver_tsql["Backup database encryption certificate for ${database}"],
+    # }
 
     # $sql_backup_certificate = "USE ${database}; BACKUP CERTIFICATE '${certificate_name}' TO FILE = '${certificate_backup_filepath}'
     # WITH PRIVATE KEY (FILE = '${certificate_backup_private_key}', ENCRYPTION BY PASSWORD = '${certificate_password}')"
