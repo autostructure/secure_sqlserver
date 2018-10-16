@@ -1,17 +1,25 @@
 ---
 version: 5
+
 defaults:
   data_hash: yaml_data
   datadir: data
 
 hierarchy:
-  - name: "Secret data (encrypted)"
+  - name: "SQL Server Secrets (encrypted)"
     lookup_key: eyaml_lookup_key    # Uses non-default backend.
-    path: "module.eyaml"            # path: "%{facts.whereami}.eyaml"
+    datadir: hieradata
+    paths:
+      - "node/%{trusted.certname}.eyaml"
+      - "secure_sqlserver.eyaml"
+      - "module.eyaml"
     options:
+      encrypt_method: pkcs7
       pkcs7_private_key: /etc/puppetlabs/puppet/keys/private_key.pkcs7.pem
       pkcs7_public_key:  /etc/puppetlabs/puppet/keys/public_key.pkcs7.pem
-  - name: "Module"
+      
+  - name: "Module Data (unencrypted)"
     paths:
+      - "node/%{trusted.certname}.yaml"
+      - "secure_sqlserver.yaml"
       - "module.yaml"
-      - "common.yaml"
