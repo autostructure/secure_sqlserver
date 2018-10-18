@@ -1,4 +1,51 @@
 ---
+# STIG Enforcement
+# Database STIGs...
+
+secure_sqlserver::stig::v79061::enforced: true
+#secure_sqlserver::stig::v79065::enforced: false
+secure_sqlserver::stig::v79067::enforced: true
+secure_sqlserver::stig::v79069::enforced: true
+secure_sqlserver::stig::v79071::enforced: true
+secure_sqlserver::stig::v79073::enforced: true
+secure_sqlserver::stig::v79075::enforced: true
+secure_sqlserver::stig::v79077::enforced: true
+#secure_sqlserver::stig::v79079::enforced: false
+secure_sqlserver::stig::v79081::enforced: true
+secure_sqlserver::stig::v79083::enforced: true
+secure_sqlserver::stig::v79085::enforced: true
+secure_sqlserver::stig::v79087::enforced: true
+secure_sqlserver::stig::v79089::enforced: true
+#secure_sqlserver::stig::v79091::enforced: false
+#secure_sqlserver::stig::v79093::enforced: false
+#secure_sqlserver::stig::v79095::enforced: false
+#secure_sqlserver::stig::v79097::enforced: false
+#secure_sqlserver::stig::v79099::enforced: false
+#secure_sqlserver::stig::v79101::enforced: false
+#secure_sqlserver::stig::v79103::enforced: false
+#secure_sqlserver::stig::v79105::enforced: false
+#secure_sqlserver::stig::v79107::enforced: false
+#secure_sqlserver::stig::v79109::enforced: false
+secure_sqlserver::stig::v79111::enforced: true
+secure_sqlserver::stig::v79113::enforced: true
+#secure_sqlserver::stig::v79115::enforced: false
+#secure_sqlserver::stig::v79117::enforced: false
+
+
+# STIG Enforcement
+# Instance STIGs...
+
+secure_sqlserver::stig::v79119::enforced: false
+secure_sqlserver::stig::v79121::enforced: false
+secure_sqlserver::stig::v79123::enforced: false
+secure_sqlserver::stig::v79129::enforced: false
+secure_sqlserver::stig::v79131::enforced: false
+secure_sqlserver::stig::v79133::enforced: false
+secure_sqlserver::stig::v79135::enforced: false
+secure_sqlserver::stig::v79137::enforced: false
+
+
+
 # Configuration Parameters
 # Database-specific configurations...
 
@@ -131,49 +178,3 @@ secure_sqlserver::database_master_key_backup_file_encryption_filepath: C:\v79087
 # V-79123
 secure_sqlserver::service_account: sa
 #secure_sqlserver::port: 1433
-
-
-# STIG Enforcement
-# Database STIGs...
-
-secure_sqlserver::stig::v79061::enforced: true
-#secure_sqlserver::stig::v79065::enforced: false
-secure_sqlserver::stig::v79067::enforced: true
-secure_sqlserver::stig::v79069::enforced: true
-secure_sqlserver::stig::v79071::enforced: true
-secure_sqlserver::stig::v79073::enforced: true
-secure_sqlserver::stig::v79075::enforced: true
-secure_sqlserver::stig::v79077::enforced: true
-#secure_sqlserver::stig::v79079::enforced: false
-secure_sqlserver::stig::v79081::enforced: true
-secure_sqlserver::stig::v79083::enforced: true
-secure_sqlserver::stig::v79085::enforced: true
-secure_sqlserver::stig::v79087::enforced: true
-secure_sqlserver::stig::v79089::enforced: true
-#secure_sqlserver::stig::v79091::enforced: false
-#secure_sqlserver::stig::v79093::enforced: false
-#secure_sqlserver::stig::v79095::enforced: false
-#secure_sqlserver::stig::v79097::enforced: false
-#secure_sqlserver::stig::v79099::enforced: false
-#secure_sqlserver::stig::v79101::enforced: false
-#secure_sqlserver::stig::v79103::enforced: false
-#secure_sqlserver::stig::v79105::enforced: false
-#secure_sqlserver::stig::v79107::enforced: false
-#secure_sqlserver::stig::v79109::enforced: false
-secure_sqlserver::stig::v79111::enforced: true
-secure_sqlserver::stig::v79113::enforced: true
-#secure_sqlserver::stig::v79115::enforced: false
-#secure_sqlserver::stig::v79117::enforced: false
-
-
-# STIG Enforcement
-# Instance STIGs...
-
-secure_sqlserver::stig::v79119::enforced: false
-secure_sqlserver::stig::v79121::enforced: false
-secure_sqlserver::stig::v79123::enforced: false
-secure_sqlserver::stig::v79129::enforced: false
-secure_sqlserver::stig::v79131::enforced: false
-secure_sqlserver::stig::v79133::enforced: false
-secure_sqlserver::stig::v79135::enforced: false
-secure_sqlserver::stig::v79137::enforced: false
