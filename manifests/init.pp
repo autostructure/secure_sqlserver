@@ -20,7 +20,8 @@ class secure_sqlserver (
   Hash   $schema_owners,
   Hash   $temporal_tables,
   Hash   $transparent_data_encryption,
-  String $port = 1433,
+  String $port    = 1433,
+  String $sa_acct = 'sa',
   ) {
 
   class { '::secure_sqlserver::controller':
@@ -37,6 +38,7 @@ class secure_sqlserver (
     temporal_tables                   => $::secure_sqlserver::temporal_tables,
     transparent_data_encryption       => $::secure_sqlserver::transparent_data_encryption,
     port                              => $::secure_sqlserver::port,
+    sa_acct                           => $::secure_sqlserver::sa_acct,
   }
 
 }
