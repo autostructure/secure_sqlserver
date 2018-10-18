@@ -21,9 +21,10 @@
 # WHERE d.name = DB_NAME()"
 #
 define secure_sqlserver::stig::v79111 (
-  Boolean       $enforced = false,
-  String[1,16]  $instance = 'MSSQLSERVER',
-  String        $database,
+  Hash         $new_database_owner,
+  Boolean      $enforced = false,
+  String[1,16] $instance = 'MSSQLSERVER',
+  String       $database,
 ) {
 
   if $enforced {
@@ -55,7 +56,7 @@ define secure_sqlserver::stig::v79111 (
     # Set the owner of the database to an authorized login:
     # https://msdn.microsoft.com/en-us/library/ms187359.aspx
 
-    $new_db_owner =lookup('secure_sqlserver::new_database_owner')[$database]
+    $new_db_owner = $new_database_owner[$database]
 
     # TODO: write logic for msdb owner?!?!
 

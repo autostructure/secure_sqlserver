@@ -27,16 +27,17 @@
 # ALTER AUTHORIZATION ON SCHEMA::[<Schema Name>] TO [<Principal Name>]
 
 define secure_sqlserver::stig::v79077 (
+  Hash          $schema_owners,
   Boolean       $enforced = false,
-  String[1,16]  $instance = 'MSSQLSERVER',
   String        $database,
+  String[1,16]  $instance = 'MSSQLSERVER',
 ) {
   if $enforced {
 
-    $skip_schemas = lookup('secure_sqlserver::schema_owners')
-    $schema_owners = $facts['sqlserver_database_schema_owners']
+    $skip_schemas = $schema_owners
+    $schemas = $facts['sqlserver_database_schema_owners']
 
-    $schema_owners.each |$schema_hash| {
+    $schemas.each |$schema_hash| {
 
       $schema = schema_hash['schema_name']
       $principal = schema_hash['owning_principal']

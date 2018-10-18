@@ -73,7 +73,10 @@
 # SQL Server	24248	Issued revoke asymmetric key permissions with cascade command (action_id RWC class_type AK)
 #
 # Note:
-# While the action_id and class_type fields are of type varchar in sys.fn_get_audit_file, they can only be used with numbers when they are a predicate source for filtering. To get the list of values to be used with class_type, execute the following query:
+# While the action_id and class_type fields are of type varchar
+# in sys.fn_get_audit_file, they can only be used with numbers when they are a
+# predicate source for filtering. To get the list of values to be used with
+# class_type, execute the following query:
 #
 # SELECT spt.[name], spt.[number]
 # FROM   [master].[dbo].[spt_values] spt
@@ -104,20 +107,18 @@
 # GO
 #
 define secure_sqlserver::stig::v79087 (
+  String        $audit_filepath,
+  String        $database,
   Boolean       $enforced = false,
   String[1,16]  $instance = 'MSSQLSERVER',
-  String        $database,
 ) {
 
   if $enforced {
-
     # Add audit rule to detect access of the database master key (DMK):
 
     $master_key_is_encrypted = $database in $facts['sqlserver_encryption_is_master_key_encrypted_by_server']
 
     if $master_key_is_encrypted {
-
-      $audit_filepath = lookup('secure_sqlserver::audit_filepath')
 
       $sql_create_audit = "CREATE SERVER AUDIT [STIG_AUDIT_ENCRYPTION_KEYS]
 TO FILE ( FILEPATH ='${audit_filepath}'

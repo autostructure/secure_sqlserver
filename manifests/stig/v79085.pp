@@ -4,9 +4,10 @@
 # The Database Master Key encryption password must meet DOD password complexity requirements.
 #
 define secure_sqlserver::stig::v79085 (
+  String        $database,
+  String        $db_master_key_encryption_password,
   Boolean       $enforced = false,
   String[1,16]  $instance = 'MSSQLSERVER',
-  String        $database,
 ) {
   if $enforced {
 
@@ -21,9 +22,7 @@ define secure_sqlserver::stig::v79085 (
       # a special character (i.e. a non-word character) and
       # a length of 15+ characters...
       $regex_password_check = '/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{15,}$/'
-      $password = lookup('secure_sqlserver::database_master_key_encryption_password')
-
-      #$facts['sqlserver_sql_authenticated_users'].each |String $sql_login| {
+      $password = $db_master_key_encryption_password
 
       if $password =~ $regex_password_check or empty($password) {
         $sql = "USE ${database}; ALTER MASTER KEY REGENERATE WITH ENCRYPTION BY PASSWORD = '${password}';"

@@ -18,6 +18,7 @@ define secure_sqlserver::stig::v79061 (
   Boolean       $enforced = false,
   String[1,16]  $instance = 'MSSQLSERVER',
   String        $database,
+  Array         $approved_sql_login_users,
 ) {
 
   if $enforced {
@@ -81,11 +82,9 @@ define secure_sqlserver::stig::v79061 (
       # reboot
     }
 
-    # yaml file contains approved_users, skip the DROP for any in the list.
-    $approved_users = lookup('secure_sqlserver::approved_sql_login_users')
-
+    # skip the DROP for any user approved for sql_loginapproved_sql_login_users.
     $facts['sqlserver_sql_authenticated_users'].each |String $sql_login| {
-      unless $sql_login in $approved_users {
+      unless $sql_login in $approved_sql_login_users {
         $sql = "USE ${database}; DROP USER '${sql_login}';"
 
         ::secure_sqlserver::log { "${instance}\\${database}: v79061 sql = \n${sql}": }

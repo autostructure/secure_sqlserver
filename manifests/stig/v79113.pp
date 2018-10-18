@@ -31,14 +31,15 @@
 #     password: password
 #
 define secure_sqlserver::stig::v79113 (
-  Boolean       $enforced = false,
-  String[1,16]  $instance = 'MSSQLSERVER',
+  Hash          $transparent_data_encryption,
   String        $database,
+  String[1,16]  $instance = 'MSSQLSERVER',
+  Boolean       $enforced = false,
 ) {
 
   if $enforced {
 
-    $tde_hash = lookup('secure_sqlserver::transparent_data_encryption')
+    $tde_hash = $transparent_data_encryption
 
     $tde_enabled = $database in $tde_hash
 

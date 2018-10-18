@@ -125,12 +125,14 @@ secure_sqlserver::transparent_data_encryption:
     password: password
 
 # V-79085
-# secure_sqlserver::database_master_key_encryption_password: p=P%BJ5E5h/;e8Xb
-# secure_sqlserver::database_master_key_backup_file_encryption_password: p=P%BJ5E5h/;e8Xb
-# secure_sqlserver::database_master_key_backup_file_encryption_filepath: C:\v79087-keyfile.txt
 secure_sqlserver::db_master_key_encryption_password: p=P%BJ5E5h/;e8Xb
 secure_sqlserver::db_master_key_encrypt_backup_file_password: p=P%BJ5E5h/;e8Xb
 secure_sqlserver::db_master_key_encrypt_backup_file_filepath: C:\v79087-keyfile.txt
+
+# V-79085
+# secure_sqlserver::database_master_key_encryption_password: p=P%BJ5E5h/;e8Xb
+# secure_sqlserver::database_master_key_backup_file_encryption_password: p=P%BJ5E5h/;e8Xb
+# secure_sqlserver::database_master_key_backup_file_encryption_filepath: C:\v79087-keyfile.txt
 
 # Configuration Parameters
 # Instance-specific Configurations...

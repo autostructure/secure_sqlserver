@@ -62,21 +62,19 @@
 #     128 freq_interval is unused.
 #
 define secure_sqlserver::stig::v79083 (
+  Hash          $backup_plan,
+  Hash          $backup_recovery_model_settings,
+  String        $database,
   Boolean       $enforced = false,
   String[1,16]  $instance = 'MSSQLSERVER',
-  String        $database,
 ) {
   if $enforced {
-
-    $backup_recovery_model_settings = lookup('secure_sqlserver::backup_recovery_model_settings')
     $target_recovery_model = upcase($backup_recovery_model_settings[$database])
 
     $recovery_models = $facts['sqlserver_database_backup_recovery_models']
 
     unless empty($recovery_models) {
-
       $recovery_models.each |$model_hash| {
-
         $db = $model_hash['database_name']
 
         if downcase($db) == downcase($database) {
@@ -135,7 +133,7 @@ define secure_sqlserver::stig::v79083 (
       $step_name_logs = "Backup database logs for ${database}."
 
       # Hiera lookups...
-      $backup_plans = lookup('secure_sqlserver::backup_plan')
+      $backup_plans = $backup_plan
 
       unless empty($backup_plans[$database]) {
         $backup_plan_desc = $backup_plans[$database]['description']

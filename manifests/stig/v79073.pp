@@ -19,6 +19,7 @@
 # How to I query the "database_principals" in a fact and get all databases info? 1) Add a database column and iterate through all databases and append output from sys.database_principals, or 2) Is there a view that combines all databases?
 
 define secure_sqlserver::stig::v79073 (
+  Hash          $audit_maintainer_username,
   Boolean       $enforced = false,
   String[1,16]  $instance = 'MSSQLSERVER',
   String        $database,
@@ -29,7 +30,7 @@ define secure_sqlserver::stig::v79073 (
     # Step 1: Create new audit role...
 
     # NOTE: omitting 'USE ${database};', the sqlserver_tsql's database parameter handles it.
-    $sql_create = "CREATE ROLE DATABASE_AUDIT_MAINTAINERS; GRANT ALTER ANY DATABASE AUDIT TO DATABASE_AUDIT_MAINTAINERS;"
+    $sql_create = 'CREATE ROLE DATABASE_AUDIT_MAINTAINERS; GRANT ALTER ANY DATABASE AUDIT TO DATABASE_AUDIT_MAINTAINERS;'
 
     ::secure_sqlserver::log { "V-79073: create database_audit_maintainers audit role on ${instance}\\${database}: sql = \n${sql_create}": }
     sqlserver_tsql{ "v79073_create_database_audit_maintainers_${instance}_${database}":
@@ -42,7 +43,7 @@ define secure_sqlserver::stig::v79073 (
 
     # Step 2: Add audit maintainer user to new DATABASE_AUDIT_MAINTAINERS role...
 
-    $audit_user = lookup('secure_sqlserver::audit_maintainer_username')[$database]
+    $audit_user = $audit_maintainer_username[$database]
 
     unless empty($audit_user) {
 

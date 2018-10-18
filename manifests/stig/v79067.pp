@@ -13,12 +13,13 @@ define secure_sqlserver::stig::v79067 (
   Boolean       $enforced = false,
   String[1,16]  $instance = 'MSSQLSERVER',
   String        $database,
+  Array         $approved_shared_accounts,
 ) {
 
   if $enforced {
 
     # yaml file contains approved_users, skip the DROP for any in the list...
-    $approved_users = lookup('secure_sqlserver::approved_shared_accounts')
+    $approved_users = $approved_shared_accounts
     $remote_accounts = $facts['sqlserver_remote_database_accounts']
 
     unless $remote_accounts == undef or empty($remote_accounts) {

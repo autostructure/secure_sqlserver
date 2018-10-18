@@ -16,6 +16,7 @@
 # Afterwards, the vm team does backup to NAS (which get off-site tape backups)
 #
 define secure_sqlserver::stig::v79089 (
+  Hash          $certificate_backup,
   Boolean       $enforced = false,
   String[1,16]  $instance = 'MSSQLSERVER',
   String        $database,
@@ -60,7 +61,7 @@ define secure_sqlserver::stig::v79089 (
 
 
     $certificate_backup_filepath = "C:\\Windows\\Temp\\${certificate}.bak"
-    $certificate_password        = 'test' 
+    $certificate_password        = 'test'
 
     $certificates.each |$certificate| {
       # $sql_backup_certificate = "USE ${database}; BACKUP CERTIFICATE '${certificate_name}' TO FILE = '${certificate_backup_filepath}' ENCRYPTION BY PASSWORD = '${certificate_password}'"
