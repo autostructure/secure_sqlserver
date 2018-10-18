@@ -2,7 +2,7 @@
 #
 # Usage:
 # class { '::secure_sqlserver':
-#   svc_acct => '<username>',
+#   sa_acct => '<username>',
 # }
 #
 class secure_sqlserver::controller {
@@ -10,20 +10,10 @@ class secure_sqlserver::controller {
   # NOTE: using 'Down-Level Logon Name' format for usernames.
   $netbios_user = $facts['identity']['user']
   $fqdn_user = $facts['id']
-  $svc_acct = lookup('secure_sqlserver::svc_acct')
+  $sa_acct = lookup('secure_sqlserver::sa_acct')
   $port = empty(lookup('secure_sqlserver::port')) ? {
     false   => lookup('secure_sqlserver::port'),
     default => 1433,
-  }
-
-  notify { 'secure_sqlserver:_controller_msg0_debug':
-    message  => "port=${port}; svc_acct=${svc_acct}; netbios_user=${netbios_user}; fqdn_user=${fqdn_user}",
-    loglevel => info,
-  }
-
-  notify { 'secure_sqlserver:_controller_msg1_warning':
-    message  => "***DEVELOPER NOTE*** Using SQL_2017 reference instead of SQL_2016 (FIX REQ'D)!!!",
-    loglevel => alert,
   }
 
   $instances = $facts['sqlserver_instances']['SQL_2016'].keys
@@ -39,7 +29,7 @@ class secure_sqlserver::controller {
     loglevel => info,
   }
 
-  # need sqlserver_config for sqlserver_tsql commands to enable windows authentication (no passwords required)
+  # need sqlserver_config for sqlserver_tsql commands, set auth to windows authentication (no passwords required)
   sqlserver::config { $single_instance:
     admin_login_type => 'WINDOWS_LOGIN',
   }
@@ -55,9 +45,8 @@ class secure_sqlserver::controller {
   if empty($databases) {
     # fail('secure_sqlserver failure: No SQL Server 2016 databases were discovered.')
     ::secure_sqlserver::log { 'No SQL Server 2016 databases were discovered.':
-      loglevel => info,
+      loglevel => alert,
     }
-
   }
 
   $databases.each |String $database| {
