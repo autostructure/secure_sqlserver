@@ -28,7 +28,7 @@ class secure_sqlserver::controller (
   $instances = $facts['sqlserver_instances']['SQL_2016'].keys
 
   if empty($instances) {
-    fail('secure_sqlserver failure: No instances of SQL Server 2016 were discovered in the sqlserver_instances puppet fact (part of the puppetlabs-sqlserver module).')
+    fail('secure_sqlserver failure: No instances of SQL Server 2016 were discovered in the sqlserver_instances puppet fact (part of the puppetlabs-sqlserver module).') # lint:ignore:140chars
   }
 
   $single_instance = $instances[0]

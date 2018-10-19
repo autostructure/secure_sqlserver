@@ -1,22 +1,20 @@
 ---
-# MS SQL Server hardening properties...
+################################################################################
+# secure_sqlserver hardening properties:
+# database-specific configurations...
 
-# Turn on encryption (TDE) for confidential or sensitive information.
-secure_sqlserver::enable_transparent_data_encryption: true
-secure_sqlserver::databases_targeted_for_encryption: fakedb
-
-
-# Configuration Parameters
-# Database-specific configurations...
+# V-79067
+secure_sqlserver::approved_shared_accounts:
+  - app1$
 
 # V-79061
 secure_sqlserver::approved_sql_login_users:
   - charlie
   - jeff
 
-# V-79067
-secure_sqlserver::approved_shared_accounts:
-  - app1$
+# V-79087
+# you should choose a audit log location separate from the o/s partition
+secure_sqlserver::audit_filepath: C:\SQLAudit\keys\
 
 # V-79073
 secure_sqlserver::audit_maintainer_username:
@@ -25,20 +23,7 @@ secure_sqlserver::audit_maintainer_username:
   msdb:   whoami3
   tempdb: whoami4
 
-# V-79087
-# you should choose a audit log location separate from the o/s partition
-secure_sqlserver::audit_filepath: C:\SQLAudit\keys\
-
 # V-79083
-# Valid Recovery Types: SIMPLE, FULL, BULK_LOGGED
-secure_sqlserver::backup_recovery_model_settings:
-  master: SIMPLE
-  model:  FULL
-  msdb:   SIMPLE
-  # tempdb: SIMPLE
-
-# V-79083
-
 secure_sqlserver::backup_plan:
   master:
     description:  Test backup description for master database.
@@ -58,9 +43,16 @@ secure_sqlserver::backup_plan:
   # tempdb:
     # description:  Test backup description for tempdb database.
     # disk:         C:\Windows\Temp\sqlserver-backup-file-tempdb.bak
-    #diff:         C:\Windows\Temp\sqlserver-backup-file-tempdb.dif
     # log:         C:\Windows\Temp\sqlserver-backup-file-tempdb.log
     # key:
+
+# V-79083
+# valid recovery types: SIMPLE, FULL, BULK_LOGGED
+secure_sqlserver::backup_recovery_model_settings:
+  master: SIMPLE
+  model:  FULL
+  msdb:   SIMPLE
+  # tempdb: SIMPLE
 
 # V-79089
 # avoid enrypting model or tempdb, doing so may cause performance issues.
@@ -71,17 +63,16 @@ secure_sqlserver::certificate_backup:
     certificate_backup_private_key: c:\Windows\Temp\master-private.key
     certificate_backup_directory:   c:\Windows\Temp
     certificate_backup_filename:    master-certificate.bak#
-    #certificate_backup_directory:   g:\
+    # certificate_backup_directory:   g:\
   msdb:
     certificate_name:               DOD_STIG_CERTIFICATE_MSDB
     certificate_password:           1234567890abcDEF
     certificate_backup_private_key: c:\Windows\Temp\msdb-private.key
     certificate_backup_directory:   c:\Windows\Temp
     certificate_backup_filename:    msdb-certificate.bak
-#secure_sqlserver::certificate_name:
-#secure_sqlserver::certificate_password:
-#secure_sqlserver::certificate_backup_directory:
-#secure_sqlserver::certificate_backup_filename:
+
+# V-79085
+secure_sqlserver::db_master_key_encryption_password: p=P%BJ5E5h/;e8Xb
 
 # V-79111
 # logins based on Active Directory users are limited to names of less than 21 characters.
@@ -91,7 +82,7 @@ secure_sqlserver::new_database_owner:
   msdb:   dbo
   tempdb: Administrator
 
-#V-79077
+# V-79077
 secure_sqlserver::schema_owners:
   master:
     sys: sys
@@ -106,7 +97,7 @@ secure_sqlserver::schema_owners:
     sys: sys
     dbo: dbo
 
-#V-79069
+# V-79069
 secure_sqlserver::temporal_tables:
   fakedb1:
     - table1
@@ -115,7 +106,7 @@ secure_sqlserver::temporal_tables:
   fakedb2:
     - table5
 
-# Turn on encryption (TDE) for confidential or sensitive information.
+# turn on encryption (TDE) for confidential and/or sensitive information (like PII/PHI).
 secure_sqlserver::transparent_data_encryption:
   fakedb1:
     certname: STIG_CERT_ENCRYPT_DB_FAKEDB1
@@ -124,18 +115,11 @@ secure_sqlserver::transparent_data_encryption:
     certname: STIG_CERT_ENCRYPT_DB_FAKEDB1
     password: password
 
-# V-79085
-# secure_sqlserver::database_master_key_encryption_password: p=P%BJ5E5h/;e8Xb
-# secure_sqlserver::database_master_key_backup_file_encryption_password: p=P%BJ5E5h/;e8Xb
-# secure_sqlserver::database_master_key_backup_file_encryption_filepath: C:\v79087-keyfile.txt
-secure_sqlserver::db_master_key_encryption_password: p=P%BJ5E5h/;e8Xb
-secure_sqlserver::db_master_key_encrypt_backup_file_password: p=P%BJ5E5h/;e8Xb
-secure_sqlserver::db_master_key_encrypt_backup_file_filepath: C:\v79087-keyfile.txt
+################################################################################
+# secure_sqlserver hardening properties:
+# instance-specific configurations...
 
-# Configuration Parameters
-# Instance-specific Configurations...
-
-# Controller
+# controller.pp
 # V-79123
-#secure_sqlserver::service_account: sa
-#secure_sqlserver::port: 1433
+# secure_sqlserver::sa_acct: sa
+# secure_sqlserver::port: 1433
