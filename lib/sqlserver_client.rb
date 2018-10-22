@@ -54,15 +54,14 @@ class SqlServerClient
     end
   end
 
-  def get_datasource
+  def datasource_string
     fqdn = Facter.value(:fqdn)
-    instances = Facter.value(:sqlserver_instances)
-    single_instance = instances['SQL_2016']
+    instance_name = Facter.value(:sqlserver_instances)['SQL_2016'].keys[0]
     #'\OPSDEVMS16'
-    data_source = fqdn
-    data_source << '\\'
-    data_source << single_instance
-    data_source
+    datasource = fqdn
+    datasource << '\\'
+    datasource << instance_name
+    datasource
   end
 
   def default_connection_string
@@ -71,7 +70,7 @@ class SqlServerClient
     connection_string =  'Provider=SQLOLEDB.1'
     connection_string << ';Integrated Security=SSPI'
     connection_string << ';Data Source='
-    connection_string << get_datasource
+    connection_string << datasource_string
     #connection_string << fqdn
     #connection_string << '\OPSDEVMS16'
     #connection_string << '.'
