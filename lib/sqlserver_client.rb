@@ -56,7 +56,9 @@ class SqlServerClient
 
   #Server=MyServer;Database=MyDb;Trusted_Connection=Yes;
   #Initial Catalog=MyDb;Data Source=MyServer;Integrated Security=SSPI;
-
+  #conn_string =
+  #"Provider=SQLOLEDB.1;Integrated Security=SSPI;Data Source=fsxopsx1191.EDC.DS1.USDA.GOV;Initial Catalog=master;Network Library=dbmssocn"
+  
   def default_connection_string
     fqdn = Facter.value(:fqdn)
     #connection_string << "Persist Security Info=False;"
@@ -64,6 +66,7 @@ class SqlServerClient
     connection_string << ';Integrated Security=SSPI'
     connection_string << ';Data Source='
     connection_string << fqdn
+    connection_string << '\OPSDEVMS16'
     #connection_string << '.'
     connection_string << ';Initial Catalog='
     connection_string << 'master'
