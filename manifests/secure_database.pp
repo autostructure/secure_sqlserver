@@ -88,7 +88,7 @@ define secure_sqlserver::secure_database (
   }
 
   ::secure_sqlserver::stig::v79077 { "${prefix}-v79077":
-    schema_owners => $schema_owners
+    schema_owners => $schema_owners,
     database      => $database,
     instance      => $instance,
     enforced      => lookup('secure_sqlserver::stig::v79077::enforced'),
