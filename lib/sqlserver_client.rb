@@ -54,15 +54,21 @@ class SqlServerClient
     end
   end
 
+  Server=MyServer;Database=MyDb;Trusted_Connection=Yes;
+  Initial Catalog=MyDb;Data Source=MyServer;Integrated Security=SSPI;
+
   def default_connection_string
+    fqdn = Facter.value(:fqdn)
     #connection_string << "Persist Security Info=False;"
     connection_string =  'Provider=SQLOLEDB.1'
     connection_string << ';Integrated Security=SSPI'
     connection_string << ';Data Source='
-    connection_string << '.'
+    connection_string << fqdn
+    #connection_string << '.'
     connection_string << ';Initial Catalog='
     connection_string << 'master'
     connection_string << ';Network Library=dbmssocn'
+    puts "sqlserver_client.rb connection_string...\n#{connection_string}"
     Puppet.debug "sqlserver_client.rb connection_string...\n#{connection_string}"
     connection_string
   end
