@@ -58,21 +58,17 @@ class SqlServerClient
     fqdn = Facter.value(:fqdn)
     instance_name = Facter.value(:sqlserver_instances)['SQL_2016'].keys[0]
     #'\OPSDEVMS16'
-    datasource = fqdn
-    datasource << '\\'
-    datasource << instance_name
+    datasource = "#{fqdn}\\#{instance_name}"
     datasource
   end
 
   def default_connection_string
-    #"Provider=SQLOLEDB.1;Integrated Security=SSPI;Data Source=fsxopsx1191.EDC.DS1.USDA.GOV\OPSDEVMS16;Initial Catalog=master;Network Library=dbmssocn"
-    #connection_string << "Persist Security Info=False;"
+    # Example connection_string...
+    # Provider=SQLOLEDB.1;Integrated Security=SSPI;Data Source=fsxopsx1191.EDC.DS1.USDA.GOV\OPSDEVMS16;Initial Catalog=master;Network Library=dbmssocn
     connection_string =  'Provider=SQLOLEDB.1'
     connection_string << ';Integrated Security=SSPI'
     connection_string << ';Data Source='
     connection_string << datasource_string
-    #connection_string << fqdn
-    #connection_string << '\OPSDEVMS16'
     #connection_string << '.'
     connection_string << ';Initial Catalog='
     connection_string << 'master'
