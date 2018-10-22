@@ -11,27 +11,28 @@
 # Because,
 # 1) the tsql may make it seem like you need a reboot every agent run.
 # 2) the instance level stigs use a registry module to apply the change too (reboot @ that level)
+# 3) Use the reboot module, i think u can delay reboot...but don't need reboot all time...make fact that triggers it
 #
 # *** REBOOT REQ'D ***
 #
 define secure_sqlserver::stig::v79061 (
-  Boolean       $enforced = false,
-  String[1,16]  $instance = 'MSSQLSERVER',
-  String        $database,
   Array         $approved_sql_login_users,
+  String[1,16]  $instance,
+  String        $database,
+  Boolean       $enforced = false,
 ) {
 
   if $enforced {
 
-    # A contained databases contains both dats & metadata.
+    # A contained databases contains both data & metadata.
     # Instead of storing metadata in the system databases, it is all contained within the database
     # and not stored in master.
     # Fail hardening if it is a contained database...
     if $facts['sqlserver_enabled_contained_databases'] {
-      ::secure_sqlserver::log { "***WARNING*** Contained databases is enabled on ${instance}\\${database}. This is a finding per vulnerability V-79061.":
+      ::secure_sqlserver::log { "***WARNING*** Contained databases is enabled on ${instance}\\${database}. This is a finding per vulnerability V-79061.": #lint:ignore:140chars
         loglevel => warning,
       }
-      fail("***FAIL*** Contained databases is enabled on ${instance}\\${database}. This is a finding per vulnerability V-79061.  Stopping module execution.")
+      fail("***FAIL*** Contained databases is enabled on ${instance}\\${database}. This is a finding per vulnerability V-79061.  Stopping module execution.") #lint:ignore:140chars
     }
 
     if $facts['sqlserver_authentication_mode'] != 'Windows Authentication' and downcase($database) == 'master' {
@@ -82,7 +83,7 @@ define secure_sqlserver::stig::v79061 (
       # reboot
     }
 
-    # skip the DROP for any user approved for sql_loginapproved_sql_login_users.
+    # skip the DROP for any user approved for sql_login
     $facts['sqlserver_sql_authenticated_users'].each |String $sql_login| {
       unless $sql_login in $approved_sql_login_users {
         $sql = "USE ${database}; DROP USER '${sql_login}';"
