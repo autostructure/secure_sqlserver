@@ -58,7 +58,7 @@ class SqlServerClient
     fqdn = Facter.value(:fqdn)
     instance_name = Facter.value(:sqlserver_instances)['SQL_2016'].keys[0]
     #'\OPSDEVMS16'
-    datasource = "#{fqdn}\\#{instance_name}"
+    datasource = fqdn + '\\' + instance_name
     datasource
   end
 
