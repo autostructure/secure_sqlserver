@@ -116,7 +116,7 @@ define secure_sqlserver::secure_database (
   }
 
   ::secure_sqlserver::stig::v79087 { "${prefix}-v79087":
-    audit_filepath => $audit_filepath
+    audit_filepath => $audit_filepath,
     database       => $database,
     instance       => $instance,
     enforced       => lookup('secure_sqlserver::stig::v79087::enforced'),
