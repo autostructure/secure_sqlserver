@@ -62,20 +62,20 @@ class secure_sqlserver::controller (
 
       # using a define type over class, since we make multiple calls...
       ::secure_sqlserver::secure_database { "secure_database_${database}":
-        instance                                   => $single_instance,
-        database                                   => $database,
-        approved_shared_accounts                   => $approved_shared_accounts,
-        approved_sql_login_users                   => $approved_sql_login_users,
-        audit_filepath                             => $audit_filepath,
-        audit_maintainer_username                  => $audit_maintainer_username,
-        backup_plan                                => $backup_plan,
-        backup_recovery_model_settings             => $backup_recovery_model_settings,
-        certificate_backup                         => $certificate_backup,
-        db_master_key_encryption_password          => $db_master_key_encryption_password,
-        new_database_owner                         => $new_database_owner,
-        schema_owners                              => $schema_owners,
-        temporal_tables                            => $temporal_tables,
-        transparent_data_encryption                => $transparent_data_encryption,
+        instance                          => $single_instance,
+        database                          => $database,
+        approved_shared_accounts          => $approved_shared_accounts,
+        approved_sql_login_users          => $approved_sql_login_users,
+        audit_filepath                    => $audit_filepath,
+        audit_maintainer_username         => $audit_maintainer_username,
+        backup_plan                       => $backup_plan,
+        backup_recovery_model_settings    => $backup_recovery_model_settings,
+        certificate_backup                => $certificate_backup,
+        db_master_key_encryption_password => $db_master_key_encryption_password,
+        new_database_owner                => $new_database_owner,
+        schema_owners                     => $schema_owners,
+        temporal_tables                   => $temporal_tables,
+        transparent_data_encryption       => $transparent_data_encryption,
       }
     }
   } else {
