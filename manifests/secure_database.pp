@@ -2,21 +2,40 @@
 #
 # This class calls all classes that secure a MS SQL Server 2016 database.
 #
-# Skipping STIG/Vulnerability Numbers:
-# V-79091
-# V-79093
-# V-79095
-# V-79097
-# V-79099
-# V-79101
-# V-79103
-# V-79117 (Duplicate of V-79115)
+# The table below displays which vulnerabilites are addressed,
+# which are delayed until version 2, and which ones had to be omitted
+# because the requirements were vague or too broad.
 #
-# Implemented in version 2.0:
-# V-79065
-# V-79079
-# V-79105
-# V-79107
+#         Version 1 |	Version 2	| Omitted |
+# ------------------+-----------+---------+
+# V-79061	    X     |           |         |
+# V-79065		        |     X     |         |
+# V-79067	    X     |           |         |
+# V-79069	    X     |           |         |
+# V-79071	    X     |           |         |
+# V-79073	    X     |           |         |
+# V-79075	    X     |           |         |
+# V-79077	    X     |           |         |
+# V-79079	   	      |     X     |         |
+# V-79081	    X     |           |         |
+# V-79083	    X     |           |         |
+# V-79085	    X     |           |         |
+# V-79087	    X     |           |         |
+# V-79089	    X     |           |         |
+# V-79091	          |           |    X    |
+# V-79093			      |           |    X    |
+# V-79095			      |           |    X    |
+# V-79097			      |           |    X    |
+# V-79099			      |           |    X    |
+# V-79101			      |           |    X    |
+# V-79103			      |           |    X    |
+# V-79105		        |     X     |         |
+# V-79107		        |     X     |         |
+# V-79109	    X     |           |         |
+# V-79111	    X     |           |         |
+# V-79113	    X     |           |         |
+# V-79115	    X     |           |         |
+# V-79117		        |           |    X    | (Duplicate of V-79115)
 #
 define secure_sqlserver::secure_database (
   Array         $approved_shared_accounts,
