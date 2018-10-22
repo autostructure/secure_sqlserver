@@ -17,14 +17,12 @@
 #
 define secure_sqlserver::stig::v79089 (
   Hash          $certificate_backup,
-  Boolean       $enforced = false,
-  String[1,16]  $instance = 'MSSQLSERVER',
+  String[1,16]  $instance,
   String        $database,
+  Boolean       $enforced = false,
 ) {
-
   if $enforced {
 
-    # 3dH85Hhk003GHk2597gheij4
     $database_certificates  = $facts['sqlserver_certificates']
 
     unless $database_certificates[$database] == undef {
