@@ -54,8 +54,8 @@ class SqlServerClient
     end
   end
 
-  Server=MyServer;Database=MyDb;Trusted_Connection=Yes;
-  Initial Catalog=MyDb;Data Source=MyServer;Integrated Security=SSPI;
+  #Server=MyServer;Database=MyDb;Trusted_Connection=Yes;
+  #Initial Catalog=MyDb;Data Source=MyServer;Integrated Security=SSPI;
 
   def default_connection_string
     fqdn = Facter.value(:fqdn)
