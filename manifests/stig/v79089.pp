@@ -28,10 +28,10 @@ define secure_sqlserver::stig::v79089 (
     $database_certificates  = $facts['sqlserver_certificates']
 
     unless $database_certificates[$database] == undef {
-      $certificates = database_certificates[$database]
+      $certificates = $database_certificates[$database]
     }
 
-/*
+    /*
     unless $certificate_backup[$database] == undef {
       $certificate_name               = $certificate_backup[$database]['certificate_name']
       $certificate_password           = $certificate_backup[$database]['certificate_password']
@@ -44,7 +44,7 @@ define secure_sqlserver::stig::v79089 (
       }
       $certificate_backup_filepath    = "${certificate_backup_directory}${delim}${certificate_backup_filename}"
     }
-*/
+    */
 
     # path is the namevar so a duplicate resource error arises (title isn't namevar)
     # file { "Create directory for encryption certificate backup file for ${database}.":
