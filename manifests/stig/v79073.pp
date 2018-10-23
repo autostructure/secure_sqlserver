@@ -48,8 +48,6 @@ define secure_sqlserver::stig::v79073 (
     unless empty($audit_user) {
 
       $sql_new_user = "CREATE USER ${audit_user} WITHOUT LOGIN"
-      # You need the single quotes around the username or t-sql thinks it a column...
-      $sql_check = "IF NOT EXISTS (SELECT name FROM sys.database_principals WHERE name='${audit_user}') THROW 50002, 'Missing auditing user.',10" #lint:ignore:140chars
 
       ::secure_sqlserver::log { "V-79073: create audit maintainer user '${audit_user}' on ${instance}\\${database}: sql = \n${sql_new_user}": } #lint:ignore:140chars
 
@@ -58,7 +56,7 @@ define secure_sqlserver::stig::v79073 (
         database => $database,
         command  => $sql_new_user,
         require  => Sqlserver::Config[$instance],
-        onlyif   => "IF NOT EXISTS (SELECT name FROM sys.database_principals WHERE name='${audit_user}') THROW 50002, 'Missing auditing user.',10", #lint:ignore:140chars
+        onlyif   => "IF NOT EXISTS (SELECT name FROM sys.database_principals WHERE name='${audit_user}') THROW 50002, 'Missing auditing user: ${audit_user}.',10", #lint:ignore:140chars
       }
 
       $sql_add = "ALTER ROLE DATABASE_AUDIT_MAINTAINERS ADD MEMBER ${audit_user};"
@@ -74,7 +72,7 @@ define secure_sqlserver::stig::v79073 (
 FULL OUTER JOIN sys.database_principals dp1 ON drm.role_principal_id = dp1.principal_id
 LEFT OUTER JOIN sys.database_principals dp2 ON drm.member_principal_id = dp2.principal_id
 WHERE dp1.name = 'DATABASE_AUDIT_MAINTAINERS' AND dp1.type = 'R' AND dp2.name = '${audit_user}' )
-THROW 50002, 'user not in database_audit_maintainers role.', 10",
+THROW 50002, 'The ${audit_user} user not in database_audit_maintainers role.', 10",
       }
     }
 
