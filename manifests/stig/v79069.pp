@@ -23,7 +23,7 @@ define secure_sqlserver::stig::v79069 (
           SysStartTime datetime2 GENERATED ALWAYS AS ROW START HIDDEN NOT NULL DEFAULT GETUTCDATE(),
           SysEndTime datetime2 GENERATED ALWAYS AS ROW END HIDDEN NOT NULL DEFAULT CONVERT(DATETIME2, '9999-12-31 23:59:59.99999999');"
 
-          ::secure_sqlserver::log { "v79069: calling tsql module for, ${instance}\\${database}, temporal table, ${temporal_table}, using sql = \n${sql}": }
+          ::secure_sqlserver::log { "v79069: calling tsql module for, ${instance}\\${database}, temporal table, ${temporal_table}, using sql = \n${sql}": } #lint:ignore:140chars
 
           sqlserver_tsql{ "v79069_make_table_temporal_${temporal_table}_for_${instance}_${database}":
             instance => $instance,
@@ -35,7 +35,7 @@ define secure_sqlserver::stig::v79069 (
           # Enable system versioning with 1-year retention for historical data.
           $sql2 = "ALTER TABLE ${temporal_table} SET (SYSTEM_VERSIONING = ON (HISTORY_RETENTION_PERIOD = 1 YEAR));"
 
-          ::secure_sqlserver::log { "v79069: calling tsql module for, ${instance}\\${database}, temporal table retention set on , ${temporal_table}, using sql = \n${sql2}": }
+          ::secure_sqlserver::log { "v79069: calling tsql module for, ${instance}\\${database}, temporal table retention set on , ${temporal_table}, using sql = \n${sql2}": } #lint:ignore:140chars
 
           sqlserver_tsql{ "v79069_set_table_temporal_retention_${temporal_table}_for_${instance}_${database}":
             instance => $instance,

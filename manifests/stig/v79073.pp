@@ -38,7 +38,7 @@ define secure_sqlserver::stig::v79073 (
       database => $database,
       command  => $sql_create,
       require  => Sqlserver::Config[$instance],
-      onlyif   => "IF NOT EXISTS (SELECT name FROM sys.database_principals WHERE name = 'DATABASE_AUDIT_MAINTAINERS' and type='R') THROW 50001, 'Missing DATABASE_AUDIT_MAINTAINERS role.', 10",
+      onlyif   => "IF NOT EXISTS (SELECT name FROM sys.database_principals WHERE name = 'DATABASE_AUDIT_MAINTAINERS' and type='R') THROW 50001, 'Missing DATABASE_AUDIT_MAINTAINERS role.', 10", #lint:ignore:140chars
     }
 
     # Step 2: Add audit maintainer user to new DATABASE_AUDIT_MAINTAINERS role...
@@ -49,16 +49,16 @@ define secure_sqlserver::stig::v79073 (
 
       $sql_new_user = "CREATE USER ${audit_user} WITHOUT LOGIN"
       # You need the single quotes around the username or t-sql thinks it a column...
-      $sql_check = "IF NOT EXISTS (SELECT name FROM sys.database_principals WHERE name='${audit_user}') THROW 50002, 'Missing auditing user.',10"
+      $sql_check = "IF NOT EXISTS (SELECT name FROM sys.database_principals WHERE name='${audit_user}') THROW 50002, 'Missing auditing user.',10" #lint:ignore:140chars
 
-      ::secure_sqlserver::log { "V-79073: create audit maintainer user '${audit_user}' on ${instance}\\${database}: sql = \n${sql_new_user}": }
+      ::secure_sqlserver::log { "V-79073: create audit maintainer user '${audit_user}' on ${instance}\\${database}: sql = \n${sql_new_user}": } #lint:ignore:140chars
 
       sqlserver_tsql{ "v79073_database_audit_maintainers_create_user_${instance}_${database}_${audit_user}":
         instance => $instance,
         database => $database,
         command  => $sql_new_user,
         require  => Sqlserver::Config[$instance],
-        onlyif   => "IF NOT EXISTS (SELECT name FROM sys.database_principals WHERE name='${audit_user}') THROW 50002, 'Missing auditing user.',10",
+        onlyif   => "IF NOT EXISTS (SELECT name FROM sys.database_principals WHERE name='${audit_user}') THROW 50002, 'Missing auditing user.',10", #lint:ignore:140chars
       }
 
       $sql_add = "ALTER ROLE DATABASE_AUDIT_MAINTAINERS ADD MEMBER ${audit_user};"
@@ -95,7 +95,9 @@ THROW 50002, 'user not in database_audit_maintainers role.', 10",
         if !empty($principal) and !empty($role) and $role=='db_owner' and downcase($principal)!='dbo' {
           $user = $principal
           $sql = "ALTER ROLE db_owner DROP MEMBER ${user};"
+
           ::secure_sqlserver::log { "V-79073: alter role on ${instance}\\${database}: sql = \n${sql}": }
+
           sqlserver_tsql{ "v79073_database_audit_maintainers_drop_member_${user}_on_${instance}_${database}":
             instance => $instance,
             database => $database,
@@ -103,13 +105,14 @@ THROW 50002, 'user not in database_audit_maintainers role.', 10",
             require  => Sqlserver::Config[$instance],
           }
         }
+
         # REVOKE CONTROL DATABASE SQL...
-        $permission_left = $permission[0,7]
-        ::secure_sqlserver::log { "V-79073: permission[0,7]=${permission_left} on ${instance}\\${database}\\${principal}": }
-        if !empty($principal) and downcase($principal)!='dbo' and !empty($permission) and ($permission[0,7]=='CONTROL' or $permission=='ALTER ANY DATABASE AUDIT') {
+        if !empty($principal) and downcase($principal)!='dbo' and !empty($permission) and ($permission[0,7]=='CONTROL' or $permission=='ALTER ANY DATABASE AUDIT') { #lint:ignore:140chars
           $user = $principal
           $sql = "REVOKE ${permission} FROM ${user};"
+
           ::secure_sqlserver::log { "V-79073: revoke control database permission for ${user} on ${instance}\\${database}: sql = \n${sql}": }
+
           sqlserver_tsql{ "v79073_database_audit_maintainers_revoke_permission_for_${user}_on_${instance}_${database}":
             instance => $instance,
             database => $database,
@@ -119,7 +122,5 @@ THROW 50002, 'user not in database_audit_maintainers role.', 10",
         }
       }
     }
-
   }
-
 }
