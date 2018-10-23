@@ -73,7 +73,6 @@ class SqlServerClient
     connection_string << ';Initial Catalog='
     connection_string << 'master'
     connection_string << ';Network Library=dbmssocn'
-    puts "sqlserver_client.rb connection_string...\n#{connection_string}"
     Puppet.debug "sqlserver_client.rb connection_string...\n#{connection_string}"
     connection_string
   end
