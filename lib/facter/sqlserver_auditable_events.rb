@@ -40,7 +40,7 @@ Facter.add('sqlserver_auditable_events') do
 
     client = SqlServerClient.new
     client.open
-    client.column(sql)
+    client.hasharray(sql)
     resultset = client.data
     client.close unless client.nil? || client.closed?
     resultset

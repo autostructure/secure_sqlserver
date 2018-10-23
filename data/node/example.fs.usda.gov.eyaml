@@ -1,4 +1,26 @@
 ---
+profile::windows_sqlserver::sa_acct: 'EDC\P_OPSX_DEV_DBAdmin_FS_Role'  # zzz environment DEV, TST, PRD
+profile::windows_sqlserver::svc_acct: 'EDC\S_OPSDevMS16-SQL'  # service account name
+profile::windows_sqlserver::svc_pwd: 'PuppetDev4536@$'  # service account password
+profile::windows_sqlserver::as_sysadmin_accounts: '' # zzz environment DEV, TST, PRD
+profile::windows_sqlserver::as_svc_acct: '' # service account name
+profile::windows_sqlserver::as_svc_pwd: '' # service account password
+profile::windows_sqlserver::rs_svc_acct: '' # service account name
+profile::windows_sqlserver::rs_svc_pwd: '' # service account password
+profile::windows_sqlserver::polybase_svc_acct: '' # service account name
+profile::windows_sqlserver::polybase_svc_pwd: '' # service account password
+profile::windows_sqlserver::sec_mode:  # Default is blank. Mixed env use 'SQL'
+profile::windows_sqlserver::app_adm_acct:  # Optional application admin group name
+profile::windows_sqlserver::instance: 'OPSDevMS16'  # DB name
+profile::windows_sqlserver::sql_ver: 'SQL_2016'  # DB version 2012, 2014, etc.
+profile::windows_sqlserver::dir_data: 'E:\\Program Files\\Microsoft SQL Server'
+profile::windows_sqlserver::dir_log : "G:/Program Files/Microsoft SQL Server/MSSQL11.%{hiera('profile::windows_sqlserver::instance')}/MSSQL/DATA"
+profile::windows_sqlserver::dir_backup: "F:/Program Files/Microsoft SQL Server/MSSQL11.%{hiera('profile::windows_sqlserver::instance')}/MSSQL/Backup"
+profile::windows_sqlserver::dir_tmp: "G:/Program Files/Microsoft SQL Server/MSSQL11.%{hiera('profile::windows_sqlserver::instance')}/MSSQL/TempDB"
+profile::windows_sqlserver::sql_features: ['SQLEngine', 'Replication', 'FullText']
+profile::windows_sqlserver::sql_install: 1 # Install SQL engine?  true = 1 false = 0
+profile::windows_sqlserver::rs_install: 0 # Install reporting services?  true = 1 false = 0
+
 ################################################################################
 # secure_sqlserver hardening properties:
 # database-specific configurations...
