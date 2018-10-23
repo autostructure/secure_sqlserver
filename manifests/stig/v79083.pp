@@ -64,9 +64,9 @@
 define secure_sqlserver::stig::v79083 (
   Hash          $backup_plan,
   Hash          $backup_recovery_model_settings,
+  String[1,16]  $instance,
   String        $database,
   Boolean       $enforced = false,
-  String[1,16]  $instance = 'MSSQLSERVER',
 ) {
   if $enforced {
     $target_recovery_model = upcase($backup_recovery_model_settings[$database])

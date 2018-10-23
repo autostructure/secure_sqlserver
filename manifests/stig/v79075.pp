@@ -23,9 +23,9 @@
 # AND M.name != 'dbo'"
 #
 define secure_sqlserver::stig::v79075 (
-  Boolean       $enforced = false,
-  String[1,16]  $instance = 'MSSQLSERVER',
+  String[1,16]  $instance,
   String        $database,
+  Boolean       $enforced = false,
 ) {
 
   if $enforced {

@@ -4,10 +4,10 @@
 # The Database Master Key encryption password must meet DOD password complexity requirements.
 #
 define secure_sqlserver::stig::v79085 (
-  String        $database,
   String        $db_master_key_encryption_password,
+  String[1,16]  $instance,
+  String        $database,
   Boolean       $enforced = false,
-  String[1,16]  $instance = 'MSSQLSERVER',
 ) {
   if $enforced {
 

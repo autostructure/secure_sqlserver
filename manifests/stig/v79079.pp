@@ -4,9 +4,9 @@
 # links to software external to SQL Server, etc.) must be owned by database/DBMS principals authorized for ownership.
 #
 define secure_sqlserver::stig::v79079 (
-  Boolean       $enforced = false,
-  String[1,16]  $instance = 'MSSQLSERVER',
+  String[1,16]  $instance,
   String        $database,
+  Boolean       $enforced = false,
 ) {
 
   if $enforced {

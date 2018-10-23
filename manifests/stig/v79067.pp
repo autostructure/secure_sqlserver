@@ -10,10 +10,10 @@
 #        the powershell check code, but we don't know how the output is returned yet.
 #
 define secure_sqlserver::stig::v79067 (
-  Boolean       $enforced = false,
-  String[1,16]  $instance = 'MSSQLSERVER',
-  String        $database,
   Array         $approved_shared_accounts,
+  String[1,16]  $instance,
+  String        $database,
+  Boolean       $enforced = false,
 ) {
 
   if $enforced {

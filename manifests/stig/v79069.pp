@@ -4,8 +4,8 @@
 #
 define secure_sqlserver::stig::v79069 (
   Hash          $temporal_tables,
+  String[1,16]  $instance,
   String        $database,
-  String[1,16]  $instance = 'MSSQLSERVER',
   Boolean       $enforced = false,
 ) {
   if $enforced {

@@ -5,7 +5,7 @@
 # information and system resources in accordance with applicable access control policies.
 #
 define secure_sqlserver::stig::v79065 (
-  Boolean       $enforced = false,
-  String[1,16]  $instance = 'MSSQLSERVER',
+  String[1,16]  $instance,
   String        $database,
+  Boolean       $enforced = false,
 ) {}

@@ -28,9 +28,9 @@
 
 define secure_sqlserver::stig::v79077 (
   Hash          $schema_owners,
-  Boolean       $enforced = false,
+  String[1,16]  $instance,
   String        $database,
-  String[1,16]  $instance = 'MSSQLSERVER',
+  Boolean       $enforced = false,
 ) {
   if $enforced {
 

@@ -20,9 +20,9 @@
 
 define secure_sqlserver::stig::v79073 (
   Hash          $audit_maintainer_username,
-  Boolean       $enforced = false,
-  String[1,16]  $instance = 'MSSQLSERVER',
+  String[1,16]  $instance,
   String        $database,
+  Boolean       $enforced = false,
 ) {
 
   if $enforced {

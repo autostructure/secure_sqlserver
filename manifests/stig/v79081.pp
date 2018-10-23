@@ -39,9 +39,9 @@
 # REVOKE ALTER ON [<Object Name>] TO [<Principal Name>]
 
 define secure_sqlserver::stig::v79081 (
-  Boolean       $enforced = false,
-  String[1,16]  $instance = 'MSSQLSERVER',
+  String[1,16]  $instance,
   String        $database,
+  Boolean       $enforced = false,
 ) {
   if $enforced {
 

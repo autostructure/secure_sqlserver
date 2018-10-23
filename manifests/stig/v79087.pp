@@ -108,9 +108,9 @@
 #
 define secure_sqlserver::stig::v79087 (
   String        $audit_filepath,
+  String[1,16]  $instance,
   String        $database,
   Boolean       $enforced = false,
-  String[1,16]  $instance = 'MSSQLSERVER',
 ) {
 
   if $enforced {

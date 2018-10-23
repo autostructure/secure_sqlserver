@@ -22,9 +22,9 @@
 #
 define secure_sqlserver::stig::v79111 (
   Hash         $new_database_owner,
-  Boolean      $enforced = false,
-  String[1,16] $instance = 'MSSQLSERVER',
-  String       $database,
+  String[1,16]  $instance,
+  String        $database,
+  Boolean       $enforced = false,
 ) {
 
   if $enforced {
