@@ -15,7 +15,7 @@ Facter.add('sqlserver_certificates') do
     databases = Facter.value(:sqlserver_databases)
     databases.each do |db|
 
-      sql = "USE #{db}; SELECT name FROM sys.certificates ORDER BY 1;"
+      sql = "SELECT name FROM [#{db}].sys.certificates ORDER BY 1;"
 
       Puppet.debug "sqlserver_certificates.rb sql...\n#{sql}"
 

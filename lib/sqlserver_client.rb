@@ -182,8 +182,6 @@ class SqlServerClient
     return nil if closed?
     @data = []
     begin
-      Puppet.debug "sqlserver_client.rb hasharray() watcher: sql=#{sql}"
-
       recordset = WIN32OLE.new('ADODB.Recordset')
       recordset.Open(sql, @connection)
 
@@ -193,27 +191,19 @@ class SqlServerClient
         @fields << field.Name
       end
 
-      Puppet.debug "sqlserver_client.rb hasharray() watcher: @fields=#{@fields}"
-
       begin
         recordset.MoveFirst
         rows = recordset.GetRows
-
-        Puppet.debug "sqlserver_client.rb hasharray() watcher: rows.size=#{rows.size}"
-
         # An ADO Recordset's GetRows method returns an array
         # of columns, so we'll use the transpose method to
         # convert it to an array of rows
-        new_data = rows.transpose
-
-        Puppet.debug "sqlserver_client.rb hasharray() watcher: rows=#{rows}"
-        Puppet.debug "sqlserver_client.rb hasharray() watcher: rows.transpose=#{new_data}"
+        dataset = rows.transpose
 
         # return the data as an array of hashes keyed by the field names
         all_hashes = []
         new_data.size.times do |rowIndex|
           row = {}
-          @fields.size.times { |i| row[@fields[i]] = new_data[rowIndex][i] }
+          @fields.size.times { |i| row[@fields[i]] = dataset[rowIndex][i] }
           all_hashes << row
         end
         @data = all_hashes
@@ -221,10 +211,12 @@ class SqlServerClient
         @data = []
         Puppet.debug "sqlserver_client.rb error: empty hasharray: #{e.message}"
       end
+
       begin
         recordset.Close
       rescue
       end
+
     rescue win32_exception => e
       Puppet.debug "sqlserver_client.rb error: hasharray(sql): #{e.message}"
     end

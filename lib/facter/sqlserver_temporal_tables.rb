@@ -24,9 +24,9 @@ Facter.add('sqlserver_temporal_tables') do
     databases = Facter.value(:sqlserver_databases)
     databases.each do |db|
 
-      sql = "USE #{db}; SELECT SCHEMA_NAME(H.schema_id) + '.' + H.name AS history_table
-  FROM sys.tables T
-  JOIN sys.tables H ON T.history_table_id = H.object_id
+      sql = "SELECT SCHEMA_NAME(H.schema_id) + '.' + H.name AS history_table
+  FROM [#{db}].sys.tables T
+  JOIN [#{db}].sys.tables H ON T.history_table_id = H.object_id
   WHERE T.temporal_type != 0
   ORDER BY 1;"
 
