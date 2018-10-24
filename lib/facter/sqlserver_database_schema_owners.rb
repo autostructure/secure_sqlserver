@@ -21,7 +21,7 @@ Facter.add('sqlserver_database_schema_owners') do
     databases = Facter.value(:sqlserver_databases)
     databases.each do |db|
 
-      sql = "USE #{db}; SELECT S.name AS schema, P.name AS owner
+      sql = "USE #{db}; SELECT S.name AS schema_name, P.name AS owner
 FROM sys.schemas S
 JOIN sys.database_principals P ON S.principal_id = P.principal_id
 ORDER BY schema_name"

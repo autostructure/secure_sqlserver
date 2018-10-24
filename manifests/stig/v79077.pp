@@ -39,7 +39,7 @@ define secure_sqlserver::stig::v79077 (
       $schemas = $all_dbs[$database
       unless empty($schemas) {
         $schemas.each |$schema_hash| {
-          $schema = $schema_hash['schema']
+          $schema = $schema_hash['schema_name']
           $principal = $schema_hash['owner']
           $schema_owner = $skip_schemas[$database][$schema]
 
