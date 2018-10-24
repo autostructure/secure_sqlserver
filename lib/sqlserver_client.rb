@@ -193,16 +193,16 @@ class SqlServerClient
         # An ADO Recordset's GetRows method returns an array
         # of columns, so we'll use the transpose method to
         # convert it to an array of rows
-        @data = rows.transpose
+        new_data = rows.transpose
 
         # return the data as an array of hashes keyed by the field names
-        hash = []
-        @data.size.times do |rowIndex|
+        all_hashes = []
+        new_data.size.times do |rowIndex|
           row = {}
-          @fields.size.times { |i| row[@fields[i]] = @data[rowIndex][i] }
-          hash << row
+          @fields.size.times { |i| row[@fields[i]] = new_data[rowIndex][i] }
+          all_hashes << row
         end
-        @data = hash
+        @data = all_hashes
       rescue
         @data = []
       end
