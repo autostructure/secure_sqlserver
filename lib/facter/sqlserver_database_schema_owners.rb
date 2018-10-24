@@ -29,10 +29,10 @@ ORDER BY schema_name"
       client = SqlServerClient.new
       client.open
       client.hasharray(sql)
-      resultset = client.data
+      ret[db] = client.data
+      Puppet.debug "sqlserver_database_schema_owners.rb ret[db] = #{ret[db]}"
       client.close unless client.nil? || client.closed?
-      ret[db] = resultset
     end
+    ret
   end
-  ret
 end
