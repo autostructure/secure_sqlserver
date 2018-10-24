@@ -33,24 +33,21 @@ define secure_sqlserver::stig::v79077 (
   Boolean       $enforced = false,
 ) {
   if $enforced {
-
     $skip_schemas = $schema_owners
     $schemas = $facts['sqlserver_database_schema_owners']
 
     $schemas.each |$schema_hash| {
-
       $schema = schema_hash['schema_name']
       $principal = schema_hash['owning_principal']
-
       $schema_owner = $skip_schemas[$database][$schema]
 
       # skip the four pre-installed databases
       # skip if the db owner already matches the yaml file setting
       #unless $schema_owner == $principal or downcase($database) == 'msdb' or empty($schema) or empty($principal)  {
-      unless $schema_owner == $principal or empty($schema) or empty($principal) or downcase($database) in ['master','msdb','model','tempdb'] {
-      $sql = "ALTER AUTHORIZATION ON SCHEMA::${schema} TO ${principal}"
+      unless $schema_owner == $principal or empty($schema) or empty($principal) or downcase($database) in ['master','msdb','model','tempdb'] { #lint:ignore:140chars
+        $sql = "ALTER AUTHORIZATION ON SCHEMA::${schema} TO ${principal}"
 
-        ::secure_sqlserver::log { "v79077: calling tsql module for, ${instance}\\${database}\\${schema}\\${principal}, using sql = \n${sql}": }
+        ::secure_sqlserver::log { "v79077: calling tsql module for, ${instance}\\${database}\\${schema}\\${principal}, using sql = \n${sql}": } #lint:ignore:140chars
 
         sqlserver_tsql{ "v79077_alter_auth_on_schema_${instance}_${database}_${schema}_${principal}":
           instance => $instance,
@@ -60,6 +57,5 @@ define secure_sqlserver::stig::v79077 (
         }
       }
     }
-
   }
 }
