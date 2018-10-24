@@ -203,8 +203,9 @@ class SqlServerClient
           all_hashes << row
         end
         @data = all_hashes
-      rescue
+      rescue exception => e
         @data = []
+        Puppet.debug "sqlserver_client.rb error: empty hasharray: #{e.message}"
       end
       begin
         recordset.Close
