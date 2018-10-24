@@ -201,7 +201,7 @@ class SqlServerClient
 
         # return the data as an array of hashes keyed by the field names
         all_hashes = []
-        new_data.size.times do |rowIndex|
+        dataset.size.times do |rowIndex|
           row = {}
           @fields.size.times { |i| row[@fields[i]] = dataset[rowIndex][i] }
           all_hashes << row
