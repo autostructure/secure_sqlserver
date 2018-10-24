@@ -200,6 +200,7 @@ class SqlServerClient
         new_data.size.times do |rowIndex|
           row = {}
           @fields.size.times { |i| row[@fields[i]] = new_data[rowIndex][i] }
+          Puppet.debug "sqlserver_client.rb watcher: row=#{row}"
           all_hashes << row
         end
         @data = all_hashes
