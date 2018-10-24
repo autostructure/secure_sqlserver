@@ -60,7 +60,7 @@ define secure_sqlserver::stig::v79089 (
         $certificate_password = 'test'
         $sql_backup_certificate = "USE ${database}; BACKUP CERTIFICATE '${certificate}' TO FILE = '${certificate_backup_filepath}' ENCRYPTION BY PASSWORD = '${certificate_password}'" #lint:ignore:140chars
 
-        sqlserver_tsql{ "Backup database encryption certificate for ${database}":
+        sqlserver_tsql{ "Backup database encryption certificate ${certificate} for database ${database}":
           instance => $instance,
           database => $database,
           command  => $sql_backup_certificate,
