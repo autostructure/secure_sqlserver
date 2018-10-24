@@ -130,7 +130,7 @@ class SqlServerClient
       rescue
       end
     rescue win32_exception => e
-      Puppet.debug "sqlserver_client.rb error: simple_array(sql): #{e.message}"
+      Puppet.debug "sqlserver_client.rb error: column(sql): #{e.message}"
     end
     @data
   end
@@ -169,7 +169,7 @@ class SqlServerClient
       rescue
       end
     rescue win32_exception => e
-      Puppet.debug "sqlserver_client.rb error: query(sql): #{e.message}"
+      Puppet.debug "sqlserver_client.rb error: rows(sql): #{e.message}"
     end
     @data
   end
@@ -184,11 +184,17 @@ class SqlServerClient
     begin
       recordset = WIN32OLE.new('ADODB.Recordset')
       recordset.Open(sql, @connection)
+
+      Puppet.debug "sqlserver_client.rb hasharray() watcher: recordset=#{recordset}"
+
       # Create and populate an array of field names
       @fields = []
       recordset.Fields.each do |field|
         @fields << field.Name
       end
+
+      Puppet.debug "sqlserver_client.rb hasharray() watcher: @fields=#{@fields}"
+
       begin
         recordset.MoveFirst
         rows = recordset.GetRows
@@ -197,12 +203,13 @@ class SqlServerClient
         # convert it to an array of rows
         new_data = rows.transpose
 
+        Puppet.debug "sqlserver_client.rb hasharray() watcher: rows.transpose=#{new_data}"
+
         # return the data as an array of hashes keyed by the field names
         all_hashes = []
         new_data.size.times do |rowIndex|
           row = {}
           @fields.size.times { |i| row[@fields[i]] = new_data[rowIndex][i] }
-          Puppet.debug "sqlserver_client.rb watcher: row=#{row}"
           all_hashes << row
         end
         @data = all_hashes
