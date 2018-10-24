@@ -29,7 +29,7 @@ ORDER BY schema_name"
       client = SqlServerClient.new
       client.open
       client.hasharray(sql)
-      ret = client.data
+      resultset = client.data
       client.close unless client.nil? || client.closed?
       ret[db] = resultset
     end

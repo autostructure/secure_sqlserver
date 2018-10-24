@@ -34,10 +34,10 @@ define secure_sqlserver::stig::v79077 (
 ) {
   if $enforced {
     $skip_schemas = $schema_owners
-    unless empty(skip_schemas[$database]) {
+    unless empty($skip_schemas[$database]) {
       $all_dbs = $facts['sqlserver_database_schema_owners']
       $schemas = $all_dbs[$database
-      unless empty(schemas) {
+      unless empty($schemas) {
         $schemas.each |$schema_hash| {
           $schema = $schema_hash['schema']
           $principal = $schema_hash['owner']
