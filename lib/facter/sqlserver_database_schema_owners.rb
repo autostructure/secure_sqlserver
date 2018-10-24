@@ -1,12 +1,17 @@
 # sqlserver_database_schema_owners.rb
 #
-# @return   A hash of databases containing a hash with each schema and its owner.
+# @return   A hash of databases containing an array of hashes with each schema and owner.
 # @example
 #           {
-#            master => { schema => 'dbo', owner => dbo },
-#            tempdb => { schema => 'dbo', owner => dbo },
-#            model  => { schema => 'dbo', owner => dbo },
-#            msdb   => { schema => 'dbo', owner => dbo },
+#            "master" => [ { "owner" => "db_owner", "schema_name" => "db_owner"},
+#                          { "owner" => "dbo", "schema_name" => "dbo" },
+#                          { "owner" => "guest", "schema_name" => "guest" },
+#                          { "owner" => "INFORMATION_SCHEMA", "schema_name" => "INFORMATION_SCHEMA" },
+#                          { "owner" => "sys", "schema_name" => "sys"}
+#                        ],
+#            "model"  => [ { "schema" => "dbo", "owner" => "dbo" } ],
+#            "msdb"   => [ { "schema" => "dbo", "owner" => "dbo" } ],
+#            "tempdb" => [ { "schema" => "dbo", "owner" => "dbo" } ],
 #           }
 #
 # @dependencies
