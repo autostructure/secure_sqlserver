@@ -121,8 +121,9 @@ class SqlServerClient
         # An ADO Recordset's GetRows method returns an array of columns,
         # I want all the values of one column, so I will NOT transpose.
         @data = rows[0]
-      rescue
+      rescue => e
         @data = []
+        Puppet.debug "sqlserver_client.rb error: empty column: #{e.message}"
       end
       begin
         recordset.Close
@@ -159,8 +160,9 @@ class SqlServerClient
         # An ADO Recordset's GetRows method returns an array of columns,
         # so we'll use the transpose method to convert it to an array of rows
         @data = @data.transpose
-      rescue
+      rescue => e
         @data = []
+        Puppet.debug "sqlserver_client.rb error: empty rows: #{e.message}"
       end
       begin
         recordset.Close
@@ -204,7 +206,7 @@ class SqlServerClient
           all_hashes << row
         end
         @data = all_hashes
-      rescue exception => e
+      rescue => e
         @data = []
         Puppet.debug "sqlserver_client.rb error: empty hasharray: #{e.message}"
       end
