@@ -182,10 +182,10 @@ class SqlServerClient
     return nil if closed?
     @data = []
     begin
+      Puppet.debug "sqlserver_client.rb hasharray() watcher: sql=#{sql}"
+
       recordset = WIN32OLE.new('ADODB.Recordset')
       recordset.Open(sql, @connection)
-
-      Puppet.debug "sqlserver_client.rb hasharray() watcher: recordset=#{recordset}"
 
       # Create and populate an array of field names
       @fields = []
@@ -198,11 +198,15 @@ class SqlServerClient
       begin
         recordset.MoveFirst
         rows = recordset.GetRows
+
+        Puppet.debug "sqlserver_client.rb hasharray() watcher: rows.size=#{rows.size}"
+
         # An ADO Recordset's GetRows method returns an array
         # of columns, so we'll use the transpose method to
         # convert it to an array of rows
         new_data = rows.transpose
 
+        Puppet.debug "sqlserver_client.rb hasharray() watcher: rows=#{rows}"
         Puppet.debug "sqlserver_client.rb hasharray() watcher: rows.transpose=#{new_data}"
 
         # return the data as an array of hashes keyed by the field names
