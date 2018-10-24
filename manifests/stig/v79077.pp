@@ -37,8 +37,8 @@ define secure_sqlserver::stig::v79077 (
     $schemas = $facts['sqlserver_database_schema_owners']
 
     $schemas.each |$schema_hash| {
-      $schema = schema_hash['schema_name']
-      $principal = schema_hash['owning_principal']
+      $schema = $schema_hash['schema_name']
+      $principal = $schema_hash['owning_principal']
       $schema_owner = $skip_schemas[$database][$schema]
 
       # skip the four pre-installed databases
