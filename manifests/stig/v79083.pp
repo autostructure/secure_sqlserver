@@ -111,7 +111,7 @@ define secure_sqlserver::stig::v79083 (
             $model = upcase($model_hash['recovery_model'])
             if $model != $target_recovery_model and !empty($target_recovery_model) {
               $sql = "ALTER DATABASE ${database} SET RECOVERY ${target_recovery_model}"
-              ::secure_sqlserver::log { "v79083: ${instance}\\${database}: changing recovery model from ${model} to ${target_recovery_model}": }
+              ::secure_sqlserver::log { "v79083: ${instance}\\${database}: changing recovery model from ${model} to ${target_recovery_model}, sql = \n${sql}": } #lint:ignore:140chars
               sqlserver_tsql{ "v79083_set_recovery_model_for_${instance}_${database}":
                 instance => $instance,
                 database => $database,
@@ -126,7 +126,7 @@ define secure_sqlserver::stig::v79083 (
               loglevel => notice,
             }
             $sql = "ALTER DATABASE ${database} SET RECOVERY FULL"
-            ::secure_sqlserver::log { "v79083: calling tsql module for, ${instance}\\${database}, using DEFAULT BACKUP RECOVER (FULL), with sql = \n${sql}": }
+            ::secure_sqlserver::log { "v79083: calling tsql module for, ${instance}\\${database}, using DEFAULT BACKUP RECOVER (FULL), with sql = \n${sql}": } #lint:ignore:140chars
             sqlserver_tsql{ "v79083_set_missing_recovery_model_for_${instance}_${database}":
               instance => $instance,
               database => $database,
