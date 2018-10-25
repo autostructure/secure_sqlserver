@@ -61,6 +61,32 @@
 #     64  (when SQLServerAgent service starts)	freq_interval is unused.
 #     128 freq_interval is unused.
 #
+#
+# Fact 'sqlserver_database_backup_recovery_models' example...
+#
+# [ {
+#   "database_name" : "FN_Test",
+#   "recovery_model" : "SIMPLE"
+# }, {
+#   "database_name" : "GST_Test",
+#   "recovery_model" : "FULL"
+# }, {
+#   "database_name" : "master",
+#   "recovery_model" : "SIMPLE"
+# }, {
+#   "database_name" : "MFS_Test",
+#   "recovery_model" : "FULL"
+# }, {
+#   "database_name" : "model",
+#   "recovery_model" : "FULL"
+# }, {
+#   "database_name" : "msdb",
+#   "recovery_model" : "SIMPLE"
+# }, {
+#   "database_name" : "tempdb",
+#   "recovery_model" : "SIMPLE"
+# } ]
+#
 define secure_sqlserver::stig::v79083 (
   Hash          $backup_plan,
   Hash          $backup_recovery_model_settings,
@@ -99,8 +125,8 @@ define secure_sqlserver::stig::v79083 (
             notify { "v79083: ${instance}\\${database}: recovery_models empty.":
               loglevel => notice,
             }
-            $sql = "ALTER DATABASE ${database} SET RECOVERY ${target_recovery_model}"
-            ::secure_sqlserver::log { "v79083: calling tsql module for, ${instance}\\${database}, using sql = \n${sql}": }
+            $sql = "ALTER DATABASE ${database} SET RECOVERY FULL"
+            ::secure_sqlserver::log { "v79083: calling tsql module for, ${instance}\\${database}, using DEFAULT BACKUP RECOVER (FULL), with sql = \n${sql}": }
             sqlserver_tsql{ "v79083_set_missing_recovery_model_for_${instance}_${database}":
               instance => $instance,
               database => $database,
